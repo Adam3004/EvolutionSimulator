@@ -7,6 +7,8 @@ public class Animal extends AbstractWorldElement {
     private int activeGen;
     private int[] genome;
 
+    private int rotation = 0;
+
     public Animal(Vector2D vector2D, int[] genome){
         this(vector2D);
         this.genome = genome;
@@ -18,7 +20,7 @@ public class Animal extends AbstractWorldElement {
         this.activeGen = 0;
     }
 
-    public int getActualGen() {
+    public int getActualGenAndSetNext() {
         int gen = genome[activeGen];
         activeGen = (activeGen + 1) % 8;
         energy -= 1;

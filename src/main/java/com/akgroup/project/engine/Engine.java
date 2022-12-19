@@ -11,8 +11,37 @@ public class Engine {
     public Engine(IWorldMap worldMap) {
         this.worldMap = worldMap;
     }
+    public void run() {
+        while (true){
+            removeDeadAnimals();
+            moveAnimals();
+            eatPlants();
+            multiplicationOfAnimals();
+            summonNewPlants();
+        }
+    }
 
-    public void run(){
-        List<Animal> allAnimals = worldMap.getAllAnimals();
+    private void removeDeadAnimals() {
+        // find dead animals
+        // remove them from map
+    }
+
+    private void moveAnimals() {
+        // move all animals on the map
+    }
+
+    private void eatPlants() {
+        // remove plants where on their field is any animal
+    }
+
+    private void multiplicationOfAnimals() {
+        // find fields with more than one animal
+        // choose two of them with maximal energy
+        // generate genome based on parents genomes
+        // create new animal object with new genome
+    }
+
+    private void summonNewPlants() {
+        // ??
     }
 }
