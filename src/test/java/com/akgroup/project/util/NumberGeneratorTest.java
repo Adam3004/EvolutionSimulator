@@ -42,7 +42,12 @@ class NumberGeneratorTest {
 
     @Test
     void createNewGenome() {
-        int[] test = NumberGenerator.createNewGenome(new Animal(new Vector2D(2, 3), NumberGenerator.generateNewGenome()), new Animal(new Vector2D(3, 2), NumberGenerator.generateNewGenome()));
-        assertNull(test);
+        int[] newGenome = NumberGenerator.createNewGenome(new Animal(new Vector2D(2, 3), new int[]{2, 7, 0, 3, 4}), new Animal(new Vector2D(3, 2), new int[]{1, 2, 3, 7, 0}));
+        assertTrue(newGenome.length == Animal.GENOME_LENGTH);
+        System.out.println(Arrays.stream(newGenome).mapToObj(Integer::toString).collect(Collectors.joining(",")));
+        for (int j = 0; j < Animal.GENOME_LENGTH; j++) {
+            assertTrue(newGenome[j] >= 0);
+            assertTrue(newGenome[j] <= 7);
+        }
     }
 }

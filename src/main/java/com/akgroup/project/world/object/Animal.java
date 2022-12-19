@@ -17,7 +17,7 @@ public class Animal extends AbstractWorldElement {
 
     public Animal(Vector2D vector2D) {
         super(vector2D);
-        this.energy = 0;
+        this.energy = 50;
         this.activeGenIndex = 0;
     }
 

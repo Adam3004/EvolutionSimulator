@@ -61,13 +61,12 @@ public class NumberGenerator {
     private static void refactorNewGenome(int[] newGenome) {
         Set<Integer> newValues = new HashSet<>();
         for (int i = 0; i < generateNextInt(0, Animal.GENOME_LENGTH); i++) {
-            newValues.add(generateNextInt(0, Animal.GENOME_LENGTH));
+            newValues.add(generateNextInt(0, Animal.GENOME_LENGTH - 1));
         }
         for (int value : newValues) {
             newGenome[value] = generateNextInt(0, 7);
         }
     }
-
 
     private static int[] findPercentage(float value1, float value2) {
         float sum = value1 + value2;
