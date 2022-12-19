@@ -39,4 +39,10 @@ class NumberGeneratorTest {
             }
         }
     }
+
+    @Test
+    void createNewGenome() {
+        int[] test = NumberGenerator.createNewGenome(new Animal(new Vector2D(2, 3), NumberGenerator.generateNewGenome()), new Animal(new Vector2D(3, 2), NumberGenerator.generateNewGenome()));
+        assertNull(test);
+    }
 }
