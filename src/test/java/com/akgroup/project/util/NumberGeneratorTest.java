@@ -1,7 +1,11 @@
 package com.akgroup.project.util;
 
+import com.akgroup.project.world.object.Animal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,6 +24,19 @@ class NumberGeneratorTest {
             int value = NumberGenerator.generateNextInt(min, max);
             assert value >= min;
             assert value <= max;
+        }
+    }
+
+    @Test
+    void generateNewGenome() {
+        for (int i = 0; i < 10; i++) {
+            int[] value = NumberGenerator.generateNewGenome();
+            assertTrue(value.length == Animal.GENOME_LENGTH);
+            System.out.println(Arrays.stream(value).mapToObj(Integer::toString).collect(Collectors.joining(",")));
+            for (int j = 0; j < Animal.GENOME_LENGTH; j++) {
+                assertTrue(value[j] >= 0);
+                assertTrue(value[j] <= 7);
+            }
         }
     }
 }
