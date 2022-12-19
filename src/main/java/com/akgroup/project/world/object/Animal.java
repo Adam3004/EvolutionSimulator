@@ -1,13 +1,18 @@
 package com.akgroup.project.world.object;
 
 import com.akgroup.project.util.Vector2D;
+import com.akgroup.project.world.map.IWorldMap;
 
 public class Animal extends AbstractWorldElement {
+
+    public static final int GENOME_LENGTH = 5;
     private int energy;
     private int activeGen;
     private int[] genome;
 
     private int rotation = 0;
+
+    private IWorldMap worldMap;
 
     public Animal(Vector2D vector2D, int[] genome){
         this(vector2D);
@@ -20,9 +25,9 @@ public class Animal extends AbstractWorldElement {
         this.activeGen = 0;
     }
 
-    public int getActualGenAndSetNext() {
+    public int getActualGenAndSetNext(int rot) {
         int gen = genome[activeGen];
-        activeGen = (activeGen + 1) % 8;
+        activeGen = (activeGen + rot) % 8;
         energy -= 1;
         return gen;
     }
