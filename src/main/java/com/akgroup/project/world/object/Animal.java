@@ -30,7 +30,7 @@ public class Animal extends AbstractWorldElement {
     }
 
     public boolean isDead(){
-        return energy == 0;
+        return energy <= 0;
     }
 
     public void addEnergy(int e){
@@ -45,5 +45,9 @@ public class Animal extends AbstractWorldElement {
     public void rotate(int nextGen) {
         activeGenIndex = (activeGenIndex + nextGen) % GENOME_LENGTH;
         rotation = (rotation + genome[activeGenIndex]) % 8;
+    }
+
+    public void loseEnergy() {
+        this.energy -= 5;
     }
 }

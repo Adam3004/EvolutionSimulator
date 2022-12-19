@@ -17,12 +17,6 @@ class PlantTest {
     }
 
     @Test
-    void getNutritionalValue() {
-        assertEquals(plant1.getNutritionalValue(), 3);
-        assertEquals(((Plant) plant2).getNutritionalValue(), 3);
-    }
-
-    @Test
     void getType() {
         assertEquals(plant1.getType(), TypeEnum.PLANT);
         assertEquals(plant2.getType(), TypeEnum.PLANT);

@@ -3,7 +3,7 @@ package com.akgroup.project.util;
 import java.util.Objects;
 
 public class Vector2D {
-    private final int x, y;
+    public final int x, y;
 
     public Vector2D(int x, int y) {
         this.x = x;

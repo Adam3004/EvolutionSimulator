@@ -49,7 +49,13 @@ public class WorldMap implements IWorldMap {
                 .collect(Collectors.toList());
     }
 
-    public void rotateAnimal(Animal animal) {
+    public void rotateAndMove(Animal animal){
+        rotateAnimal(animal);
+        moveAnimal(animal);
+        animal.loseEnergy();
+    }
+
+    private void rotateAnimal(Animal animal) {
         int genGap = 1;
         if (!SimulationConfig.getInstance().isFullPredestination()) {
             if (NumberGenerator.isTrue(20)) {
@@ -59,7 +65,7 @@ public class WorldMap implements IWorldMap {
         animal.rotate(genGap);
     }
 
-    public void moveAnimal(Animal animal) {
+    private void moveAnimal(Animal animal) {
         //TODO implement
     }
 }
