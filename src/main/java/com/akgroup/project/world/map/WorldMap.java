@@ -52,7 +52,7 @@ public class WorldMap implements IWorldMap {
     public void rotateAndMove(Animal animal){
         rotateAnimal(animal);
         moveAnimal(animal);
-        animal.loseEnergy();
+        animal.loseEnergyOnMove();
     }
 
     private void rotateAnimal(Animal animal) {
@@ -66,6 +66,6 @@ public class WorldMap implements IWorldMap {
     }
 
     private void moveAnimal(Animal animal) {
-        //TODO implement
+        // TODO implement
     }
 }

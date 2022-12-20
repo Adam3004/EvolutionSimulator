@@ -4,6 +4,7 @@ public class SimulationConfig {
     public static SimulationConfig INSTANCE;
     private boolean isFullPredestination;
     private int mapWidth, mapHeight;
+    private int energyNeededToMove;
 
     // docelowo taki *konstruktor*
     // public static void init(SimulationConfiguration)
@@ -15,6 +16,7 @@ public class SimulationConfig {
         INSTANCE.isFullPredestination = false;
         INSTANCE.mapWidth = 10;
         INSTANCE.mapHeight = 10;
+        INSTANCE.energyNeededToMove = 1;
     }
 
     public static SimulationConfig getInstance(){
@@ -31,5 +33,9 @@ public class SimulationConfig {
 
     public int getMapHeight() {
         return mapHeight;
+    }
+
+    public int getEnergyNeededToMove() {
+        return energyNeededToMove;
     }
 }

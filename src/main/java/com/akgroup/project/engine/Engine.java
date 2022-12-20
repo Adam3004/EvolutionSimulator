@@ -22,7 +22,7 @@ public class Engine {
     }
 
     private void removeDeadAnimals() {
-        // find dead animals
+        // find dead animals where energy is lower than  SimulationConfig.getInstance().getEnergyNeededToMove()
         // remove them from map
     }
 

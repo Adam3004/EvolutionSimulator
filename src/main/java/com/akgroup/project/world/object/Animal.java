@@ -1,5 +1,6 @@
 package com.akgroup.project.world.object;
 
+import com.akgroup.project.engine.SimulationConfig;
 import com.akgroup.project.util.Vector2D;
 
 public class Animal extends AbstractWorldElement {
@@ -47,7 +48,11 @@ public class Animal extends AbstractWorldElement {
         rotation = (rotation + genome[activeGenIndex]) % 8;
     }
 
-    public void loseEnergy() {
-        this.energy -= 5;
+    public void loseEnergy(int energyToLose) {
+        this.energy -= energyToLose;
+    }
+
+    public void loseEnergyOnMove(){
+        this.loseEnergy(SimulationConfig.getInstance().getEnergyNeededToMove());
     }
 }
