@@ -1,9 +1,7 @@
 -move
 .ruch do przodu
-.obród
 
 -jedzenie roślin
 -wyrastanie roślin
 -rozmnażanie
--trawka
 -randomizacja

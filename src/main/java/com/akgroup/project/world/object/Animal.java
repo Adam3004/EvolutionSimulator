@@ -11,7 +11,7 @@ public class Animal extends AbstractWorldElement {
     private int[] genome;
     private int rotation = 0;
 
-    public Animal(Vector2D vector2D, int[] genome){
+    public Animal(Vector2D vector2D, int[] genome) {
         this(vector2D);
         this.genome = genome;
     }
@@ -30,12 +30,16 @@ public class Animal extends AbstractWorldElement {
         return energy;
     }
 
-    public boolean isDead(){
+    public boolean isDead() {
         return energy <= 0;
     }
 
-    public void addEnergy(int e){
+    public void addEnergy(int e) {
         this.energy += e;
+    }
+
+    public int getActiveGenIndex() {
+        return activeGenIndex;
     }
 
     @Override
@@ -54,5 +58,9 @@ public class Animal extends AbstractWorldElement {
 
     public void loseEnergyOnMove(){
         this.loseEnergy(SimulationConfig.getInstance().getEnergyNeededToMove());
+    }
+
+    public void move(Vector2D newPosition) {
+        position = newPosition;
     }
 }
