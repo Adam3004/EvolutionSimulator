@@ -62,6 +62,10 @@ public class Animal extends AbstractWorldElement {
         this.energy -= energyToLose;
     }
 
+//    private boolean haveEnoughEnergy(){
+//        this.energy>=SimulationConfig.get
+//    }
+
     public void loseEnergyOnMove(){
         this.loseEnergy(SimulationConfig.getInstance().getEnergyNeededToMove());
     }
