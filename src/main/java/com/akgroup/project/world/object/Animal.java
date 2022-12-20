@@ -66,7 +66,7 @@ public class Animal extends AbstractWorldElement {
         this.loseEnergy(SimulationConfig.getInstance().getEnergyNeededToMove());
     }
 
-    public void move(Vector2D newPosition) {
+    public void moveAt(Vector2D newPosition) {
         position = newPosition;
     }
 

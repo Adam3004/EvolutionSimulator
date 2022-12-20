@@ -77,13 +77,18 @@ public class WorldMap implements IWorldMap {
             mapObjects.remove(object.getPosition());
         }
     }
-
+    /**
+     * Finds unit vector of animal rotation.
+     * Calculates position after moving by unit vector.
+     * If position is outside the map then calculates position depending on MapBorder implementation.
+     * Updates animal position and stored animals in HashMap.
+     */
     private void moveAnimal(Animal animal) {
         Vector2D moveVector = Rotation.getVectorFromRotation(animal.getRotation());
         Vector2D newMapPosition = animal.getPosition().add(moveVector);
+        newMapPosition = getMapBorders().getPositionOutOfMap(animal, newMapPosition);
         removeObject(animal);
-        newMapPosition = getMapBorders().getPositionOutOfMap(newMapPosition);
-        animal.move(newMapPosition);
+        animal.moveAt(newMapPosition);
         placeObject(animal);
     }
 
@@ -98,6 +103,6 @@ public class WorldMap implements IWorldMap {
     }
 
     private MapBorders getMapBorders() {
-        return configuration.getMapBorders();
+        return configuration.mapBorders();
     }
 }
