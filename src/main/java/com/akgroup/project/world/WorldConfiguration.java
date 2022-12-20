@@ -2,6 +2,7 @@ package com.akgroup.project.world;
 
 import com.akgroup.project.world.borders.EarthBorders;
 import com.akgroup.project.world.borders.MapBorders;
+import com.akgroup.project.world.map.WorldMap;
 
 public class WorldConfiguration {
     private MapBorders mapBorders;
@@ -18,5 +19,10 @@ public class WorldConfiguration {
 
     public MapBorders getMapBorders() {
         return mapBorders;
+    }
+
+    public void setWorldMap(WorldMap worldMap) {
+        this.mapBorders.setWorldMap(worldMap);
+        // other setters
     }
 }

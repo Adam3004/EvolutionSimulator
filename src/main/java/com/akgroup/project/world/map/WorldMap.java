@@ -19,14 +19,14 @@ import java.util.stream.Collectors;
 public class WorldMap implements IWorldMap {
     private final Vector2D lowerLeft, upperRight;
     private final Map<Vector2D, List<IWorldElement>> mapObjects;
-    private final MapBorders mapBorders;
+    private final WorldConfiguration configuration;
 
     public WorldMap(int width, int height, WorldConfiguration configuration) {
         this.mapObjects = new HashMap<>();
         this.lowerLeft = new Vector2D(0, 0);
         this.upperRight = new Vector2D(width, height);
-        this.mapBorders = configuration.getMapBorders();
-        this.mapBorders.setWorldMap(this);
+        this.configuration = configuration;
+        this.configuration.setWorldMap(this);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class WorldMap implements IWorldMap {
         if (canMoveTo(moveVector)) {
             Vector2D newMapPosition = animal.getPosition().add(moveVector);
             removeObject(animal);
-            newMapPosition = mapBorders.getPositionOutOfMap(newMapPosition);
+            newMapPosition = getMapBorders().getPositionOutOfMap(newMapPosition);
             animal.move(newMapPosition);
             placeObject(animal);
         }
@@ -102,5 +102,9 @@ public class WorldMap implements IWorldMap {
     @Override
     public Vector2D getUpperRight() {
         return upperRight;
+    }
+
+    private MapBorders getMapBorders() {
+        return configuration.getMapBorders();
     }
 }
