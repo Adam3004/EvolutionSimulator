@@ -10,10 +10,7 @@ import com.akgroup.project.world.object.IWorldElement;
 import com.akgroup.project.world.object.Rotation;
 import com.akgroup.project.world.object.TypeEnum;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class WorldMap implements IWorldMap {
@@ -78,20 +75,33 @@ public class WorldMap implements IWorldMap {
         }
     }
 
-    private boolean canMoveTo(Vector2D checkingVector) {
-        return upperRight.follows(checkingVector) && lowerLeft.precedes(checkingVector);
-    }
-
     private void moveAnimal(Animal animal) {
         Vector2D moveVector = Rotation.getVectorFromRotation(animal.getRotation());
+        Vector2D newMapPosition = animal.getPosition().add(moveVector);
+        removeObject(animal);
+        newMapPosition = mapBorders.getPositionOutOfMap(newMapPosition);
+        animal.move(newMapPosition);
+        placeObject(animal);
+    }
 
-        if (canMoveTo(moveVector)) {
-            Vector2D newMapPosition = animal.getPosition().add(moveVector);
-            removeObject(animal);
-            newMapPosition = mapBorders.getPositionOutOfMap(newMapPosition);
-            animal.move(newMapPosition);
-            placeObject(animal);
+    private void animalsReproduction(Vector2D vector2D) {
+        List<IWorldElement> mapElementsOnVector2D = mapObjects.get(vector2D);
+        if (mapElementsOnVector2D.size() < 2) {
+            return;
         }
+        List<Animal> animalsOnVector2D = mapElementsOnVector2D.stream()
+                .map(object -> (Animal) object)
+//                .filter(Animal)
+                .sorted(Comparator.comparing(Animal::getEnergy).reversed())
+                .toList();
+        Animal mum = animalsOnVector2D.get(0);
+        Animal dad = animalsOnVector2D.get(1);
+
+
+    }
+
+    private void prepareEnergy(){
+
     }
 
     @Override

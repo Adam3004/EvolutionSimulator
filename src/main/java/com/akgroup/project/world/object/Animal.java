@@ -8,6 +8,7 @@ import java.util.Arrays;
 public class Animal extends AbstractWorldElement {
 
     public static final int GENOME_LENGTH = 5;
+    private final int
     private int energy;
     private int activeGenIndex;
     private int[] genome;
@@ -61,6 +62,10 @@ public class Animal extends AbstractWorldElement {
     public void loseEnergy(int energyToLose) {
         this.energy -= energyToLose;
     }
+
+//    private boolean haveEnoughEnergy(){
+//        this.energy>=SimulationConfig.get
+//    }
 
     public void loseEnergyOnMove(){
         this.loseEnergy(SimulationConfig.getInstance().getEnergyNeededToMove());
