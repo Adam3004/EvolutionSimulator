@@ -1,26 +1,37 @@
 package com.akgroup.project.engine;
 
+import com.akgroup.project.util.MapVisualiser;
 import com.akgroup.project.world.map.IWorldMap;
 import com.akgroup.project.world.map.WorldMap;
 import com.akgroup.project.world.object.Animal;
 import com.akgroup.project.world.object.Plant;
 
 import java.util.List;
+import java.util.Map;
 
 public class Engine {
     private final WorldMap worldMap;
 
     public Engine(IWorldMap worldMap) {
         this.worldMap = (WorldMap) worldMap;
+        this.visualiser = new MapVisualiser(this.worldMap);
     }
+
+    private final MapVisualiser visualiser;
 
     public void run() {
         while (true) {
+            visualiser.renderFrame();
             removeDeadAnimals();
             moveAnimals();
             eatPlants();
             multiplicationOfAnimals();
             summonNewPlants();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

@@ -20,7 +20,7 @@ public class WorldMap implements IWorldMap {
         this.animals = new HashMap<>();
         this.plants = new HashMap<>();
         this.lowerLeft = new Vector2D(0, 0);
-        this.upperRight = new Vector2D(width, height);
+        this.upperRight = new Vector2D(width - 1, height - 1);
         this.configuration = configuration;
         this.configuration.setWorldMap(this);
     }
