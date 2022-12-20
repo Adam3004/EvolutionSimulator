@@ -74,6 +74,7 @@ public class WorldMap implements IWorldMap {
             mapObjects.remove(object.getPosition());
         }
     }
+
     /**
      * Finds unit vector of animal rotation.
      * Calculates position after moving by unit vector.
@@ -89,24 +90,34 @@ public class WorldMap implements IWorldMap {
         placeObject(animal);
     }
 
-    private void animalsReproduction(Vector2D vector2D) {
+    public void animalsReproduction(Vector2D vector2D) {
         List<IWorldElement> mapElementsOnVector2D = mapObjects.get(vector2D);
         if (mapElementsOnVector2D.size() < 2) {
             return;
         }
         List<Animal> animalsOnVector2D = mapElementsOnVector2D.stream()
                 .map(object -> (Animal) object)
-//                .filter(Animal)
+                .filter(Animal::haveEnoughEnergy)
                 .sorted(Comparator.comparing(Animal::getEnergy).reversed())
                 .toList();
-        Animal mum = animalsOnVector2D.get(0);
-        Animal dad = animalsOnVector2D.get(1);
-
-
+        if (animalsOnVector2D.size() < 2) {
+            return;
+        }
+        createKid(animalsOnVector2D, vector2D);
     }
 
-    private void prepareEnergy(){
+    private void createKid(List<Animal> animalsOnVector2D, Vector2D vector2D) {
+        Animal mum = animalsOnVector2D.get(0);
+        Animal dad = animalsOnVector2D.get(1);
+        int energyPerParent = SimulationConfig.getInstance().getMultiplicationEnergyLose();
+        prepareEnergy(mum, dad, energyPerParent);
+        Animal kid = new Animal(vector2D, 2 * energyPerParent, NumberGenerator.createNewGenome(dad, mum));
+        placeObject(kid);
+    }
 
+    private void prepareEnergy(Animal mum, Animal dad, int energyPerParent) {
+        mum.loseEnergy(energyPerParent);
+        dad.loseEnergy(energyPerParent);
     }
 
     @Override

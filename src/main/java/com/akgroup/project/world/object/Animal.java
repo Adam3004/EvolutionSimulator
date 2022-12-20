@@ -14,14 +14,15 @@ public class Animal extends AbstractWorldElement {
     private int rotation = 0;
 
     public Animal(Vector2D vector2D, int[] genome) {
-        this(vector2D);
-        this.genome = genome;
+        this(vector2D, 10, genome);
+
     }
 
-    public Animal(Vector2D vector2D) {
+    public Animal(Vector2D vector2D, int energy, int[] genome) {
         super(vector2D);
-        this.energy = 50;
+        this.energy = energy;
         this.activeGenIndex = 0;
+        this.genome = genome;
     }
 
     public int[] getGenome() {
@@ -62,11 +63,11 @@ public class Animal extends AbstractWorldElement {
         this.energy -= energyToLose;
     }
 
-//    private boolean haveEnoughEnergy(){
-//        this.energy>=SimulationConfig.get
-//    }
+    public boolean haveEnoughEnergy() {
+        return this.energy >= SimulationConfig.getInstance().getMultiplicationEnergyLose();
+    }
 
-    public void loseEnergyOnMove(){
+    public void loseEnergyOnMove() {
         this.loseEnergy(SimulationConfig.getInstance().getEnergyNeededToMove());
     }
 

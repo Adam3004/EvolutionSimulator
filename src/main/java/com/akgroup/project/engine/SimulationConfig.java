@@ -19,7 +19,7 @@ public class SimulationConfig {
         INSTANCE.mapWidth = 10;
         INSTANCE.mapHeight = 10;
         INSTANCE.energyNeededToMove = 1;
-        INSTANCE.multiplicationEnergyLose = 3;
+        INSTANCE.multiplicationEnergyLose = 4;
     }
 
     private SimulationConfig() {
