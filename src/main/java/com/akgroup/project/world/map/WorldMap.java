@@ -5,6 +5,7 @@ import com.akgroup.project.util.NumberGenerator;
 import com.akgroup.project.util.Vector2D;
 import com.akgroup.project.world.object.Animal;
 import com.akgroup.project.world.object.IWorldElement;
+import com.akgroup.project.world.object.Rotation;
 import com.akgroup.project.world.object.TypeEnum;
 
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class WorldMap implements IWorldMap {
                 .collect(Collectors.toList());
     }
 
-    public void rotateAndMove(Animal animal){
+    public void rotateAndMove(Animal animal) {
         rotateAnimal(animal);
         moveAnimal(animal);
         animal.loseEnergy();
@@ -65,7 +66,23 @@ public class WorldMap implements IWorldMap {
         animal.rotate(genGap);
     }
 
+    private void removeObject(IWorldElement object) {
+        mapObjects.get(object.getPosition()).remove(object);
+    }
+
+    private boolean canMoveTo(Vector2D checkingVector) {
+        return upperRight.follows(checkingVector) && lowerLeft.precedes(checkingVector);
+    }
+
     private void moveAnimal(Animal animal) {
-        //TODO implement
+        //TODO sprawdzenie czy można ruszyć się na nowe pole
+//        mapObjects.get(animal.getPosition()) = animal.getGenome()[animal.getActiveGenIndex()]
+        Vector2D moveVector = Rotation.getVectorFromRotation(animal.getGenome()[animal.getActiveGenIndex()]);
+        if (canMoveTo(moveVector)) {
+            Vector2D newMapPosition = animal.getPosition().add(moveVector);
+            removeObject(animal);
+            animal.move(newMapPosition);
+            placeObject(animal);
+        }
     }
 }

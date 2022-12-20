@@ -13,4 +13,6 @@ public class Main {
         worldMap.placeObject(animal);
         SimulationConfig.init();
     }
+
+//    równik z trupami, albo kula z czymś
 }
