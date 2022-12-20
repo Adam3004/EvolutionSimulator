@@ -11,10 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class NumberGeneratorTest {
 
-    @BeforeEach
-    void setUp() {
-        NumberGenerator.init();
-    }
 
     @Test
     void generateNextInt() {

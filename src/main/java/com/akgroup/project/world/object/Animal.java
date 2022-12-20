@@ -3,6 +3,8 @@ package com.akgroup.project.world.object;
 import com.akgroup.project.engine.SimulationConfig;
 import com.akgroup.project.util.Vector2D;
 
+import java.util.Arrays;
+
 public class Animal extends AbstractWorldElement {
 
     public static final int GENOME_LENGTH = 5;
@@ -62,5 +64,16 @@ public class Animal extends AbstractWorldElement {
 
     public void move(Vector2D newPosition) {
         position = newPosition;
+    }
+
+    @Override
+    public String toString() {
+        return "Animal{" +
+                "energy=" + energy +
+                ", activeGenIndex=" + activeGenIndex +
+                ", genome=" + Arrays.toString(genome) +
+                ", rotation=" + rotation +
+                ", position=" + position +
+                '}';
     }
 }
