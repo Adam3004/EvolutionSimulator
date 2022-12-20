@@ -68,6 +68,9 @@ public class WorldMap implements IWorldMap {
 
     private void removeObject(IWorldElement object) {
         mapObjects.get(object.getPosition()).remove(object);
+        if (mapObjects.get(object.getPosition()).size() == 0) {
+            mapObjects.remove(object.getPosition());
+        }
     }
 
     private boolean canMoveTo(Vector2D checkingVector) {
@@ -77,7 +80,7 @@ public class WorldMap implements IWorldMap {
     private void moveAnimal(Animal animal) {
         //TODO sprawdzenie czy można ruszyć się na nowe pole
 //        mapObjects.get(animal.getPosition()) = animal.getGenome()[animal.getActiveGenIndex()]
-        Vector2D moveVector = Rotation.getVectorFromRotation(animal.getGenome()[animal.getActiveGenIndex()]);
+        Vector2D moveVector = Rotation.getVectorFromRotation(animal.getRotation());
         if (canMoveTo(moveVector)) {
             Vector2D newMapPosition = animal.getPosition().add(moveVector);
             removeObject(animal);

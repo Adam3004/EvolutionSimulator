@@ -1,5 +1,6 @@
 package com.akgroup.project.world.map;
 
+import com.akgroup.project.engine.SimulationConfig;
 import com.akgroup.project.util.NumberGenerator;
 import com.akgroup.project.util.Vector2D;
 import com.akgroup.project.world.object.Animal;
@@ -72,8 +73,13 @@ class WorldMapTest {
 
     @Test
     void rotateAndMove() {
-        worldMap.placeObject(animal1);
-        worldMap.placeObject(animal2);
-        worldMap.placeObject(animal3);
+        SimulationConfig.init();
+        Animal animal5 = new Animal(new Vector2D(2, 2), new int[]{2, 3, 5, 2, 0});
+        worldMap.placeObject(animal5);
+        worldMap.rotateAndMove(animal5);
+        assertEquals(animal5.getPosition(), new Vector2D(3, 2));
+        worldMap.rotateAndMove(animal5);
+        System.out.println(animal5.getPosition());
+        assertEquals(animal5.getPosition(), new Vector2D(4, 1));
     }
 }

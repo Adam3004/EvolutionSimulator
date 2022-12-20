@@ -12,7 +12,7 @@ public class SimulationConfig {
 
     public static void init(){
         INSTANCE = new SimulationConfig();
-        INSTANCE.isFullPredestination = false;
+        INSTANCE.isFullPredestination = true;
         INSTANCE.mapWidth = 10;
         INSTANCE.mapHeight = 10;
     }
