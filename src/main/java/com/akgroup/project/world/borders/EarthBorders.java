@@ -6,7 +6,7 @@ import com.akgroup.project.world.object.Animal;
 public class EarthBorders extends MapBorders {
 
     @Override
-    public Vector2D getPositionOutOfMap(Animal animal, Vector2D position) {
+    public Vector2D repairAnimalPosition(Animal animal, Vector2D position) {
         int y = position.y;
         y = Math.max(Math.min(y, worldMap.getUpperRight().y), worldMap.getLowerLeft().y);
         int x = position.x;
