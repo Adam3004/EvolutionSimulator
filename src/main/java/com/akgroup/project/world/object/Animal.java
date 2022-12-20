@@ -11,9 +11,9 @@ public class Animal extends AbstractWorldElement {
     private int energy;
     private int activeGenIndex;
     private int[] genome;
-    private int rotation = 0;
-    private int age = 0;
-    private int numberOfKids = 0;
+    private int rotation;
+    private int age;
+    private int numberOfKids;
 
     public Animal(Vector2D vector2D, int[] genome) {
         this(vector2D, 10, genome);
@@ -25,6 +25,9 @@ public class Animal extends AbstractWorldElement {
         this.energy = energy;
         this.activeGenIndex = 0;
         this.genome = genome;
+        this.age = 0;
+        this.numberOfKids = 0;
+        this.rotation = 0;
     }
 
     public int[] getGenome() {

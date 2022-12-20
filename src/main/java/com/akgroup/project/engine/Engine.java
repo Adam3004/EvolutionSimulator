@@ -16,6 +16,7 @@ public class Engine {
 
     public void run() {
         while (true) {
+            increaseAge();
             removeDeadAnimals();
             moveAnimals();
             eatPlants();
@@ -45,14 +46,14 @@ public class Engine {
     }
 
     private void multiplicationOfAnimals() {
-
-        // find fields with more than one animal
-        // choose two of them with maximal energy
-        // generate genome based on parents genomes
-        // create new animal object with new genome
+        worldMap.multiplyAnimals();
     }
 
     private void summonNewPlants() {
         // ??
+    }
+
+    private void increaseAge() {
+        worldMap.increaseAgeOfAnimals();
     }
 }

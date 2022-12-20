@@ -103,15 +103,37 @@ public class WorldMap implements IWorldMap {
         placeObject(animal);
     }
 
-    
-
-    public void animalsReproduction(Vector2D vector2D) {
-        List<Animal> animalsOnVector2D = sortAnimalsByEnergyR(animals.get(vector2D));
-        if (animalsOnVector2D.size() < 2) {
-            return;
+    public void multiplyAnimals() {
+        List<List<Animal>> animalsToMultiply = animals.values().stream()
+                .filter(animalList -> animalList.size() > 1)
+                .toList();
+        for (List<Animal> animalsToReproduction : animalsToMultiply) {
+            List<Animal> goodAnimals = sortAnimalsByEnergyR(animalsToReproduction);
+            if (goodAnimals.size() < 2) {
+                continue;
+            }
+            Animal bestAnimal = findBestAnimal(goodAnimals);
+            goodAnimals.remove(bestAnimal);
+            Animal secondBestAnimal = findBestAnimal(goodAnimals);
+            goodAnimals.add(bestAnimal);
+            createKid(bestAnimal, secondBestAnimal);
         }
-        createKid(animalsOnVector2D, vector2D);
     }
+
+    public void increaseAgeOfAnimals() {
+        List<Animal> animalsList = this.animals.values().stream()
+                .flatMap(List::stream)
+                .toList();
+        animalsList.forEach(Animal::increaseAge);
+    }
+
+//    private void animalsReproduction(Vector2D vector2D) {
+//        List<Animal> animalsOnVector2D = sortAnimalsByEnergyR(animals.get(vector2D));
+//        if (animalsOnVector2D.size() < 2) {
+//            return;
+//        }
+//        createKid(animalsOnVector2D, vector2D);
+//    }
 
     private List<Animal> sortAnimalsByEnergyR(List<Animal> inputList) {
         return inputList.stream()
@@ -120,14 +142,21 @@ public class WorldMap implements IWorldMap {
                 .toList();
     }
 
-    private void createKid(List<Animal> animalsOnVector2D, Vector2D vector2D) {
-        Animal mum = animalsOnVector2D.get(0);
-        Animal dad = animalsOnVector2D.get(1);
+    private void createKid(Animal mum, Animal dad) {
         int energyPerParent = SimulationConfig.getInstance().getMultiplicationEnergyLose();
         prepareEnergy(mum, dad, energyPerParent);
-        Animal kid = new Animal(vector2D, 2 * energyPerParent, NumberGenerator.createNewGenome(dad, mum));
+        Animal kid = new Animal(mum.getPosition(), 2 * energyPerParent, NumberGenerator.createNewGenome(dad, mum));
         placeObject(kid);
     }
+
+//    private void createKid(List<Animal> animalsOnVector2D, Vector2D vector2D) {
+//        Animal mum = animalsOnVector2D.get(0);
+//        Animal dad = animalsOnVector2D.get(1);
+//        int energyPerParent = SimulationConfig.getInstance().getMultiplicationEnergyLose();
+//        prepareEnergy(mum, dad, energyPerParent);
+//        Animal kid = new Animal(vector2D, 2 * energyPerParent, NumberGenerator.createNewGenome(dad, mum));
+//        placeObject(kid);
+//    }
 
     private void prepareEnergy(Animal mum, Animal dad, int energyPerParent) {
         mum.loseEnergy(energyPerParent);
