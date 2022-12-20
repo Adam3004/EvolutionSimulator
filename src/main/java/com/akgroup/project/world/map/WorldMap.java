@@ -25,7 +25,7 @@ public class WorldMap implements IWorldMap {
         this.mapObjects = new HashMap<>();
         this.lowerLeft = new Vector2D(0, 0);
         this.upperRight = new Vector2D(width, height);
-        this.mapBorders = configuration.getMapBorders();
+        this.mapBorders = configuration.mapBorders();
         this.mapBorders.setWorldMap(this);
     }
 
