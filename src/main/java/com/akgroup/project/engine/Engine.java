@@ -10,13 +10,12 @@ import java.util.List;
 
 public class Engine {
     private final WorldMap worldMap;
+    private final MapVisualiser visualiser;
 
     public Engine(IWorldMap worldMap) {
         this.worldMap = (WorldMap) worldMap;
         this.visualiser = new MapVisualiser(this.worldMap);
     }
-
-    private final MapVisualiser visualiser;
 
     public void run() {
         while (true) {
@@ -28,7 +27,7 @@ public class Engine {
             multiplicationOfAnimals();
             summonNewPlants();
             try {
-                Thread.sleep(1000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

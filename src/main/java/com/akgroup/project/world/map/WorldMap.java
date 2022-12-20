@@ -117,7 +117,13 @@ public class WorldMap implements IWorldMap {
             Animal secondBestAnimal = findBestAnimal(goodAnimals);
             goodAnimals.add(bestAnimal);
             createKid(bestAnimal, secondBestAnimal);
+            increaseNumberOfKids(bestAnimal);
+            increaseNumberOfKids(secondBestAnimal);
         }
+    }
+
+    private void increaseNumberOfKids(Animal animal) {
+        animal.increaseNumberOfKids();
     }
 
     public void increaseAgeOfAnimals() {
