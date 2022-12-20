@@ -12,4 +12,11 @@ public class Plant extends AbstractWorldElement {
     public TypeEnum getType() {
         return TypeEnum.PLANT;
     }
+
+    @Override
+    public String toString() {
+        return "Plant{" +
+                "position=" + position +
+                '}';
+    }
 }

@@ -9,11 +9,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class NumberGenerator {
-    private static Random random;
+    private static final Random random = new Random();
 
-    public static void init() {
-        random = new Random();
-    }
 
     public static int generateNextInt(int min, int max) {
         return random.nextInt(max - min + 1) + min;
