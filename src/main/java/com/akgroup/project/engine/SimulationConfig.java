@@ -11,7 +11,8 @@ public class SimulationConfig {
     // lub
     // public static void init(SimulationSettings)
 
-    public static void init(){
+    public static void init() {
+        if (INSTANCE != null) return;
         INSTANCE = new SimulationConfig();
         INSTANCE.isFullPredestination = false;
         INSTANCE.mapWidth = 10;
@@ -19,7 +20,10 @@ public class SimulationConfig {
         INSTANCE.energyNeededToMove = 1;
     }
 
-    public static SimulationConfig getInstance(){
+    private SimulationConfig() {
+    }
+
+    public static SimulationConfig getInstance() {
         return INSTANCE;
     }
 

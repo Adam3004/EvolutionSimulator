@@ -1,6 +1,8 @@
 package com.akgroup.project.world.map;
 
 import com.akgroup.project.util.Vector2D;
+import com.akgroup.project.world.WorldConfiguration;
+import com.akgroup.project.world.borders.EarthBorders;
 import com.akgroup.project.world.object.Animal;
 import com.akgroup.project.world.object.Plant;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +18,7 @@ class WorldMapTest {
 
     @BeforeEach
     void setUp(){
-        worldMap = new WorldMap(100, 100);
+        worldMap = new WorldMap(100, 100, WorldConfiguration.defaultConfiguration());
     }
 
     @Test

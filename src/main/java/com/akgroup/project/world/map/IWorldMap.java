@@ -15,4 +15,10 @@ public interface IWorldMap {
 
     /** Returns all Animals on the map*/
     List<Animal> getAllAnimals();
+
+    /** Returns bottom left point of the map as a Vector2D */
+    Vector2D getLowerLeft();
+
+    /** Returns top right point of the map as a Vector2D*/
+    Vector2D getUpperRight();
 }
