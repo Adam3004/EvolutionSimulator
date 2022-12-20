@@ -78,6 +78,6 @@ class WorldMapTest {
         assertEquals(animal5.getPosition(), new Vector2D(3, 2));
         worldMap.rotateAndMove(animal5);
         System.out.println(animal5.getPosition());
-        assertEquals(animal5.getPosition(), new Vector2D(4, 1));
+        assertEquals(animal5.getPosition(), new Vector2D(2, 1));
     }
 }

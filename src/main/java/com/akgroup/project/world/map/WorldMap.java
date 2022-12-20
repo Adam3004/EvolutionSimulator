@@ -78,20 +78,13 @@ public class WorldMap implements IWorldMap {
         }
     }
 
-    private boolean canMoveTo(Vector2D checkingVector) {
-        return upperRight.follows(checkingVector) && lowerLeft.precedes(checkingVector);
-    }
-
     private void moveAnimal(Animal animal) {
         Vector2D moveVector = Rotation.getVectorFromRotation(animal.getRotation());
-
-        if (canMoveTo(moveVector)) {
-            Vector2D newMapPosition = animal.getPosition().add(moveVector);
-            removeObject(animal);
-            newMapPosition = getMapBorders().getPositionOutOfMap(newMapPosition);
-            animal.move(newMapPosition);
-            placeObject(animal);
-        }
+        Vector2D newMapPosition = animal.getPosition().add(moveVector);
+        removeObject(animal);
+        newMapPosition = getMapBorders().getPositionOutOfMap(newMapPosition);
+        animal.move(newMapPosition);
+        placeObject(animal);
     }
 
     @Override
