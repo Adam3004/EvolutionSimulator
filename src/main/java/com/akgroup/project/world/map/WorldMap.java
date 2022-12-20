@@ -54,8 +54,11 @@ public class WorldMap implements IWorldMap {
     public List<Animal> getAllAnimals() {
         return animals.values().stream()
                 .flatMap(List::stream)
-                .filter(element -> element.getType() == TypeEnum.ANIMAL)
                 .collect(Collectors.toList());
+    }
+
+    public List<Plant> getPlants() {
+        return plants.values().stream().toList();
     }
 
     public void rotateAndMove(Animal animal) {
@@ -74,7 +77,7 @@ public class WorldMap implements IWorldMap {
         animal.rotate(genGap);
     }
 
-    private void removeObject(IWorldElement object) {
+    public void removeObject(IWorldElement object) {
         if (object.getType().equals(TypeEnum.ANIMAL)) {
             animals.get(object.getPosition()).remove((Animal) object);
             if (animals.get(object.getPosition()).size() == 0) {
@@ -100,15 +103,21 @@ public class WorldMap implements IWorldMap {
         placeObject(animal);
     }
 
+    
+
     public void animalsReproduction(Vector2D vector2D) {
-        List<Animal> animalsOnVector2D = animals.get(vector2D).stream()
-                .filter(Animal::haveEnoughEnergy)
-                .sorted(Comparator.comparing(Animal::getEnergy).reversed())
-                .toList();
+        List<Animal> animalsOnVector2D = sortAnimalsByEnergyR(animals.get(vector2D));
         if (animalsOnVector2D.size() < 2) {
             return;
         }
         createKid(animalsOnVector2D, vector2D);
+    }
+
+    private List<Animal> sortAnimalsByEnergyR(List<Animal> inputList) {
+        return inputList.stream()
+                .filter(Animal::haveEnoughEnergy)
+                .sorted(Comparator.comparing(Animal::getEnergy).reversed())
+                .toList();
     }
 
     private void createKid(List<Animal> animalsOnVector2D, Vector2D vector2D) {
@@ -137,5 +146,41 @@ public class WorldMap implements IWorldMap {
 
     private MapBorders getMapBorders() {
         return configuration.mapBorders();
+    }
+
+    public void eatPlants() {
+        for (Vector2D plantPosition : plants.keySet()) {
+            if (animals.get(plantPosition) == null) {
+                continue;
+            }
+            Animal bestAnimal = findBestAnimal(animals.get(plantPosition));
+            bestAnimal.addEnergy(SimulationConfig.getInstance().getValueFromEating());
+            plants.remove(plantPosition);
+        }
+    }
+
+    private Animal findBestAnimal(List<Animal> chosenAnimals) {
+        List<Animal> chosenSortedAnimals = sortAnimalsByEnergyR(chosenAnimals);
+        int maxEnergy = chosenSortedAnimals.get(0).getEnergy();
+        List<Animal> biggestEnergyAnimals = chosenSortedAnimals.stream()
+                .filter(animal -> animal.getEnergy() == maxEnergy)
+                .toList();
+        if (biggestEnergyAnimals.size() == 1) {
+            return biggestEnergyAnimals.get(0);
+        }
+        biggestEnergyAnimals = biggestEnergyAnimals.stream()
+                .sorted(Comparator.comparing(Animal::getAge).reversed())
+                .toList();
+        int maxAge = biggestEnergyAnimals.get(0).getAge();
+        List<Animal> oldestAnimals = biggestEnergyAnimals.stream()
+                .filter(animal -> animal.getAge() == maxAge)
+                .toList();
+        if (oldestAnimals.size() == 1) {
+            return oldestAnimals.get(0);
+        }
+        oldestAnimals = oldestAnimals.stream()
+                .sorted(Comparator.comparing(Animal::getNumberOfKids).reversed())
+                .toList();
+        return oldestAnimals.get(0);
     }
 }

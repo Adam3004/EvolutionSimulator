@@ -1,18 +1,21 @@
 package com.akgroup.project.engine;
 
 import com.akgroup.project.world.map.IWorldMap;
+import com.akgroup.project.world.map.WorldMap;
 import com.akgroup.project.world.object.Animal;
+import com.akgroup.project.world.object.Plant;
 
 import java.util.List;
 
 public class Engine {
-    private final IWorldMap worldMap;
+    private final WorldMap worldMap;
 
     public Engine(IWorldMap worldMap) {
-        this.worldMap = worldMap;
+        this.worldMap = (WorldMap) worldMap;
     }
+
     public void run() {
-        while (true){
+        while (true) {
             removeDeadAnimals();
             moveAnimals();
             eatPlants();
@@ -22,19 +25,27 @@ public class Engine {
     }
 
     private void removeDeadAnimals() {
-        // find dead animals where energy is lower than  SimulationConfig.getInstance().getEnergyNeededToMove()
-        // remove them from map
+        List<Animal> deadAnimals = worldMap.getAllAnimals().stream()
+                .filter(Animal::isDead)
+                .toList();
+        for (Animal deadAnimal : deadAnimals) {
+            worldMap.removeObject(deadAnimal);
+        }
     }
 
     private void moveAnimals() {
-        // move all animals on the map
+        List<Animal> animals = worldMap.getAllAnimals();
+        for (Animal animal : animals) {
+            worldMap.rotateAndMove(animal);
+        }
     }
 
     private void eatPlants() {
-        // remove plants where on their field is any animal
+        worldMap.eatPlants();
     }
 
     private void multiplicationOfAnimals() {
+
         // find fields with more than one animal
         // choose two of them with maximal energy
         // generate genome based on parents genomes

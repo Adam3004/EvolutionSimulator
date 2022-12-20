@@ -6,6 +6,7 @@ public class SimulationConfig {
     private int mapWidth, mapHeight;
     private int energyNeededToMove;
     private int multiplicationEnergyLose;
+    private int valueFromEating;
 
     // docelowo taki *konstruktor*
     // public static void init(SimulationConfiguration)
@@ -20,6 +21,7 @@ public class SimulationConfig {
         INSTANCE.mapHeight = 10;
         INSTANCE.energyNeededToMove = 1;
         INSTANCE.multiplicationEnergyLose = 4;
+        INSTANCE.valueFromEating = 5;
     }
 
     private SimulationConfig() {
@@ -47,5 +49,9 @@ public class SimulationConfig {
 
     public int getMultiplicationEnergyLose() {
         return multiplicationEnergyLose;
+    }
+
+    public int getValueFromEating() {
+        return valueFromEating;
     }
 }

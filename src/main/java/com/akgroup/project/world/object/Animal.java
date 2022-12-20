@@ -12,6 +12,8 @@ public class Animal extends AbstractWorldElement {
     private int activeGenIndex;
     private int[] genome;
     private int rotation = 0;
+    private int age = 0;
+    private int numberOfKids = 0;
 
     public Animal(Vector2D vector2D, int[] genome) {
         this(vector2D, 10, genome);
@@ -73,6 +75,22 @@ public class Animal extends AbstractWorldElement {
 
     public void moveAt(Vector2D newPosition) {
         position = newPosition;
+    }
+
+    public void increaseAge() {
+        age += 1;
+    }
+
+    public void increaseNumberOfKids() {
+        numberOfKids += 1;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public int getNumberOfKids() {
+        return numberOfKids;
     }
 
     @Override
