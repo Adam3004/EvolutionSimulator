@@ -3,6 +3,7 @@ package com.akgroup.project.world.map;
 import com.akgroup.project.engine.SimulationConfig;
 import com.akgroup.project.util.NumberGenerator;
 import com.akgroup.project.util.Vector2D;
+import com.akgroup.project.world.WorldConfiguration;
 import com.akgroup.project.world.object.Animal;
 import com.akgroup.project.world.object.Plant;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,14 +16,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class WorldMapTest {
 
     WorldMap worldMap;
-    Animal animal1;
-    Animal animal2;
-    Animal animal3;
-    Animal animal4;
+    Animal animal1, animal2, animal3, animal4;
 
     @BeforeEach
-    void setUp() {
-        worldMap = new WorldMap(100, 100);
+    void setUp(){
+        worldMap = new WorldMap(100, 100, WorldConfiguration.defaultConfiguration());
         animal1 = new Animal(new Vector2D(1, 10), NumberGenerator.generateNewGenome());
         animal2 = new Animal(new Vector2D(100, 101), NumberGenerator.generateNewGenome());
         animal3 = new Animal(new Vector2D(-2, 5), NumberGenerator.generateNewGenome());
