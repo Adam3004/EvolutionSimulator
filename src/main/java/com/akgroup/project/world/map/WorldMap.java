@@ -5,21 +5,20 @@ import com.akgroup.project.util.NumberGenerator;
 import com.akgroup.project.util.Vector2D;
 import com.akgroup.project.world.WorldConfiguration;
 import com.akgroup.project.world.borders.MapBorders;
-import com.akgroup.project.world.object.Animal;
-import com.akgroup.project.world.object.IWorldElement;
-import com.akgroup.project.world.object.Rotation;
-import com.akgroup.project.world.object.TypeEnum;
+import com.akgroup.project.world.object.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class WorldMap implements IWorldMap {
     private final Vector2D lowerLeft, upperRight;
-    private final Map<Vector2D, List<IWorldElement>> mapObjects;
+    private final Map<Vector2D, List<Animal>> animals;
+    private final Map<Vector2D, Plant> plants;
     private final WorldConfiguration configuration;
 
     public WorldMap(int width, int height, WorldConfiguration configuration) {
-        this.mapObjects = new HashMap<>();
+        this.animals = new HashMap<>();
+        this.plants = new HashMap<>();
         this.lowerLeft = new Vector2D(0, 0);
         this.upperRight = new Vector2D(width, height);
         this.configuration = configuration;
@@ -30,25 +29,32 @@ public class WorldMap implements IWorldMap {
     public boolean placeObject(IWorldElement element) {
         Vector2D position = element.getPosition();
         if (!position.follows(lowerLeft) || !position.precedes(upperRight)) return false;
-        if (!mapObjects.containsKey(position)) {
-            mapObjects.put(position, new ArrayList<>());
+        if (element.getType().equals(TypeEnum.ANIMAL)) {
+            if (!animals.containsKey(position)) {
+                animals.put(position, new ArrayList<>());
+            }
+            animals.get(position).add((Animal) element);
+        } else if (!plants.containsKey(position)) {
+            plants.put(position, (Plant) element);
+        } else {
+            return false;
         }
-        mapObjects.get(position).add(element);
+
         return true;
     }
 
     @Override
     public List<IWorldElement> getObjectsAt(Vector2D vector2D) {
-        if (!mapObjects.containsKey(vector2D)) return new ArrayList<>();
-        return mapObjects.get(vector2D);
+        if (plants.containsKey(vector2D)) return Collections.singletonList(plants.get(vector2D));
+        if (!animals.containsKey(vector2D)) return new ArrayList<>();
+        return new ArrayList<>(animals.get(vector2D));
     }
 
     @Override
     public List<Animal> getAllAnimals() {
-        return mapObjects.values().stream()
+        return animals.values().stream()
                 .flatMap(List::stream)
                 .filter(element -> element.getType() == TypeEnum.ANIMAL)
-                .map(element -> (Animal) element)
                 .collect(Collectors.toList());
     }
 
@@ -69,9 +75,13 @@ public class WorldMap implements IWorldMap {
     }
 
     private void removeObject(IWorldElement object) {
-        mapObjects.get(object.getPosition()).remove(object);
-        if (mapObjects.get(object.getPosition()).size() == 0) {
-            mapObjects.remove(object.getPosition());
+        if (object.getType().equals(TypeEnum.ANIMAL)) {
+            animals.get(object.getPosition()).remove((Animal) object);
+            if (animals.get(object.getPosition()).size() == 0) {
+                animals.remove(object.getPosition());
+            }
+        } else {
+            plants.remove(object.getPosition());
         }
     }
 
@@ -91,12 +101,7 @@ public class WorldMap implements IWorldMap {
     }
 
     public void animalsReproduction(Vector2D vector2D) {
-        List<IWorldElement> mapElementsOnVector2D = mapObjects.get(vector2D);
-        if (mapElementsOnVector2D.size() < 2) {
-            return;
-        }
-        List<Animal> animalsOnVector2D = mapElementsOnVector2D.stream()
-                .map(object -> (Animal) object)
+        List<Animal> animalsOnVector2D = animals.get(vector2D).stream()
                 .filter(Animal::haveEnoughEnergy)
                 .sorted(Comparator.comparing(Animal::getEnergy).reversed())
                 .toList();
