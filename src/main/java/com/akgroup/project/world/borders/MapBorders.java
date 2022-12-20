@@ -10,7 +10,6 @@ public abstract class MapBorders {
     public void setWorldMap(IWorldMap worldMap) {
         this.worldMap = worldMap;
     }
-
     /** Method takes animal and its new position then returns new position depending on implementation*/
-    public abstract Vector2D getPositionOutOfMap(Animal animal, Vector2D position);
+    public abstract Vector2D repairAnimalPosition(Animal animal, Vector2D position);
 }

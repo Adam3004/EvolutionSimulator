@@ -97,7 +97,7 @@ public class WorldMap implements IWorldMap {
     private void moveAnimal(Animal animal) {
         Vector2D moveVector = Rotation.getVectorFromRotation(animal.getRotation());
         Vector2D newMapPosition = animal.getPosition().add(moveVector);
-        newMapPosition = getMapBorders().getPositionOutOfMap(animal, newMapPosition);
+        newMapPosition = getMapBorders().repairAnimalPosition(animal, newMapPosition);
         removeObject(animal);
         animal.moveAt(newMapPosition);
         placeObject(animal);

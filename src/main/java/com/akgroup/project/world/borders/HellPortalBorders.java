@@ -7,7 +7,7 @@ import com.akgroup.project.world.object.Animal;
 
 public class HellPortalBorders extends MapBorders {
     @Override
-    public Vector2D getPositionOutOfMap(Animal animal, Vector2D position) {
+    public Vector2D repairAnimalPosition(Animal animal, Vector2D position) {
         Vector2D lowerLeft = worldMap.getLowerLeft();
         Vector2D upperRight = worldMap.getUpperRight();
         if (position.follows(lowerLeft) && position.precedes(upperRight)) return position;
