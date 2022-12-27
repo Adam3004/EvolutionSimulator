@@ -5,6 +5,7 @@ import com.akgroup.project.util.NumberGenerator;
 import com.akgroup.project.util.Vector2D;
 import com.akgroup.project.world.WorldConfiguration;
 import com.akgroup.project.world.borders.MapBorders;
+import com.akgroup.project.world.mutators.GenomeMutator;
 import com.akgroup.project.world.object.*;
 
 import java.util.*;
@@ -151,7 +152,9 @@ public class WorldMap implements IWorldMap {
     private void createKid(Animal mum, Animal dad) {
         int energyPerParent = SimulationConfig.getInstance().getMultiplicationEnergyLose();
         prepareEnergy(mum, dad, energyPerParent);
-        Animal kid = new Animal(mum.getPosition(), 2 * energyPerParent, NumberGenerator.createNewGenome(dad, mum));
+        int[] newGenome = NumberGenerator.createNewGenome(dad, mum);
+        getGenomeMutator().mutate(newGenome);
+        Animal kid = new Animal(mum.getPosition(), 2 * energyPerParent, newGenome);
         placeObject(kid);
     }
 
@@ -181,6 +184,10 @@ public class WorldMap implements IWorldMap {
 
     private MapBorders getMapBorders() {
         return configuration.mapBorders();
+    }
+
+    private GenomeMutator getGenomeMutator(){
+        return configuration.mutator();
     }
 
     public void eatPlants() {
