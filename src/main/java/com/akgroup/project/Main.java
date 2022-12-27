@@ -10,6 +10,7 @@ import com.akgroup.project.world.object.Plant;
 
 public class Main {
     public static void main(String[] args) {
+        System.out.println(Math.round(3.5f));
         WorldConfiguration configuration = WorldConfiguration.defaultConfiguration();
         WorldMap worldMap = new WorldMap(10, 10, configuration);
         Animal animal = new Animal(new Vector2D(1, 1), new int[]{0, 5, 2, 4, 7});
@@ -19,6 +20,5 @@ public class Main {
         Engine engine = new Engine(worldMap);
         engine.run();
     }
-
 //    równik z trupami, albo kula z czymś
 }

@@ -12,7 +12,7 @@ public class MapVisualiser {
 
     private final int w, h;
 
-    private final String[] animalArrows = new String[]{"/\\", "NE", "->", "SE", "\\/", "SW", "<-", "NW"};
+    private final String[] animalArrows = new String[]{"/\\", "^|", "->", "_|", "\\/", "|_", "<-", "|^"};
 
     public MapVisualiser(WorldMap worldMap) {
         this.worldMap = worldMap;
@@ -46,7 +46,7 @@ public class MapVisualiser {
     private void buildRow(int y) {
         builder.append(String.format("\n%3d: ", h - y - 1));
         builder.append('|');
-        char c = ' ';
+        char c;
         for (int i = 0; i < w; i++) {
             c = charsMap[h - y - 1][i];
             if (c == 0)

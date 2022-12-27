@@ -26,6 +26,6 @@ class EarthBordersTest {
         for (int i = 0; i < 4; i++) {
             worldMap.rotateAndMove(animal);
         }
-        assertEquals(new Vector2D(9, 0), animal.getPosition());
+        assertEquals(new Vector2D(8, 0), animal.getPosition());
     }
 }
