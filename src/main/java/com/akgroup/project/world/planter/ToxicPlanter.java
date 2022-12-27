@@ -9,7 +9,7 @@ public class ToxicPlanter extends Planter {
 
     @Override
     public void init() {
-
+        super.init();
     }
 
     @Override

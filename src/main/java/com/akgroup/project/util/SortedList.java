@@ -11,7 +11,7 @@ public class SortedList<E> extends LinkedList<E> {
         this.comparator = comparator;
     }
 
-    private void sortList() {
+    public void sortList() {
         this.sort(this.comparator);
     }
 
@@ -21,5 +21,6 @@ public class SortedList<E> extends LinkedList<E> {
         sortList();
         return result;
     }
+
 
 }

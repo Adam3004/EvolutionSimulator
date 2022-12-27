@@ -24,9 +24,16 @@ public abstract class Planter {
         listOfPossibilities.add(new Vector2DWithPossibility(val, vector2D));
     }
 
-    public abstract void init();
+    public void init() {
+        for (int currW = 0; currW < width; currW++) {
+            for (int currH = 0; currH < height; currH++) {
+                listOfPossibilities.add(new Vector2DWithPossibility(1, new Vector2D(currW, currH)));
+            }
+        }
+    }
 
     public abstract void update(Vector2D vector2D, int valueChange);
+
 
     @Override
     public String toString() {
