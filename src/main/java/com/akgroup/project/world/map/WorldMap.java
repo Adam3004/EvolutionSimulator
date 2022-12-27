@@ -218,4 +218,21 @@ public class WorldMap implements IWorldMap {
                 .toList();
         return oldestAnimals.get(0);
     }
+
+
+//    public void findPlacesToGrass(int numberOfNewGrass) {
+//
+//    }
+//
+//    public int findEquator() {
+//        int equator = (upperRight.x + upperRight.y) / 10;
+//        if (equator == 0) {
+//            equator = 1;
+//        } else if (equator > upperRight.x) {
+//            equator = upperRight.x;
+//        } else if (equator > upperRight.y) {
+//            equator = upperRight.y;
+//        }
+//        return equator;
+//    }
 }
