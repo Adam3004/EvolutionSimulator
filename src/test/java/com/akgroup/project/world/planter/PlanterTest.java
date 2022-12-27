@@ -9,14 +9,13 @@ class PlanterTest {
 
     @Test
     void addValue() {
-        Planter equatorPlanter = new EquatorPlanter();
+        Planter equatorPlanter = new EquatorPlanter(10,10);
         equatorPlanter.addValue(new Vector2D(1,2), 5);
         equatorPlanter.addValue(new Vector2D(2,2), 1);
         equatorPlanter.addValue(new Vector2D(3,2), 6);
         equatorPlanter.addValue(new Vector2D(4,2), 8);
         equatorPlanter.addValue(new Vector2D(5,2), 5);
         equatorPlanter.addValue(new Vector2D(4,2), 0);
-        System.out.println(equatorPlanter.getPossibility().size());
-        System.out.println(equatorPlanter.getPossibility());
+
     }
 }

@@ -134,7 +134,7 @@ public class WorldMap implements IWorldMap {
     }
 
 //    private void animalsReproduction(Vector2D vector2D) {
-//        List<Animal> animalsOnVector2D = sortAnimalsByEnergyR(animals.get(vector2D));
+//        List<Animal> animalsOnVector2D = sortAnimalsByEnergyR(animals.getListOfPossibilities(vector2D));
 //        if (animalsOnVector2D.size() < 2) {
 //            return;
 //        }
@@ -156,8 +156,8 @@ public class WorldMap implements IWorldMap {
     }
 
 //    private void createKid(List<Animal> animalsOnVector2D, Vector2D vector2D) {
-//        Animal mum = animalsOnVector2D.get(0);
-//        Animal dad = animalsOnVector2D.get(1);
+//        Animal mum = animalsOnVector2D.getListOfPossibilities(0);
+//        Animal dad = animalsOnVector2D.getListOfPossibilities(1);
 //        int energyPerParent = SimulationConfig.getInstance().getMultiplicationEnergyLose();
 //        prepareEnergy(mum, dad, energyPerParent);
 //        Animal kid = new Animal(vector2D, 2 * energyPerParent, NumberGenerator.createNewGenome(dad, mum));

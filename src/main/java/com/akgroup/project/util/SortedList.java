@@ -22,5 +22,4 @@ public class SortedList<E> extends LinkedList<E> {
         return result;
     }
 
-
 }
