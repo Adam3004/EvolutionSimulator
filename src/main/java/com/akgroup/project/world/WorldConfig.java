@@ -56,10 +56,10 @@ public record WorldConfig(MapBorders mapBorders, GenomeMutator mutator, Planter 
     private static Planter planterFromConfig(int bordersType, int width, int height) {
         switch (bordersType) {
             case 1 -> {
-                return new EquatorPlanter(width, height);
+                return new ToxicPlanter(width, height);
             }
             default -> {
-                return new ToxicPlanter(width, height);
+                return new EquatorPlanter(width, height);
             }
         }
     }
