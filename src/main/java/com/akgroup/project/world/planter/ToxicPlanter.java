@@ -15,7 +15,7 @@ public class ToxicPlanter extends Planter {
     @Override
     public void update(Vector2D vector2D, int valueChange) {
         Vector2DWithPossibility currVector = listOfPossibilities.stream()
-                .filter(data -> data.getVector2D() == vector2D)
+                .filter(data -> data.getVector2D().equals(vector2D))
                 .toList().get(0);
         currVector.setPossibility(currVector.getPossibility() + valueChange);
     }

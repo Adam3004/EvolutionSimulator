@@ -44,7 +44,17 @@ class PlanterTest {
     void increasingPossibilitiesInList() {
         EquatorPlanter equatorPlanter = new EquatorPlanter(2, 12);
         equatorPlanter.init();
-        System.out.println(equatorPlanter.listOfPossibilities);
+        assertEquals(equatorPlanter.getListOfPossibilities().stream().filter(data -> data.getPossibility() == 3).toList().size(), 3);
+    }
+
+    @Test
+    void ToxicPlanterIncreasingValue() {
+        ToxicPlanter toxicPlanter = new ToxicPlanter(10, 10);
+        toxicPlanter.init();
+        toxicPlanter.update(new Vector2D(1, 1), -1);
+        toxicPlanter.update(new Vector2D(1, 1), -1);
+        toxicPlanter.update(new Vector2D(1, 1), -1);
+        assertEquals(toxicPlanter.getListOfPossibilities().stream().filter(data -> data.getVector2D().equals(new Vector2D(1, 1))).toList().get(0).getPossibility(), -2);
     }
 
 }
