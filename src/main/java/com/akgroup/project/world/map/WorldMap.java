@@ -29,6 +29,10 @@ public class WorldMap implements IWorldMap {
         this.simulationConfig = simulationConfig;
     }
 
+    public WorldConfig getWorldConfig() {
+        return worldConfig;
+    }
+
     @Override
     public boolean placeObject(IWorldElement element) {
         Vector2D position = element.getPosition();
@@ -63,6 +67,10 @@ public class WorldMap implements IWorldMap {
 
     public List<Plant> getPlants() {
         return plants.values().stream().toList();
+    }
+
+    public List<Vector2D> getPlantedFields() {
+        return plants.keySet().stream().toList();
     }
 
     public void rotateAndMove(Animal animal) {
@@ -184,18 +192,22 @@ public class WorldMap implements IWorldMap {
         return worldConfig.mapBorders();
     }
 
-    private GenomeMutator getGenomeMutator(){
+    private GenomeMutator getGenomeMutator() {
         return worldConfig.mutator();
     }
 
     public void eatPlants() {
+        List<Vector2D> tmpList = new ArrayList<>();
         for (Vector2D plantPosition : plants.keySet()) {
             if (animals.get(plantPosition) == null) {
                 continue;
             }
             Animal bestAnimal = findBestAnimal(animals.get(plantPosition));
             bestAnimal.addEnergy(simulationConfig.getValue(ConfigOption.PLANT_ENERGY));
-            plants.remove(plantPosition);
+            tmpList.add(plantPosition);
+        }
+        for (Vector2D vector2D : tmpList) {
+            plants.remove(vector2D);
         }
     }
 

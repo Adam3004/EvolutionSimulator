@@ -1,5 +1,6 @@
 package com.akgroup.project.world.planter;
 
+import com.akgroup.project.util.NumberGenerator;
 import com.akgroup.project.util.SortedList;
 import com.akgroup.project.util.Vector2D;
 
@@ -38,6 +39,10 @@ public abstract class Planter {
     }
 
     public abstract void update(Vector2D vector2D, int valueChange);
+
+    public Vector2D findNewVector() {
+        return listOfPossibilities.get(NumberGenerator.generateNextInt(0,listOfPossibilities.size()-1)).getVector2D();
+    }
 
     private void createJungle() {
         int[] params = findJungle();

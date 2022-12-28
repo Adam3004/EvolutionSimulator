@@ -1,11 +1,13 @@
 package com.akgroup.project.engine;
 
 import com.akgroup.project.config.Config;
+import com.akgroup.project.config.ConfigOption;
 import com.akgroup.project.util.MapVisualiser;
 import com.akgroup.project.util.Vector2D;
 import com.akgroup.project.world.map.WorldMap;
 import com.akgroup.project.world.object.Animal;
 import com.akgroup.project.world.object.Plant;
+import com.akgroup.project.world.planter.Planter;
 
 import java.util.List;
 
@@ -13,6 +15,8 @@ public class Engine implements Runnable {
     private WorldMap worldMap;
     private MapVisualiser visualiser;
     private final Config simulationConfig;
+
+    private int startingSize;
 
     public Engine(Config config) {
         this.simulationConfig = config;
@@ -33,6 +37,8 @@ public class Engine implements Runnable {
     }
 
     private void summonStartPlants() {
+        worldMap.getWorldConfig().planter().init();
+        summonNewPlants(simulationConfig.getValue(ConfigOption.PLANTS_ON_START));
         worldMap.placeObject(new Plant(new Vector2D(9, 2)));
     }
 
@@ -44,7 +50,7 @@ public class Engine implements Runnable {
             moveAnimals();
             eatPlants();
             multiplicationOfAnimals();
-            summonNewPlants();
+            summonNewPlants(simulationConfig.getValue(ConfigOption.PLANTS_EVERY_DAY));
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
@@ -77,8 +83,12 @@ public class Engine implements Runnable {
         worldMap.multiplyAnimals();
     }
 
-    private void summonNewPlants() {
-        // ??
+    private void summonNewPlants(int increase) {
+        startingSize = worldMap.getPlantedFields().size();
+        int area = simulationConfig.getValue(ConfigOption.WIDTH) * simulationConfig.getValue(ConfigOption.HEIGHT);
+        while (worldMap.getPlantedFields().size() < area && worldMap.getPlantedFields().size() < startingSize + increase) {
+            worldMap.placeObject(new Plant(worldMap.getWorldConfig().planter().findNewVector()));
+        }
     }
 
     private void increaseAge() {

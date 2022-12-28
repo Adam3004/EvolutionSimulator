@@ -12,7 +12,7 @@ public class SortedList<E> extends LinkedList<E> {
     }
 
     public void sortList() {
-        this.sort(this.comparator);
+        this.sort(Collections.reverseOrder(this.comparator));
     }
 
     @Override
