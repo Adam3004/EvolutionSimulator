@@ -5,7 +5,7 @@ import com.akgroup.project.util.Vector2D;
 public class EquatorPlanter extends Planter {
     private int[] equatorHeight;
 
-    protected EquatorPlanter(int width, int height) {
+    public EquatorPlanter(int width, int height) {
         super(width, height);
     }
 
@@ -66,12 +66,9 @@ public class EquatorPlanter extends Planter {
     }
 
     private void increasePossibilityBecauseOfEquator() {
-        Vector2D topLeft = new Vector2D(0, equatorHeight[0]);
-        Vector2D bottomRight = new Vector2D(width - 1, equatorHeight[1]);
-        listOfPossibilities.stream()
-                .filter(data -> data.getVector2D().follows(topLeft) && data.getVector2D().precedes(bottomRight))
-                .forEach(data -> data.setPossibility(data.getPossibility() + 1));
-        listOfPossibilities.sortList();
+        Vector2D bottomLeft = new Vector2D(0, equatorHeight[0]);
+        Vector2D topRight = new Vector2D(width - 1, equatorHeight[1]);
+        increasePossibility(bottomLeft, topRight);
     }
 
 }
