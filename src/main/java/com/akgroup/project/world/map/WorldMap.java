@@ -17,7 +17,6 @@ public class WorldMap implements IWorldMap {
     private final Map<Vector2D, List<Animal>> animals;
     private final Map<Vector2D, Plant> plants;
     private final WorldConfig worldConfig;
-
     private final Config simulationConfig;
 
     public WorldMap(Config simulationConfig) {
@@ -159,7 +158,9 @@ public class WorldMap implements IWorldMap {
         int energyPerParent = simulationConfig.getValue(ConfigOption.ANIMAL_ENERGY_FOR_CHILD);
         prepareEnergy(mum, dad, energyPerParent);
         int[] newGenome = NumberGenerator.createNewGenome(dad, mum);
-        getGenomeMutator().mutate(newGenome);
+        int minMutations = simulationConfig.getValue(ConfigOption.MINIMAL_MUTATION);
+        int maxMutations = simulationConfig.getValue(ConfigOption.MAXIMAL_MUTATION);
+        getGenomeMutator().mutate(newGenome, minMutations, maxMutations);
         Animal kid = new Animal(mum.getPosition(), 2 * energyPerParent, newGenome);
         placeObject(kid);
     }
