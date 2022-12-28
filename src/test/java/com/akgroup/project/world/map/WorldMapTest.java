@@ -1,9 +1,8 @@
 package com.akgroup.project.world.map;
 
-import com.akgroup.project.engine.SimulationConfig;
+import com.akgroup.project.config.Config;
 import com.akgroup.project.util.NumberGenerator;
 import com.akgroup.project.util.Vector2D;
-import com.akgroup.project.world.WorldConfiguration;
 import com.akgroup.project.world.object.Animal;
 import com.akgroup.project.world.object.Plant;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,8 +19,8 @@ class WorldMapTest {
 
     @BeforeEach
     void setUp(){
-        worldMap = new WorldMap(100, 100, WorldConfiguration.defaultConfiguration());
-        animal1 = new Animal(new Vector2D(1, 10), NumberGenerator.generateNewGenome());
+        worldMap = new WorldMap(Config.defaultConfig());
+        animal1 = new Animal(new Vector2D(1, 9), NumberGenerator.generateNewGenome());
         animal2 = new Animal(new Vector2D(100, 101), NumberGenerator.generateNewGenome());
         animal3 = new Animal(new Vector2D(-2, 5), NumberGenerator.generateNewGenome());
         animal4 = new Animal(new Vector2D(0, 0), NumberGenerator.generateNewGenome());
@@ -41,7 +40,7 @@ class WorldMapTest {
         worldMap.placeObject(animal2);
         worldMap.placeObject(animal3);
         worldMap.placeObject(animal4);
-        var objectsAt = worldMap.getObjectsAt(new Vector2D(1, 10));
+        var objectsAt = worldMap.getObjectsAt(new Vector2D(1, 9));
         assertEquals(objectsAt.size(), 1);
         assertTrue(objectsAt.contains(animal1));
         assertFalse(objectsAt.contains(animal2));
@@ -71,7 +70,6 @@ class WorldMapTest {
 
     @Test
     void rotateAndMove() {
-        SimulationConfig.init();
         Animal animal5 = new Animal(new Vector2D(2, 2), new int[]{2, 3, 5, 2, 0});
         worldMap.placeObject(animal5);
         worldMap.rotateAndMove(animal5);

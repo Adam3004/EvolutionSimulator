@@ -1,23 +1,42 @@
 package com.akgroup.project.engine;
 
+import com.akgroup.project.config.Config;
 import com.akgroup.project.util.MapVisualiser;
-import com.akgroup.project.world.map.IWorldMap;
+import com.akgroup.project.util.Vector2D;
 import com.akgroup.project.world.map.WorldMap;
 import com.akgroup.project.world.object.Animal;
 import com.akgroup.project.world.object.Plant;
 
 import java.util.List;
 
-public class Engine {
-    private final WorldMap worldMap;
-    private final MapVisualiser visualiser;
+public class Engine implements Runnable {
+    private WorldMap worldMap;
+    private MapVisualiser visualiser;
+    private final Config simulationConfig;
 
-    public Engine(IWorldMap worldMap) {
-        this.worldMap = (WorldMap) worldMap;
-        this.visualiser = new MapVisualiser(this.worldMap);
+    public Engine(Config config) {
+        this.simulationConfig = config;
     }
 
+    @Override
     public void run() {
+        worldMap = new WorldMap(simulationConfig);
+        visualiser = new MapVisualiser(worldMap);
+        summonStartPlants();
+        summonStartAnimals();
+        infinityLoop();
+    }
+
+    private void summonStartAnimals() {
+        Animal animal = new Animal(new Vector2D(1, 1), new int[]{0, 5, 2, 4, 7});
+        worldMap.placeObject(animal);
+    }
+
+    private void summonStartPlants() {
+        worldMap.placeObject(new Plant(new Vector2D(9, 2)));
+    }
+
+    private void infinityLoop() {
         while (true) {
             visualiser.renderFrame();
             increaseAge();

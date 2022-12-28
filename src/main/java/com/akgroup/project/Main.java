@@ -1,24 +1,22 @@
 package com.akgroup.project;
 
+import com.akgroup.project.config.Config;
+import com.akgroup.project.config.ConfigLoader;
 import com.akgroup.project.engine.Engine;
-import com.akgroup.project.engine.SimulationConfig;
-import com.akgroup.project.util.Vector2D;
-import com.akgroup.project.world.WorldConfiguration;
-import com.akgroup.project.world.map.WorldMap;
-import com.akgroup.project.world.object.Animal;
-import com.akgroup.project.world.object.Plant;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println(Math.round(3.5f));
-        WorldConfiguration configuration = WorldConfiguration.defaultConfiguration();
-        WorldMap worldMap = new WorldMap(10, 10, configuration);
-        Animal animal = new Animal(new Vector2D(1, 1), new int[]{0, 5, 2, 4, 7});
-        worldMap.placeObject(animal);
-        worldMap.placeObject(new Plant(new Vector2D(9, 2)));
-        SimulationConfig.init();
-        Engine engine = new Engine(worldMap);
-        engine.run();
+        ConfigLoader loader = new ConfigLoader();
+        Config config = loader.loadConfig("default");
+        createThread(config);
     }
+
+    /** Function creates new thread based on given config options*/
+    private static void createThread(Config config) {
+        Engine engine = new Engine(config);
+        Thread thread = new Thread(engine);
+        thread.start();
+    }
+
 //    równik z trupami, albo kula z czymś
 }

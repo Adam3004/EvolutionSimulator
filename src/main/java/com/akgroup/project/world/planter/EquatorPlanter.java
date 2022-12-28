@@ -5,7 +5,7 @@ import com.akgroup.project.util.Vector2D;
 public class EquatorPlanter extends Planter {
     private int[] equatorHeight;
 
-    protected EquatorPlanter(int width, int height) {
+    public EquatorPlanter(int width, int height) {
         super(width, height);
     }
 

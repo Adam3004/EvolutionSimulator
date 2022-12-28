@@ -3,7 +3,7 @@ package com.akgroup.project.world.planter;
 import com.akgroup.project.util.Vector2D;
 
 public class ToxicPlanter extends Planter {
-    protected ToxicPlanter(int width, int height) {
+    public ToxicPlanter(int width, int height) {
         super(width, height);
     }
 

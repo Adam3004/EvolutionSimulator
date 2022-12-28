@@ -1,16 +1,14 @@
 package com.akgroup.project.world.object;
 
-import com.akgroup.project.engine.SimulationConfig;
 import com.akgroup.project.util.Vector2D;
 
 import java.util.Arrays;
 
 public class Animal extends AbstractWorldElement {
-
     public static final int GENOME_LENGTH = 5;
     private int energy;
     private int activeGenIndex;
-    private int[] genome;
+    private final int[] genome;
     private int rotation;
     private int age;
     private int numberOfKids;
@@ -68,12 +66,13 @@ public class Animal extends AbstractWorldElement {
         this.energy -= energyToLose;
     }
 
+    //TODO zmienić statyczną wartość na przekazywaną zwierzęciu w konstruktorze albo zrobić to w mapie
     public boolean haveEnoughEnergy() {
-        return this.energy >= SimulationConfig.getInstance().getMultiplicationEnergyLose();
+        return this.energy >= 4;
     }
 
     public void loseEnergyOnMove() {
-        this.loseEnergy(SimulationConfig.getInstance().getEnergyNeededToMove());
+        this.loseEnergy(1);
     }
 
     public void moveAt(Vector2D newPosition) {

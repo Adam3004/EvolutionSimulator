@@ -1,8 +1,7 @@
 package com.akgroup.project.world.borders;
 
-import com.akgroup.project.engine.SimulationConfig;
+import com.akgroup.project.config.Config;
 import com.akgroup.project.util.Vector2D;
-import com.akgroup.project.world.WorldConfiguration;
 import com.akgroup.project.world.map.WorldMap;
 import com.akgroup.project.world.object.Animal;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,8 +14,7 @@ class EarthBordersTest {
     WorldMap worldMap;
     @BeforeEach
     void setUp(){
-        SimulationConfig.init();
-        worldMap = new WorldMap(10, 10, WorldConfiguration.defaultConfiguration());
+        worldMap = new WorldMap(Config.defaultConfig());
     }
 
     @Test

@@ -1,9 +1,10 @@
 package com.akgroup.project.world.map;
 
-import com.akgroup.project.engine.SimulationConfig;
+import com.akgroup.project.config.Config;
+import com.akgroup.project.config.ConfigOption;
 import com.akgroup.project.util.NumberGenerator;
 import com.akgroup.project.util.Vector2D;
-import com.akgroup.project.world.WorldConfiguration;
+import com.akgroup.project.world.WorldConfig;
 import com.akgroup.project.world.borders.MapBorders;
 import com.akgroup.project.world.mutators.GenomeMutator;
 import com.akgroup.project.world.object.*;
@@ -15,15 +16,17 @@ public class WorldMap implements IWorldMap {
     private final Vector2D lowerLeft, upperRight;
     private final Map<Vector2D, List<Animal>> animals;
     private final Map<Vector2D, Plant> plants;
-    private final WorldConfiguration configuration;
+    private final WorldConfig worldConfig;
 
-    public WorldMap(int width, int height, WorldConfiguration configuration) {
+    private final Config simulationConfig;
+
+    public WorldMap(Config simulationConfig) {
         this.animals = new HashMap<>();
         this.plants = new HashMap<>();
         this.lowerLeft = new Vector2D(0, 0);
-        this.upperRight = new Vector2D(width - 1, height - 1);
-        this.configuration = configuration;
-        this.configuration.setWorldMap(this);
+        this.upperRight = new Vector2D(simulationConfig.getValue(ConfigOption.WIDTH) - 1, simulationConfig.getValue(ConfigOption.HEIGHT) - 1);
+        this.worldConfig = WorldConfig.fromConfig(simulationConfig);
+        this.simulationConfig = simulationConfig;
     }
 
     @Override
@@ -69,12 +72,7 @@ public class WorldMap implements IWorldMap {
     }
 
     private void rotateAnimal(Animal animal) {
-        int genGap = 1;
-        if (!SimulationConfig.getInstance().isFullPredestination()) {
-            if (NumberGenerator.isTrue(20)) {
-                genGap = NumberGenerator.generateNextInt(1, Animal.GENOME_LENGTH);
-            }
-        }
+        int genGap = worldConfig.behaviour().getAnimalRotation();
         animal.rotate(genGap);
     }
 
@@ -150,7 +148,7 @@ public class WorldMap implements IWorldMap {
     }
 
     private void createKid(Animal mum, Animal dad) {
-        int energyPerParent = SimulationConfig.getInstance().getMultiplicationEnergyLose();
+        int energyPerParent = simulationConfig.getValue(ConfigOption.ANIMAL_ENERGY_FOR_CHILD);
         prepareEnergy(mum, dad, energyPerParent);
         int[] newGenome = NumberGenerator.createNewGenome(dad, mum);
         getGenomeMutator().mutate(newGenome);
@@ -183,11 +181,11 @@ public class WorldMap implements IWorldMap {
     }
 
     private MapBorders getMapBorders() {
-        return configuration.mapBorders();
+        return worldConfig.mapBorders();
     }
 
     private GenomeMutator getGenomeMutator(){
-        return configuration.mutator();
+        return worldConfig.mutator();
     }
 
     public void eatPlants() {
@@ -196,7 +194,7 @@ public class WorldMap implements IWorldMap {
                 continue;
             }
             Animal bestAnimal = findBestAnimal(animals.get(plantPosition));
-            bestAnimal.addEnergy(SimulationConfig.getInstance().getValueFromEating());
+            bestAnimal.addEnergy(simulationConfig.getValue(ConfigOption.PLANT_ENERGY));
             plants.remove(plantPosition);
         }
     }
