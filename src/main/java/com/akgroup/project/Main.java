@@ -12,12 +12,14 @@ public class Main {
             ConfigLoader loader = new ConfigLoader();
             Config config = loader.loadConfig("default");
             createThread(config);
-        }catch (InvalidConfigException exception){
+        } catch (InvalidConfigException exception) {
             System.out.println(exception.getMessage());
         }
     }
 
-    /** Function creates new thread based on given config options*/
+    /**
+     * Function creates new thread based on given config options
+     */
     private static void createThread(Config config) {
         Engine engine = new Engine(config, new MapVisualiser());
         Thread thread = new Thread(engine);

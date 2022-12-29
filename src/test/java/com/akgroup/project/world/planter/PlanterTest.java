@@ -57,4 +57,14 @@ class PlanterTest {
         assertEquals(toxicPlanter.getListOfPossibilities().stream().filter(data -> data.getVector2D().equals(new Vector2D(1, 1))).toList().get(0).getPossibility(), -2);
     }
 
+
+    @Test
+    void GeneratingTest() {
+        EquatorPlanter equatorPlanter = new EquatorPlanter(4, 4);
+        equatorPlanter.init();
+        for (int i = 0; i < 20; i++) {
+            equatorPlanter.findNewVectorToPlant();
+        }
+    }
+
 }

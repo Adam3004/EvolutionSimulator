@@ -50,6 +50,7 @@ public class WorldMap implements IWorldMap {
         int genGap = worldConfig.behaviour().getAnimalRotation();
         animal.rotate(genGap);
     }
+
     /**
      * Finds unit vector of animal rotation.
      * Calculates position after moving by unit vector.
@@ -63,14 +64,14 @@ public class WorldMap implements IWorldMap {
         animal.moveAt(newMapPosition);
     }
 
-    public List<Animal> filterAnimalsToReproduction(List<Animal> list){
+    public List<Animal> filterAnimalsToReproduction(List<Animal> list) {
         return list.stream()
                 .filter(Animal::haveEnoughEnergy)
                 .sorted(Comparator.comparing(Animal::getEnergy).reversed())
                 .collect(Collectors.toList());
     }
 
-    public void multiply(List<Animal> list){
+    public void multiply(List<Animal> list) {
         Animal bestAnimal = animalsContainer.findBestAnimalFrom(list);
         list.remove(bestAnimal);
         Animal secondBestAnimal = animalsContainer.findBestAnimalFrom(list);
@@ -120,28 +121,29 @@ public class WorldMap implements IWorldMap {
     public void eatPlants() {
         List<Vector2D> tmpList = new ArrayList<>();
         for (Vector2D plantPosition : plants.keySet()) {
-            if(!animalsContainer.hasAnimalAt(plantPosition)) continue;
+            if (!animalsContainer.hasAnimalAt(plantPosition)) continue;
             Animal bestAnimal = animalsContainer.findBestAnimalAt(plantPosition);
-            if(bestAnimal == null) continue;
+            if (bestAnimal == null) continue;
             bestAnimal.addEnergy(simulationConfig.getValue(ConfigOption.PLANT_ENERGY));
             tmpList.add(plantPosition);
         }
         for (Vector2D vector2D : tmpList) {
             plants.remove(vector2D);
+            worldConfig.planter().eatPlantOnField(vector2D);
         }
     }
 
-    private void notifyOnPositionChanged(Animal animal, Vector2D oldPosition, Vector2D newPosition){
+    private void notifyOnPositionChanged(Animal animal, Vector2D oldPosition, Vector2D newPosition) {
         positionChangedObservers.forEach(obs -> obs.onPositionChanged(animal, oldPosition, newPosition));
     }
 
     public void trySummonNewPlant() {
-        Vector2D proposedVector = worldConfig.planter().findNewVector();
+        Vector2D proposedVector = worldConfig.planter().findNewVectorToPlant();
         placeObject(new Plant(proposedVector));
     }
 
     @Override
-    public void init(){
+    public void init() {
         worldConfig.planter().init();
     }
 
