@@ -1,26 +1,19 @@
 package com.akgroup.project.util;
 
+import com.akgroup.project.IOutputObserver;
 import com.akgroup.project.world.map.WorldMap;
 
-public class MapVisualiser {
+public class MapVisualiser implements IOutputObserver {
 
-    private final WorldMap worldMap;
+    private WorldMap worldMap;
 
-    private final char[][] charsMap;
+    private char[][] charsMap;
 
-    private final StringBuilder builder;
+    private StringBuilder builder;
 
-    private final int w, h;
+    private int w, h;
 
     private final String[] animalArrows = new String[]{"/\\", "^|", "->", "_|", "\\/", "|_", "<-", "|^"};
-
-    public MapVisualiser(WorldMap worldMap) {
-        this.worldMap = worldMap;
-        this.w = worldMap.getUpperRight().x - worldMap.getLowerLeft().x + 1;
-        this.h = worldMap.getUpperRight().y - worldMap.getLowerLeft().y + 1;
-        this.charsMap = new char[this.h][this.w];
-        this.builder = new StringBuilder();
-    }
 
     public void renderFrame() {
         for (int row = 0; row < h; row++) {
@@ -94,5 +87,34 @@ public class MapVisualiser {
         for (int i = 0; i < w; i++) {
             builder.append(String.format("%2d ", i));
         }
+    }
+
+    @Override
+    public void init(WorldMap worldMap) {
+        this.worldMap = worldMap;
+        this.w = worldMap.getUpperRight().x - worldMap.getLowerLeft().x + 1;
+        this.h = worldMap.getUpperRight().y - worldMap.getLowerLeft().y + 1;
+        this.charsMap = new char[this.h][this.w];
+        this.builder = new StringBuilder();
+    }
+
+    @Override
+    public void onAnimalSummoned(Vector2D position) {
+
+    }
+
+    @Override
+    public void onPositionChanged(Vector2D oldPosition, Vector2D newPosition) {
+
+    }
+
+    @Override
+    public void onPlantSummoned(Vector2D position) {
+
+    }
+
+    @Override
+    public void onPlantWasEaten(Vector2D position) {
+
     }
 }

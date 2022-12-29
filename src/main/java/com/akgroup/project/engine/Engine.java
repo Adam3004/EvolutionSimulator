@@ -1,50 +1,49 @@
 package com.akgroup.project.engine;
 
+import com.akgroup.project.IOutputObserver;
 import com.akgroup.project.config.Config;
 import com.akgroup.project.config.ConfigOption;
-import com.akgroup.project.util.MapVisualiser;
 import com.akgroup.project.util.Vector2D;
 import com.akgroup.project.world.map.WorldMap;
 import com.akgroup.project.world.object.Animal;
-import com.akgroup.project.world.object.Plant;
-import com.akgroup.project.world.planter.Planter;
 
 import java.util.List;
 
+/** Class responsible for main simulation loop*/
 public class Engine implements Runnable {
     private WorldMap worldMap;
-    private MapVisualiser visualiser;
     private final Config simulationConfig;
-
-    private int startingSize;
-
-    public Engine(Config config) {
+    private final IOutputObserver outputObserver;
+    public Engine(Config config, IOutputObserver outputObserver) {
         this.simulationConfig = config;
+        this.outputObserver = outputObserver;
     }
 
     @Override
     public void run() {
         worldMap = new WorldMap(simulationConfig);
-        visualiser = new MapVisualiser(worldMap);
+        outputObserver.init(worldMap);
+//        worldMap.addSimulationObserver(this);
         summonStartPlants();
         summonStartAnimals();
         infinityLoop();
     }
 
     private void summonStartAnimals() {
-        Animal animal = new Animal(new Vector2D(1, 1), new int[]{0, 5, 2, 4, 7});
-        worldMap.placeObject(animal);
+        worldMap.placeObject(new Animal(new Vector2D(1, 1), new int[]{0, 4, 0, 0, 7}));
+        worldMap.placeObject(new Animal(new Vector2D(1, 2), new int[]{4, 4, 0, 0, 3}));
+        worldMap.placeObject(new Animal(new Vector2D(2, 2), new int[]{5, 4, 3, 1, 5}));
+        worldMap.placeObject(new Animal(new Vector2D(2, 1), new int[]{3, 7, 1, 5, 4}));
     }
 
     private void summonStartPlants() {
         worldMap.getWorldConfig().planter().init();
         summonNewPlants(simulationConfig.getValue(ConfigOption.PLANTS_ON_START));
-        worldMap.placeObject(new Plant(new Vector2D(9, 2)));
     }
 
     private void infinityLoop() {
         while (true) {
-            visualiser.renderFrame();
+            outputObserver.renderFrame();
             increaseAge();
             removeDeadAnimals();
             moveAnimals();
@@ -84,14 +83,14 @@ public class Engine implements Runnable {
     }
 
     private void summonNewPlants(int increase) {
-        startingSize = worldMap.getPlantedFields().size();
-        int area = simulationConfig.getValue(ConfigOption.WIDTH) * simulationConfig.getValue(ConfigOption.HEIGHT);
-        while (worldMap.getPlantedFields().size() < area && worldMap.getPlantedFields().size() < startingSize + increase) {
-            worldMap.placeObject(new Plant(worldMap.getWorldConfig().planter().findNewVector()));
+        int startingSize = worldMap.getPlantsCount();
+        int area = simulationConfig.getMapArea();
+        while (worldMap.getPlantsCount() < area && worldMap.getPlantsCount() < startingSize + increase) {
+            worldMap.trySummonNewPlant();
         }
     }
 
     private void increaseAge() {
-        worldMap.increaseAgeOfAnimals();
+        worldMap.getAllAnimals().forEach(Animal::increaseAge);
     }
 }

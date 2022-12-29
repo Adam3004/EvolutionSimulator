@@ -37,4 +37,16 @@ public class Config {
         }
         return config;
     }
+
+    public int getMapArea() {
+        return getWidth() * getHeight();
+    }
+
+    private int getHeight() {
+        return getValue(ConfigOption.HEIGHT);
+    }
+
+    private int getWidth() {
+        return getValue(ConfigOption.WIDTH);
+    }
 }

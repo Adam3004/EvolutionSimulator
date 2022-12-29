@@ -4,6 +4,7 @@ import com.akgroup.project.config.Config;
 import com.akgroup.project.config.ConfigLoader;
 import com.akgroup.project.config.InvalidConfigException;
 import com.akgroup.project.engine.Engine;
+import com.akgroup.project.util.MapVisualiser;
 
 public class Main {
     public static void main(String[] args) {
@@ -18,7 +19,7 @@ public class Main {
 
     /** Function creates new thread based on given config options*/
     private static void createThread(Config config) {
-        Engine engine = new Engine(config);
+        Engine engine = new Engine(config, new MapVisualiser());
         Thread thread = new Thread(engine);
         thread.start();
     }

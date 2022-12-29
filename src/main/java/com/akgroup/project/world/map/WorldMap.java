@@ -1,5 +1,6 @@
 package com.akgroup.project.world.map;
 
+import com.akgroup.project.ISimulationObserver;
 import com.akgroup.project.config.Config;
 import com.akgroup.project.config.ConfigOption;
 import com.akgroup.project.util.NumberGenerator;
@@ -18,8 +19,10 @@ public class WorldMap implements IWorldMap {
     private final Map<Vector2D, Plant> plants;
     private final WorldConfig worldConfig;
     private final Config simulationConfig;
+    private final List<ISimulationObserver> simulationObservers;
 
     public WorldMap(Config simulationConfig) {
+        this.simulationObservers = new ArrayList<>();
         this.animals = new HashMap<>();
         this.plants = new HashMap<>();
         this.lowerLeft = new Vector2D(0, 0);
@@ -46,7 +49,6 @@ public class WorldMap implements IWorldMap {
         } else {
             return false;
         }
-
         return true;
     }
 
@@ -68,8 +70,8 @@ public class WorldMap implements IWorldMap {
         return plants.values().stream().toList();
     }
 
-    public List<Vector2D> getPlantedFields() {
-        return plants.keySet().stream().toList();
+    public int getPlantsCount() {
+        return plants.keySet().size();
     }
 
     public void rotateAndMove(Animal animal) {
@@ -114,7 +116,7 @@ public class WorldMap implements IWorldMap {
                 .filter(animalList -> animalList.size() > 1)
                 .toList();
         for (List<Animal> animalsToReproduction : animalsToMultiply) {
-            List<Animal> goodAnimals = sortAnimalsByEnergyR(animalsToReproduction);
+            List<Animal> goodAnimals = animalsToReproduction.stream().sorted(Comparator.comparing(Animal::getEnergy).reversed()).filter(Animal::haveEnoughEnergy).collect(Collectors.toList());
             if (goodAnimals.size() < 2) {
                 continue;
             }
@@ -123,20 +125,9 @@ public class WorldMap implements IWorldMap {
             Animal secondBestAnimal = findBestAnimal(goodAnimals);
             goodAnimals.add(bestAnimal);
             createKid(bestAnimal, secondBestAnimal);
-            increaseNumberOfKids(bestAnimal);
-            increaseNumberOfKids(secondBestAnimal);
+            bestAnimal.increaseNumberOfKids();
+            secondBestAnimal.increaseNumberOfKids();
         }
-    }
-
-    private void increaseNumberOfKids(Animal animal) {
-        animal.increaseNumberOfKids();
-    }
-
-    public void increaseAgeOfAnimals() {
-        List<Animal> animalsList = this.animals.values().stream()
-                .flatMap(List::stream)
-                .toList();
-        animalsList.forEach(Animal::increaseAge);
     }
 
 //    private void animalsReproduction(Vector2D vector2D) {
@@ -149,14 +140,14 @@ public class WorldMap implements IWorldMap {
 
     private List<Animal> sortAnimalsByEnergyR(List<Animal> inputList) {
         return inputList.stream()
-                .filter(Animal::haveEnoughEnergy)
                 .sorted(Comparator.comparing(Animal::getEnergy).reversed())
                 .toList();
     }
 
     private void createKid(Animal mum, Animal dad) {
         int energyPerParent = simulationConfig.getValue(ConfigOption.ANIMAL_ENERGY_FOR_CHILD);
-        prepareEnergy(mum, dad, energyPerParent);
+        mum.loseEnergy(energyPerParent);
+        dad.loseEnergy(energyPerParent);
         int[] newGenome = NumberGenerator.createNewGenome(dad, mum);
         int minMutations = simulationConfig.getValue(ConfigOption.MINIMAL_MUTATION);
         int maxMutations = simulationConfig.getValue(ConfigOption.MAXIMAL_MUTATION);
@@ -174,16 +165,10 @@ public class WorldMap implements IWorldMap {
 //        placeObject(kid);
 //    }
 
-    private void prepareEnergy(Animal mum, Animal dad, int energyPerParent) {
-        mum.loseEnergy(energyPerParent);
-        dad.loseEnergy(energyPerParent);
-    }
-
     @Override
     public Vector2D getLowerLeft() {
         return lowerLeft;
     }
-
     @Override
     public Vector2D getUpperRight() {
         return upperRight;
@@ -237,20 +222,12 @@ public class WorldMap implements IWorldMap {
         return oldestAnimals.get(0);
     }
 
+    public void addSimulationObserver(ISimulationObserver output){
+        this.simulationObservers.add(output);
+    }
 
-//    public void findPlacesToGrass(int numberOfNewGrass) {
-//
-//    }
-//
-//    public int findEquator() {
-//        int equator = (upperRight.x + upperRight.y) / 10;
-//        if (equator == 0) {
-//            equator = 1;
-//        } else if (equator > upperRight.x) {
-//            equator = upperRight.x;
-//        } else if (equator > upperRight.y) {
-//            equator = upperRight.y;
-//        }
-//        return equator;
-//    }
+    public void trySummonNewPlant() {
+        Vector2D proposedVector = worldConfig.planter().findNewVector();
+        placeObject(new Plant(proposedVector));
+    }
 }
