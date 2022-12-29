@@ -13,11 +13,13 @@ public abstract class Planter {
 
     protected Vector2D jgBottomLeft;
     protected Vector2D jgTopRight;
+    private final int size;
 
     protected Planter(int width, int height) {
         this.listOfPossibilities = new SortedList<>(Comparator.comparing(Vector2DWithPossibility::getPossibility));
         this.width = width;
         this.height = height;
+        this.size = width * height;
     }
 
     public SortedList<Vector2DWithPossibility> getListOfPossibilities() {
@@ -40,8 +42,66 @@ public abstract class Planter {
 
     public abstract void update(Vector2D vector2D, int valueChange);
 
-    public Vector2D findNewVector() {
-        return listOfPossibilities.get(NumberGenerator.generateNextInt(0,listOfPossibilities.size()-1)).getVector2D();
+    public Vector2D findNewVectorToPlant() {
+        if (NumberGenerator.isTrue(20)) {
+            return chooseVector(filterOnlyPossiblePlaces(listOfPossibilities));
+        }
+        return chooseVector(findInterestingList());
+    }
+
+
+    private Vector2D chooseVector(List<Vector2DWithPossibility> interestingList) {
+        Vector2DWithPossibility chosenField = interestingList.get(NumberGenerator.generateNextInt(0, interestingList.size() - 1));
+        plantOnField(chosenField);
+        return chosenField.getVector2D();
+    }
+
+    private void plantOnField(Vector2DWithPossibility field) {
+        field.setPossibility(field.getPossibility() - 10000);
+    }
+
+    public void eatPlantOnField(Vector2D vector2D) {
+        Vector2DWithPossibility currVector = listOfPossibilities.stream()
+                .filter(data -> data.getVector2D().equals(vector2D))
+                .toList().get(0);
+        currVector.setPossibility(currVector.getPossibility() + 10000);
+    }
+
+    private List<Vector2DWithPossibility> filterOnlyPossiblePlaces(List<Vector2DWithPossibility> interestingList) {
+        return interestingList.stream()
+                .filter(vector2DWithPossibility -> vector2DWithPossibility.getPossibility() > -9997)
+                .toList();
+    }
+
+
+    private List<Vector2DWithPossibility> findInterestingList() {
+        int interestingLen = Math.toIntExact(Math.round(size * 0.2));
+        if (listOfPossibilities.get(interestingLen).getPossibility() <= -9997) {
+            return filterOnlyPossiblePlaces(listOfPossibilities);
+        }
+        int possibilities = 1;
+        int start = interestingLen;
+        int i = interestingLen;
+        int interestingValue = listOfPossibilities.get(interestingLen).getPossibility();
+        while (i > 0 && interestingValue == listOfPossibilities.get(i).getPossibility()) {
+            possibilities += 1;
+            start -= 1;
+            i--;
+        }
+        List<Vector2DWithPossibility> tmpList = new ArrayList<>(listOfPossibilities.subList(0, start).stream().toList());
+        i = interestingLen + 1;
+        while (i < size - 1 && interestingValue == listOfPossibilities.get(i).getPossibility()) {
+            possibilities += 1;
+            i++;
+        }
+        Set<Integer> chosenNumbers = new HashSet<>();
+        while (chosenNumbers.size() < possibilities) {
+            chosenNumbers.add(NumberGenerator.generateNextInt(start, start + possibilities));
+        }
+        for (int number : chosenNumbers) {
+            tmpList.add(listOfPossibilities.get(number));
+        }
+        return tmpList;
     }
 
     private void createJungle() {

@@ -10,11 +10,14 @@ import com.akgroup.project.world.object.Animal;
 
 import java.util.List;
 
-/** Class responsible for main simulation loop*/
+/**
+ * Class responsible for main simulation loop
+ */
 public class Engine implements Runnable, IPositionChangedObserver {
     private WorldMap worldMap;
     private final Config simulationConfig;
     private final IOutputObserver outputObserver;
+
     public Engine(Config config, IOutputObserver outputObserver) {
         this.simulationConfig = config;
         this.outputObserver = outputObserver;
@@ -85,8 +88,7 @@ public class Engine implements Runnable, IPositionChangedObserver {
 
     private void summonNewPlants(int increase) {
         int startingSize = worldMap.getPlantsCount();
-        int area = simulationConfig.getMapArea();
-        while (worldMap.getPlantsCount() < area && worldMap.getPlantsCount() < startingSize + increase) {
+        while (worldMap.getPlantsCount() < simulationConfig.getMapArea() && worldMap.getPlantsCount() < startingSize + increase) {
             worldMap.trySummonNewPlant();
         }
     }
