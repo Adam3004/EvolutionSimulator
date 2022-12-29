@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.akgroup.project.gui.SimulationConfigController">
+  <children>
+    <MenuBar VBox.vgrow="NEVER">
+      <menus>
+        <Menu mnemonicParsing="false" text="File">
+          <items>
+            <MenuItem mnemonicParsing="false" text="New config" />
+            <MenuItem mnemonicParsing="false" text="Open config" />
+            <Menu mnemonicParsing="false" text="Open Recent" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Close" />
+            <MenuItem mnemonicParsing="false" text="Save" />
+            <MenuItem mnemonicParsing="false" text="Save As…" />
+            <MenuItem mnemonicParsing="false" text="Revert" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Quit" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Help">
+          <items>
+            <MenuItem mnemonicParsing="false" text="About" />
+                  <MenuItem mnemonicParsing="false" text="Author" />
+                  <MenuItem mnemonicParsing="false" text="Easter egg" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="311.0" prefWidth="640.0">
+         <children>
+            <GridPane alignment="CENTER" prefHeight="343.0" prefWidth="640.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                     <children>
+                        <Label text="Wybierz warianty" textAlignment="CENTER">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                        <Pane prefHeight="55.0" prefWidth="300.0">
+                           <children>
+                              <VBox alignment="TOP_CENTER" prefHeight="55.0" prefWidth="300.0">
+                                 <children>
+                                    <Label text="Wybierz typ mapy" textAlignment="CENTER">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <HBox alignment="CENTER" prefHeight="29.0" prefWidth="300.0">
+                                       <children>
+                                          <RadioButton mnemonicParsing="false" selected="true" text="Kula ziemska">
+                                             <padding>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                             </padding>
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="map_type" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton mnemonicParsing="false" text="Piekielny portal" toggleGroup="$map_type">
+                                             <padding>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                             </padding>
+                                          </RadioButton>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </Pane>
+                        <Pane prefHeight="55.0" prefWidth="300.0">
+                           <children>
+                              <VBox alignment="TOP_CENTER" prefHeight="55.0" prefWidth="300.0">
+                                 <children>
+                                    <Label text="Wybierz wzrost roślin" textAlignment="CENTER">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <HBox alignment="CENTER" prefHeight="29.0" prefWidth="300.0">
+                                       <children>
+                                          <RadioButton mnemonicParsing="false" selected="true" text="Zalesione równiki">
+                                             <padding>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                             </padding>
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="plant_type" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton mnemonicParsing="false" text="Toksyczne trupy" toggleGroup="$plant_type">
+                                             <padding>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                             </padding>
+                                          </RadioButton>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </Pane>
+                        <Pane prefHeight="55.0" prefWidth="300.0">
+                           <children>
+                              <VBox alignment="TOP_CENTER" prefHeight="55.0" prefWidth="300.0">
+                                 <children>
+                                    <Label text="Wybierz mutację" textAlignment="CENTER">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <HBox alignment="CENTER" prefHeight="29.0" prefWidth="300.0">
+                                       <children>
+                                          <RadioButton mnemonicParsing="false" selected="true" text="Pełna losowość">
+                                             <padding>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                             </padding>
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="mutation_type" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton mnemonicParsing="false" text="Lekka korekta" toggleGroup="$mutation_type">
+                                             <padding>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                             </padding>
+                                          </RadioButton>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </Pane>
+                        <Pane prefHeight="55.0" prefWidth="300.0">
+                           <children>
+                              <VBox alignment="TOP_CENTER" prefHeight="55.0" prefWidth="300.0">
+                                 <children>
+                                    <Label text="Wybierz zachowanie" textAlignment="CENTER">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <HBox alignment="CENTER" prefHeight="29.0" prefWidth="300.0">
+                                       <children>
+                                          <RadioButton mnemonicParsing="false" selected="true" text="Pełna predestynacja">
+                                             <padding>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                             </padding>
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="behaviour_type" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton mnemonicParsing="false" text="Nieco szaleństwa" toggleGroup="$behaviour_type">
+                                             <padding>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                             </padding>
+                                          </RadioButton>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </Pane>
+                     </children>
+                  </VBox>
+                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
+                     <children>
+                        <Label text="Parametry symulacji" textAlignment="CENTER">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                        <ScrollPane hbarPolicy="NEVER" prefHeight="316.0" prefWidth="300.0" vbarPolicy="ALWAYS">
+                          <content>
+                            <AnchorPane minWidth="0.0" prefWidth="289.0">
+                                 <children>
+                                    <Pane prefHeight="33.0" prefWidth="300.0">
+                                       <children>
+                                          <HBox alignment="CENTER" prefHeight="32.0" prefWidth="300.0">
+                                             <children>
+                                                <Label prefHeight="17.0" prefWidth="110.0" text="Wysokość">
+                                                   <HBox.margin>
+                                                      <Insets right="15.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="heightInput" prefHeight="25.0" prefWidth="120.0" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </Pane>
+                                    <Pane layoutY="33.0" prefHeight="33.0" prefWidth="300.0">
+                                       <children>
+                                          <HBox alignment="CENTER" prefHeight="32.0" prefWidth="300.0">
+                                             <children>
+                                                <Label prefHeight="17.0" prefWidth="110.0" text="Szerokość">
+                                                   <HBox.margin>
+                                                      <Insets right="15.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="widthInput" prefHeight="25.0" prefWidth="120.0" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </Pane>
+                                    <Pane layoutY="66.0" prefHeight="33.0" prefWidth="300.0">
+                                       <children>
+                                          <HBox alignment="CENTER" prefHeight="32.0" prefWidth="300.0">
+                                             <children>
+                                                <Label prefHeight="17.0" prefWidth="110.0" text="Liczba roślin (start)">
+                                                   <HBox.margin>
+                                                      <Insets right="15.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="startPlantInput" prefHeight="25.0" prefWidth="120.0" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </Pane>
+                                    <Pane layoutY="99.0" prefHeight="33.0" prefWidth="300.0">
+                                       <children>
+                                          <HBox alignment="CENTER" prefHeight="32.0" prefWidth="300.0">
+                                             <children>
+                                                <Label prefHeight="17.0" prefWidth="110.0" text="Liczba roślin (dzień)">
+                                                   <HBox.margin>
+                                                      <Insets right="15.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="plantEveryDayInput" prefHeight="25.0" prefWidth="120.0" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </Pane>
+                                    <Pane layoutY="132.0" prefHeight="33.0" prefWidth="300.0">
+                                       <children>
+                                          <HBox alignment="CENTER" prefHeight="32.0" prefWidth="300.0">
+                                             <children>
+                                                <Label prefHeight="17.0" prefWidth="110.0" text="Energia z roślin">
+                                                   <HBox.margin>
+                                                      <Insets right="15.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="plantEnergyInput" prefHeight="25.0" prefWidth="120.0" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </Pane>
+                                    <Pane layoutY="165.0" prefHeight="33.0" prefWidth="300.0">
+                                       <children>
+                                          <HBox alignment="CENTER" prefHeight="32.0" prefWidth="300.0">
+                                             <children>
+                                                <Label prefHeight="17.0" prefWidth="110.0" text="Zwierzęta (start)">
+                                                   <HBox.margin>
+                                                      <Insets right="15.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="animalsStartInput" prefHeight="25.0" prefWidth="120.0" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </Pane>
+                                    <Pane layoutY="198.0" prefHeight="33.0" prefWidth="300.0">
+                                       <children>
+                                          <HBox alignment="CENTER" prefHeight="32.0" prefWidth="300.0">
+                                             <children>
+                                                <Label prefHeight="17.0" prefWidth="110.0" text="Energia zwierzaków">
+                                                   <HBox.margin>
+                                                      <Insets right="15.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="animalEnergyInput" prefHeight="25.0" prefWidth="120.0" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </Pane>
+                                    <Pane layoutY="231.0" prefHeight="33.0" prefWidth="300.0">
+                                       <children>
+                                          <HBox alignment="CENTER" prefHeight="32.0" prefWidth="300.0">
+                                             <children>
+                                                <Label prefHeight="17.0" prefWidth="110.0" text="Energia do rozmnażania">
+                                                   <HBox.margin>
+                                                      <Insets right="15.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="animalNeededEnergyInput" prefHeight="25.0" prefWidth="120.0" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </Pane>
+                                    <Pane layoutY="264.0" prefHeight="33.0" prefWidth="300.0">
+                                       <children>
+                                          <HBox alignment="CENTER" prefHeight="32.0" prefWidth="300.0">
+                                             <children>
+                                                <Label prefHeight="17.0" prefWidth="110.0" text="Energia dla potomka">
+                                                   <HBox.margin>
+                                                      <Insets right="15.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="animalChildEnergyInput" prefHeight="25.0" prefWidth="120.0" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </Pane>
+                                    <Pane layoutY="297.0" prefHeight="33.0" prefWidth="300.0">
+                                       <children>
+                                          <HBox alignment="CENTER" prefHeight="32.0" prefWidth="300.0">
+                                             <children>
+                                                <Label prefHeight="17.0" prefWidth="110.0" text="Min mutacji">
+                                                   <HBox.margin>
+                                                      <Insets right="15.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="minMutationInput" prefHeight="25.0" prefWidth="120.0" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </Pane>
+                                    <Pane layoutY="330.0" prefHeight="33.0" prefWidth="300.0">
+                                       <children>
+                                          <HBox alignment="CENTER" prefHeight="32.0" prefWidth="300.0">
+                                             <children>
+                                                <Label prefHeight="17.0" prefWidth="110.0" text="Max mutacji">
+                                                   <HBox.margin>
+                                                      <Insets right="15.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="maxMutationInput" prefHeight="25.0" prefWidth="120.0" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </Pane>
+                                    <Pane layoutY="363.0" prefHeight="33.0" prefWidth="300.0">
+                                       <children>
+                                          <HBox alignment="CENTER" prefHeight="32.0" prefWidth="300.0">
+                                             <children>
+                                                <Label prefHeight="17.0" prefWidth="110.0" text="Długość genomu">
+                                                   <HBox.margin>
+                                                      <Insets right="15.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="genomeLengthInput" prefHeight="25.0" prefWidth="120.0" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </Pane>
+                                 </children>
+                              </AnchorPane>
+                          </content>
+                        </ScrollPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </GridPane>
+         </children>
+    </AnchorPane>
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="640.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#startSimulation" text="Uruchom symulację" />
+         </children>
+      </VBox>
+  </children>
+</VBox>

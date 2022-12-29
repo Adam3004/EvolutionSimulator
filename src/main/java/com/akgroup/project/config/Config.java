@@ -6,7 +6,7 @@ import java.util.Map;
 public class Config {
     private final Map<ConfigOption, Integer> config;
 
-    private static final int[] defaultConfig = new int[]{10, 10, 0, 5, 5, 1, 0, 3, 8, 4, 2, 0, 4, 0, 5, 0};
+    private static final int[] defaultConfig = new int[]{10, 10, 5, 5, 1, 3, 8, 4, 2, 0, 4, 5, 0, 0, 0, 0};
 
     public Config() {
         this.config = new HashMap<>();

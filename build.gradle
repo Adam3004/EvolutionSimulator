@@ -1,12 +1,23 @@
 plugins {
+    id 'application'
     id 'java'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
 }
 
 group 'com.akgroup'
 version '1.0-SNAPSHOT'
 
+application {
+    getMainClass().set('com.akgroup.project.JavaFXMain')
+}
+
 repositories {
     mavenCentral()
+}
+
+javafx {
+    version = "16"
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
 dependencies {
