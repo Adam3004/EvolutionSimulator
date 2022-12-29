@@ -1,13 +1,11 @@
 package com.akgroup.project.world.map;
 
-import com.akgroup.project.ISimulationObserver;
+import com.akgroup.project.IPositionChangedObserver;
 import com.akgroup.project.config.Config;
 import com.akgroup.project.config.ConfigOption;
 import com.akgroup.project.util.NumberGenerator;
 import com.akgroup.project.util.Vector2D;
 import com.akgroup.project.world.WorldConfig;
-import com.akgroup.project.world.borders.MapBorders;
-import com.akgroup.project.world.mutators.GenomeMutator;
 import com.akgroup.project.world.object.*;
 
 import java.util.*;
@@ -15,55 +13,21 @@ import java.util.stream.Collectors;
 
 public class WorldMap implements IWorldMap {
     private final Vector2D lowerLeft, upperRight;
-    private final Map<Vector2D, List<Animal>> animals;
+    private final AnimalsContainer animalsContainer;
     private final Map<Vector2D, Plant> plants;
     private final WorldConfig worldConfig;
     private final Config simulationConfig;
-    private final List<ISimulationObserver> simulationObservers;
+    private final List<IPositionChangedObserver> positionChangedObservers;
 
     public WorldMap(Config simulationConfig) {
-        this.simulationObservers = new ArrayList<>();
-        this.animals = new HashMap<>();
+        this.positionChangedObservers = new ArrayList<>();
+        this.animalsContainer = new AnimalsContainer();
+        this.positionChangedObservers.add(this.animalsContainer);
         this.plants = new HashMap<>();
         this.lowerLeft = new Vector2D(0, 0);
         this.upperRight = new Vector2D(simulationConfig.getValue(ConfigOption.WIDTH) - 1, simulationConfig.getValue(ConfigOption.HEIGHT) - 1);
         this.worldConfig = WorldConfig.fromConfig(simulationConfig);
         this.simulationConfig = simulationConfig;
-    }
-
-    public WorldConfig getWorldConfig() {
-        return worldConfig;
-    }
-
-    @Override
-    public boolean placeObject(IWorldElement element) {
-        Vector2D position = element.getPosition();
-        if (!position.follows(lowerLeft) || !position.precedes(upperRight)) return false;
-        if (element.getType().equals(TypeEnum.ANIMAL)) {
-            if (!animals.containsKey(position)) {
-                animals.put(position, new ArrayList<>());
-            }
-            animals.get(position).add((Animal) element);
-        } else if (!plants.containsKey(position)) {
-            plants.put(position, (Plant) element);
-        } else {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public List<IWorldElement> getObjectsAt(Vector2D vector2D) {
-        if (plants.containsKey(vector2D)) return Collections.singletonList(plants.get(vector2D));
-        if (!animals.containsKey(vector2D)) return new ArrayList<>();
-        return new ArrayList<>(animals.get(vector2D));
-    }
-
-    @Override
-    public List<Animal> getAllAnimals() {
-        return animals.values().stream()
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
     }
 
     public List<Plant> getPlants() {
@@ -75,27 +39,17 @@ public class WorldMap implements IWorldMap {
     }
 
     public void rotateAndMove(Animal animal) {
+        Vector2D oldPosition = animal.getPosition();
         rotateAnimal(animal);
         moveAnimal(animal);
         animal.loseEnergyOnMove();
+        notifyOnPositionChanged(animal, oldPosition, animal.getPosition());
     }
 
     private void rotateAnimal(Animal animal) {
         int genGap = worldConfig.behaviour().getAnimalRotation();
         animal.rotate(genGap);
     }
-
-    public void removeObject(IWorldElement object) {
-        if (object.getType().equals(TypeEnum.ANIMAL)) {
-            animals.get(object.getPosition()).remove((Animal) object);
-            if (animals.get(object.getPosition()).size() == 0) {
-                animals.remove(object.getPosition());
-            }
-        } else {
-            plants.remove(object.getPosition());
-        }
-    }
-
     /**
      * Finds unit vector of animal rotation.
      * Calculates position after moving by unit vector.
@@ -105,29 +59,32 @@ public class WorldMap implements IWorldMap {
     private void moveAnimal(Animal animal) {
         Vector2D moveVector = Rotation.getVectorFromRotation(animal.getRotation());
         Vector2D newMapPosition = animal.getPosition().add(moveVector);
-        newMapPosition = getMapBorders().repairAnimalPosition(animal, newMapPosition);
-        removeObject(animal);
+        newMapPosition = worldConfig.mapBorders().repairAnimalPosition(animal, newMapPosition);
         animal.moveAt(newMapPosition);
-        placeObject(animal);
+    }
+
+    public List<Animal> filterAnimalsToReproduction(List<Animal> list){
+        return list.stream()
+                .filter(Animal::haveEnoughEnergy)
+                .sorted(Comparator.comparing(Animal::getEnergy).reversed())
+                .collect(Collectors.toList());
+    }
+
+    public void multiply(List<Animal> list){
+        Animal bestAnimal = animalsContainer.findBestAnimalFrom(list);
+        list.remove(bestAnimal);
+        Animal secondBestAnimal = animalsContainer.findBestAnimalFrom(list);
+        list.add(bestAnimal);
+        createKid(bestAnimal, secondBestAnimal);
+        bestAnimal.increaseNumberOfKids();
+        secondBestAnimal.increaseNumberOfKids();
     }
 
     public void multiplyAnimals() {
-        List<List<Animal>> animalsToMultiply = animals.values().stream()
-                .filter(animalList -> animalList.size() > 1)
-                .toList();
-        for (List<Animal> animalsToReproduction : animalsToMultiply) {
-            List<Animal> goodAnimals = animalsToReproduction.stream().sorted(Comparator.comparing(Animal::getEnergy).reversed()).filter(Animal::haveEnoughEnergy).collect(Collectors.toList());
-            if (goodAnimals.size() < 2) {
-                continue;
-            }
-            Animal bestAnimal = findBestAnimal(goodAnimals);
-            goodAnimals.remove(bestAnimal);
-            Animal secondBestAnimal = findBestAnimal(goodAnimals);
-            goodAnimals.add(bestAnimal);
-            createKid(bestAnimal, secondBestAnimal);
-            bestAnimal.increaseNumberOfKids();
-            secondBestAnimal.increaseNumberOfKids();
-        }
+        animalsContainer.getAnimalGroups()
+                .map(this::filterAnimalsToReproduction)
+                .filter(group -> group.size() > 1)
+                .forEach(this::multiply);
     }
 
 //    private void animalsReproduction(Vector2D vector2D) {
@@ -138,12 +95,6 @@ public class WorldMap implements IWorldMap {
 //        createKid(animalsOnVector2D, vector2D);
 //    }
 
-    private List<Animal> sortAnimalsByEnergyR(List<Animal> inputList) {
-        return inputList.stream()
-                .sorted(Comparator.comparing(Animal::getEnergy).reversed())
-                .toList();
-    }
-
     private void createKid(Animal mum, Animal dad) {
         int energyPerParent = simulationConfig.getValue(ConfigOption.ANIMAL_ENERGY_FOR_CHILD);
         mum.loseEnergy(energyPerParent);
@@ -151,7 +102,7 @@ public class WorldMap implements IWorldMap {
         int[] newGenome = NumberGenerator.createNewGenome(dad, mum);
         int minMutations = simulationConfig.getValue(ConfigOption.MINIMAL_MUTATION);
         int maxMutations = simulationConfig.getValue(ConfigOption.MAXIMAL_MUTATION);
-        getGenomeMutator().mutate(newGenome, minMutations, maxMutations);
+        worldConfig.mutator().mutate(newGenome, minMutations, maxMutations);
         Animal kid = new Animal(mum.getPosition(), 2 * energyPerParent, newGenome);
         placeObject(kid);
     }
@@ -165,30 +116,13 @@ public class WorldMap implements IWorldMap {
 //        placeObject(kid);
 //    }
 
-    @Override
-    public Vector2D getLowerLeft() {
-        return lowerLeft;
-    }
-    @Override
-    public Vector2D getUpperRight() {
-        return upperRight;
-    }
-
-    private MapBorders getMapBorders() {
-        return worldConfig.mapBorders();
-    }
-
-    private GenomeMutator getGenomeMutator() {
-        return worldConfig.mutator();
-    }
 
     public void eatPlants() {
         List<Vector2D> tmpList = new ArrayList<>();
         for (Vector2D plantPosition : plants.keySet()) {
-            if (animals.get(plantPosition) == null) {
-                continue;
-            }
-            Animal bestAnimal = findBestAnimal(animals.get(plantPosition));
+            if(!animalsContainer.hasAnimalAt(plantPosition)) continue;
+            Animal bestAnimal = animalsContainer.findBestAnimalAt(plantPosition);
+            if(bestAnimal == null) continue;
             bestAnimal.addEnergy(simulationConfig.getValue(ConfigOption.PLANT_ENERGY));
             tmpList.add(plantPosition);
         }
@@ -197,37 +131,67 @@ public class WorldMap implements IWorldMap {
         }
     }
 
-    private Animal findBestAnimal(List<Animal> chosenAnimals) {
-        List<Animal> chosenSortedAnimals = sortAnimalsByEnergyR(chosenAnimals);
-        int maxEnergy = chosenSortedAnimals.get(0).getEnergy();
-        List<Animal> biggestEnergyAnimals = chosenSortedAnimals.stream()
-                .filter(animal -> animal.getEnergy() == maxEnergy)
-                .toList();
-        if (biggestEnergyAnimals.size() == 1) {
-            return biggestEnergyAnimals.get(0);
-        }
-        biggestEnergyAnimals = biggestEnergyAnimals.stream()
-                .sorted(Comparator.comparing(Animal::getAge).reversed())
-                .toList();
-        int maxAge = biggestEnergyAnimals.get(0).getAge();
-        List<Animal> oldestAnimals = biggestEnergyAnimals.stream()
-                .filter(animal -> animal.getAge() == maxAge)
-                .toList();
-        if (oldestAnimals.size() == 1) {
-            return oldestAnimals.get(0);
-        }
-        oldestAnimals = oldestAnimals.stream()
-                .sorted(Comparator.comparing(Animal::getNumberOfKids).reversed())
-                .toList();
-        return oldestAnimals.get(0);
-    }
-
-    public void addSimulationObserver(ISimulationObserver output){
-        this.simulationObservers.add(output);
+    private void notifyOnPositionChanged(Animal animal, Vector2D oldPosition, Vector2D newPosition){
+        positionChangedObservers.forEach(obs -> obs.onPositionChanged(animal, oldPosition, newPosition));
     }
 
     public void trySummonNewPlant() {
         Vector2D proposedVector = worldConfig.planter().findNewVector();
         placeObject(new Plant(proposedVector));
+    }
+
+    @Override
+    public void init(){
+        worldConfig.planter().init();
+    }
+
+    @Override
+    public boolean placeObject(IWorldElement element) {
+        Vector2D position = element.getPosition();
+        if (!position.follows(lowerLeft) || !position.precedes(upperRight)) return false;
+        if (element.getType().equals(TypeEnum.ANIMAL)) {
+            animalsContainer.addAnimal(position, (Animal) element);
+        } else if (!plants.containsKey(position)) {
+            plants.put(position, (Plant) element);
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public List<IWorldElement> getObjectsAt(Vector2D vector2D) {
+        List<IWorldElement> elements = animalsContainer.getWorldElementsAt(vector2D);
+        if (plants.containsKey(vector2D)) elements.add(plants.get(vector2D));
+        return elements;
+    }
+
+    @Override
+    public List<Animal> getAllAnimals() {
+        return animalsContainer.getAllAnimals();
+    }
+
+    @Override
+    public void removeObject(IWorldElement object) {
+        if (object.getType().equals(TypeEnum.ANIMAL)) {
+            animalsContainer.removeAnimal((Animal) object);
+        } else {
+            plants.remove(object.getPosition());
+        }
+    }
+
+    @Override
+    public Vector2D getLowerLeft() {
+        return lowerLeft;
+    }
+
+    @Override
+    public Vector2D getUpperRight() {
+        return upperRight;
+    }
+
+    @Override
+    public void addPositionChangedObserver(IPositionChangedObserver observer) {
+        this.positionChangedObservers.add(observer);
     }
 }

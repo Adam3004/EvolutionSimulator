@@ -1,11 +1,11 @@
 package com.akgroup.project.util;
 
 import com.akgroup.project.IOutputObserver;
-import com.akgroup.project.world.map.WorldMap;
+import com.akgroup.project.world.map.IWorldMap;
 
 public class MapVisualiser implements IOutputObserver {
 
-    private WorldMap worldMap;
+    private IWorldMap worldMap;
 
     private char[][] charsMap;
 
@@ -90,7 +90,7 @@ public class MapVisualiser implements IOutputObserver {
     }
 
     @Override
-    public void init(WorldMap worldMap) {
+    public void init(IWorldMap worldMap) {
         this.worldMap = worldMap;
         this.w = worldMap.getUpperRight().x - worldMap.getLowerLeft().x + 1;
         this.h = worldMap.getUpperRight().y - worldMap.getLowerLeft().y + 1;

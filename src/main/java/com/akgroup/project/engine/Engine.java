@@ -1,6 +1,7 @@
 package com.akgroup.project.engine;
 
 import com.akgroup.project.IOutputObserver;
+import com.akgroup.project.IPositionChangedObserver;
 import com.akgroup.project.config.Config;
 import com.akgroup.project.config.ConfigOption;
 import com.akgroup.project.util.Vector2D;
@@ -10,7 +11,7 @@ import com.akgroup.project.world.object.Animal;
 import java.util.List;
 
 /** Class responsible for main simulation loop*/
-public class Engine implements Runnable {
+public class Engine implements Runnable, IPositionChangedObserver {
     private WorldMap worldMap;
     private final Config simulationConfig;
     private final IOutputObserver outputObserver;
@@ -23,7 +24,7 @@ public class Engine implements Runnable {
     public void run() {
         worldMap = new WorldMap(simulationConfig);
         outputObserver.init(worldMap);
-//        worldMap.addSimulationObserver(this);
+        worldMap.addPositionChangedObserver(this);
         summonStartPlants();
         summonStartAnimals();
         infinityLoop();
@@ -31,13 +32,13 @@ public class Engine implements Runnable {
 
     private void summonStartAnimals() {
         worldMap.placeObject(new Animal(new Vector2D(1, 1), new int[]{0, 4, 0, 0, 7}));
-        worldMap.placeObject(new Animal(new Vector2D(1, 2), new int[]{4, 4, 0, 0, 3}));
-        worldMap.placeObject(new Animal(new Vector2D(2, 2), new int[]{5, 4, 3, 1, 5}));
-        worldMap.placeObject(new Animal(new Vector2D(2, 1), new int[]{3, 7, 1, 5, 4}));
+        //worldMap.placeObject(new Animal(new Vector2D(1, 2), new int[]{4, 4, 0, 0, 3}));
+        //worldMap.placeObject(new Animal(new Vector2D(2, 2), new int[]{5, 4, 3, 1, 5}));
+        //worldMap.placeObject(new Animal(new Vector2D(2, 1), new int[]{3, 7, 1, 5, 4}));
     }
 
     private void summonStartPlants() {
-        worldMap.getWorldConfig().planter().init();
+        worldMap.init();
         summonNewPlants(simulationConfig.getValue(ConfigOption.PLANTS_ON_START));
     }
 
@@ -92,5 +93,10 @@ public class Engine implements Runnable {
 
     private void increaseAge() {
         worldMap.getAllAnimals().forEach(Animal::increaseAge);
+    }
+
+    @Override
+    public void onPositionChanged(Animal animal, Vector2D oldPosition, Vector2D newPosition) {
+
     }
 }
