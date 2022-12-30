@@ -4,6 +4,7 @@ import com.akgroup.project.IOutputObserver;
 import com.akgroup.project.IPositionChangedObserver;
 import com.akgroup.project.config.Config;
 import com.akgroup.project.config.ConfigOption;
+import com.akgroup.project.util.NumberGenerator;
 import com.akgroup.project.util.Vector2D;
 import com.akgroup.project.world.map.WorldMap;
 import com.akgroup.project.world.object.Animal;
@@ -34,10 +35,11 @@ public class Engine implements Runnable, IPositionChangedObserver {
     }
 
     private void summonStartAnimals() {
-        worldMap.placeObject(new Animal(new Vector2D(1, 1), new int[]{0, 4, 0, 0, 7}));
-        //worldMap.placeObject(new Animal(new Vector2D(1, 2), new int[]{4, 4, 0, 0, 3}));
-        //worldMap.placeObject(new Animal(new Vector2D(2, 2), new int[]{5, 4, 3, 1, 5}));
-        //worldMap.placeObject(new Animal(new Vector2D(2, 1), new int[]{3, 7, 1, 5, 4}));
+        int width = simulationConfig.getValue(ConfigOption.WIDTH);
+        int height = simulationConfig.getValue(ConfigOption.HEIGHT);
+        for (int i = 0; i < simulationConfig.getValue(ConfigOption.ANIMALS_ON_START); i++) {
+            worldMap.placeObject(new Animal(NumberGenerator.generateNextVector2D(width, height), NumberGenerator.generateNewGenome()));
+        }
     }
 
     private void summonStartPlants() {
