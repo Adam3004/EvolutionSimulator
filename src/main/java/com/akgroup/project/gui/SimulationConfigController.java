@@ -37,11 +37,8 @@ public class SimulationConfigController {
         textFields = new TextField[]{widthInput, heightInput, startPlantInput, plantEnergyInput,
                 plantEveryDayInput, animalsStartInput, animalEnergyInput, animalNeededEnergyInput, animalChildEnergyInput,
                 minMutationInput, maxMutationInput, genomeLengthInput};
-        System.out.println("1");
         if(!hasAllFieldsCorrect()) return; //TODO display error message on window
-        System.out.println("2");
         Config config = createConfigFromFields();
-        System.out.println("3");
         observer.startSimulation(config);
     }
 
@@ -61,12 +58,37 @@ public class SimulationConfigController {
         return simulationConfig;
     }
 
-    private boolean hasAllFieldsCorrect() {
+
+    private boolean hasAllFieldsCorrect(){
+        return hasAllFieldsNumbers() && hasMinLessThanMax();
+    }
+
+    private boolean hasMinLessThanMax() {
+        int min = getFieldValue(minMutationInput);
+        int max = getFieldValue(maxMutationInput);
+        if(min <= max){
+            setTextFieldValid(minMutationInput);
+            setTextFieldValid(maxMutationInput);
+            return true;
+        }else{
+            setTextFieldInvalid(minMutationInput);
+            setTextFieldInvalid(maxMutationInput);
+            return false;
+        }
+    }
+
+    private boolean hasAllFieldsNumbers() {
+        boolean correct = true;
         for (TextField textField : textFields) {
             boolean isNumber = checkIfNumber(textField);
-            if(!isNumber) return false;
+            if(!isNumber){
+                setTextFieldInvalid(textField);
+                correct = false;
+            }else {
+                setTextFieldValid(textField);
+            }
         }
-        return true;
+        return correct;
     }
 
     private boolean checkIfNumber(TextField textField) {
@@ -101,6 +123,14 @@ public class SimulationConfigController {
 
     private String getToggleGroupValue(ToggleGroup group) {
         return ((RadioButton) group.getSelectedToggle()).getText();
+    }
+
+    private void setTextFieldInvalid(TextField textField){
+        textField.setStyle("-fx-text-box-border: #ff0000; -fx-focus-color: #ff0000;");
+    }
+
+    private void setTextFieldValid(TextField textField){
+        textField.setStyle("-fx-text-box-border: #009100; -fx-focus-color: #009100;");
     }
 
     public void setObserver(IFXObserver observer) {

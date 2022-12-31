@@ -3,8 +3,6 @@ package com.akgroup.project;
 import java.io.IOException;
 
 import com.akgroup.project.config.Config;
-import com.akgroup.project.config.ConfigLoader;
-import com.akgroup.project.config.InvalidConfigException;
 import com.akgroup.project.engine.Engine;
 import com.akgroup.project.gui.IFXObserver;
 import com.akgroup.project.gui.SimulationConfigController;

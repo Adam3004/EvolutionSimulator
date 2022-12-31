@@ -41,8 +41,8 @@
         <Menu mnemonicParsing="false" text="Help">
           <items>
             <MenuItem mnemonicParsing="false" text="About" />
-                  <MenuItem mnemonicParsing="false" text="Author" />
-                  <MenuItem mnemonicParsing="false" text="Easter egg" />
+                  <MenuItem mnemonicParsing="false" text="Authors" />
+                  <MenuItem mnemonicParsing="false" text="Github" />
           </items>
         </Menu>
       </menus>
