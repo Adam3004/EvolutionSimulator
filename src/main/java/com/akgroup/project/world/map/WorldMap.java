@@ -52,7 +52,7 @@ public class WorldMap implements IWorldMap {
     }
 
     private void rotateAnimal(Animal animal) {
-        int genGap = worldConfig.behaviour().getAnimalRotation();
+        int genGap = worldConfig.behaviour().getAnimalRotation(simulationConfig.getValue(ConfigOption.GENOME_LENGTH));
         animal.rotate(genGap);
     }
 
@@ -76,7 +76,7 @@ public class WorldMap implements IWorldMap {
                 .collect(Collectors.toList());
     }
 
-    public void multiply(List<Animal> list) {
+    private void multiply(List<Animal> list) {
         Animal bestAnimal = animalsContainer.findBestAnimalFrom(list);
         list.remove(bestAnimal);
         Animal secondBestAnimal = animalsContainer.findBestAnimalFrom(list);
@@ -105,10 +105,11 @@ public class WorldMap implements IWorldMap {
         int energyPerParent = simulationConfig.getValue(ConfigOption.ANIMAL_ENERGY_FOR_CHILD);
         mum.loseEnergy(energyPerParent);
         dad.loseEnergy(energyPerParent);
-        int[] newGenome = NumberGenerator.createNewGenome(dad, mum);
+        int genomeLen = simulationConfig.getValue(ConfigOption.GENOME_LENGTH);
+        int[] newGenome = NumberGenerator.createNewGenome(dad, mum, genomeLen);
         int minMutations = simulationConfig.getValue(ConfigOption.MINIMAL_MUTATION);
         int maxMutations = simulationConfig.getValue(ConfigOption.MAXIMAL_MUTATION);
-        worldConfig.mutator().mutate(newGenome, minMutations, maxMutations);
+        worldConfig.mutator().mutate(newGenome, minMutations, maxMutations, genomeLen);
         Animal kid = new Animal(mum.getPosition(), 2 * energyPerParent, newGenome);
         placeObject(kid);
     }

@@ -38,7 +38,9 @@ public class Engine implements Runnable, IPositionChangedObserver {
         int width = simulationConfig.getValue(ConfigOption.WIDTH);
         int height = simulationConfig.getValue(ConfigOption.HEIGHT);
         for (int i = 0; i < simulationConfig.getValue(ConfigOption.ANIMALS_ON_START); i++) {
-            worldMap.placeObject(new Animal(NumberGenerator.generateNextVector2D(width, height), NumberGenerator.generateNewGenome()));
+            Vector2D newVector = NumberGenerator.generateNextVector2D(width, height);
+            int[] newGenome = NumberGenerator.generateNewGenome(simulationConfig.getValue(ConfigOption.GENOME_LENGTH));
+            worldMap.placeObject(new Animal(newVector, newGenome));
         }
     }
 
@@ -68,6 +70,8 @@ public class Engine implements Runnable, IPositionChangedObserver {
         List<Animal> deadAnimals = worldMap.getAllAnimals().stream()
                 .filter(Animal::isDead)
                 .toList();
+        deadAnimals
+                .forEach(animal -> animal.setLastDay(animal.getAge()));
         for (Animal deadAnimal : deadAnimals) {
             worldMap.getPlanter().update(deadAnimal.getPosition(), -1);
             worldMap.removeObject(deadAnimal);
@@ -76,6 +80,7 @@ public class Engine implements Runnable, IPositionChangedObserver {
 
     private void moveAnimals() {
         List<Animal> animals = worldMap.getAllAnimals();
+        System.out.println(animals);
         for (Animal animal : animals) {
             worldMap.rotateAndMove(animal);
         }

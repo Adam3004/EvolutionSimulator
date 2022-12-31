@@ -24,8 +24,7 @@ public class NumberGenerator {
     /**
      * Generates new animal genome
      */
-    public static int[] generateNewGenome() {
-        int len = Animal.GENOME_LENGTH;
+    public static int[] generateNewGenome(int len) {
         int[] newGenome = new int[len];
         for (int i = 0; i < len; i++) {
             newGenome[i] = generateNextInt(0, 7);
@@ -36,9 +35,9 @@ public class NumberGenerator {
     /**
      * Generates combined genome from given dad and mum Animal objects.
      */
-    public static int[] createNewGenome(Animal dad, Animal mum) {
-        int numberOfGenomes = findHowManyGenomes(dad.getEnergy(), mum.getEnergy());
-        return fillNewGenome(numberOfGenomes, dad, mum);
+    public static int[] createNewGenome(Animal dad, Animal mum, int lenOfGenome) {
+        int numberOfGenomes = findHowManyGenomes(dad.getEnergy(), mum.getEnergy(), lenOfGenome);
+        return fillNewGenome(numberOfGenomes, dad, mum, lenOfGenome);
     }
 
     /**
@@ -46,21 +45,21 @@ public class NumberGenerator {
      *
      * @param numberOfGenomes - amount of genomes which will be given from dad animal
      */
-    private static int[] fillNewGenome(int numberOfGenomes, Animal dad, Animal mum) {
-        int[] newGenome = new int[Animal.GENOME_LENGTH];
-        int numberOfGenomes2 = Animal.GENOME_LENGTH - numberOfGenomes;
+    private static int[] fillNewGenome(int numberOfGenomes, Animal dad, Animal mum, int len) {
+        int[] newGenome = new int[len];
+        int numberOfGenomes2 = len - numberOfGenomes;
         if (isTrue(50)) {
             for (int i = 0; i < numberOfGenomes; i++) {
                 newGenome[i] = dad.getGenome()[i];
             }
-            for (int i = numberOfGenomes; i < Animal.GENOME_LENGTH; i++) {
+            for (int i = numberOfGenomes; i < len; i++) {
                 newGenome[i] = mum.getGenome()[i];
             }
         } else {
             for (int i = 0; i < numberOfGenomes2; i++) {
                 newGenome[i] = mum.getGenome()[i];
             }
-            for (int i = numberOfGenomes2; i < Animal.GENOME_LENGTH; i++) {
+            for (int i = numberOfGenomes2; i < len; i++) {
                 newGenome[i] = dad.getGenome()[i];
             }
         }
@@ -70,13 +69,13 @@ public class NumberGenerator {
     /**
      * Function returns how many genomes will be given to child (from first animal) based on mum and dad energy values
      */
-    private static int findHowManyGenomes(float value1, float value2) {
+    private static int findHowManyGenomes(float value1, float value2, int genomeLen) {
         float sum = value1 + value2;
         float percentage1 = value1 / sum;
         float percentage2 = value2 / sum;
-        int places1 = Math.round(percentage1 * Animal.GENOME_LENGTH);
-        int places2 = Math.round(percentage2 * Animal.GENOME_LENGTH);
-        if (places1 + places2 > Animal.GENOME_LENGTH) {
+        int places1 = Math.round(percentage1 * genomeLen);
+        int places2 = Math.round(percentage2 * genomeLen);
+        if (places1 + places2 > genomeLen) {
             if (isTrue(50)) places1 -= 1;
         }
         return places1;

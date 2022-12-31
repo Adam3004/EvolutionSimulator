@@ -1,31 +1,34 @@
 package com.akgroup.project.world.object;
 
+import com.akgroup.project.util.NumberGenerator;
 import com.akgroup.project.util.Vector2D;
 
 import java.util.Arrays;
 
 public class Animal extends AbstractWorldElement {
-    public static final int GENOME_LENGTH = 5;
     private int energy;
     private int activeGenIndex;
     private final int[] genome;
     private int rotation;
     private int age;
     private int numberOfKids;
+    private int eatenPlants;
+    private int lastDay;
 
     public Animal(Vector2D vector2D, int[] genome) {
         this(vector2D, 10, genome);
-
     }
 
     public Animal(Vector2D vector2D, int energy, int[] genome) {
         super(vector2D);
         this.energy = energy;
-        this.activeGenIndex = 0;
         this.genome = genome;
         this.age = 0;
         this.numberOfKids = 0;
-        this.rotation = 0;
+        this.eatenPlants = 0;
+        this.activeGenIndex = generateFirstActiveGenomeIndex();
+        this.rotation = generateStartingRotation();
+        this.lastDay = -1;
     }
 
     public int[] getGenome() {
@@ -44,8 +47,21 @@ public class Animal extends AbstractWorldElement {
         return energy <= 0;
     }
 
+    public int getEatenPlants() {
+        return eatenPlants;
+    }
+
+    public int getLastDay() {
+        return lastDay;
+    }
+
+    public void setLastDay(int lastDay) {
+        this.lastDay = lastDay;
+    }
+
     public void addEnergy(int e) {
         this.energy += e;
+        eatenPlants += 1;
     }
 
     public int getActiveGenIndex() {
@@ -59,7 +75,7 @@ public class Animal extends AbstractWorldElement {
 
     public void rotate(int nextGen) {
         rotation = (rotation + genome[activeGenIndex]) % 8;
-        activeGenIndex = (activeGenIndex + nextGen) % GENOME_LENGTH;
+        activeGenIndex = (activeGenIndex + nextGen) % genome.length;
     }
 
     public void loseEnergy(int energyToLose) {
@@ -93,6 +109,14 @@ public class Animal extends AbstractWorldElement {
 
     public int getNumberOfKids() {
         return numberOfKids;
+    }
+
+    private int generateStartingRotation() {
+        return NumberGenerator.generateNextInt(0, 7);
+    }
+
+    private int generateFirstActiveGenomeIndex() {
+        return NumberGenerator.generateNextInt(0, genome.length - 1);
     }
 
     @Override
