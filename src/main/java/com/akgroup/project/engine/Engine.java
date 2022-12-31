@@ -81,9 +81,7 @@ public class Engine implements Runnable, IPositionChangedObserver {
 
     private void moveAnimals() {
         List<Animal> animals = worldMap.getAllAnimals();
-        System.out.println(animals);
         for (Animal animal : animals) {
-            System.out.println(animal);
             worldMap.rotateAndMove(animal);
         }
     }

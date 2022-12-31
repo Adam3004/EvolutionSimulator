@@ -43,9 +43,7 @@ public abstract class Planter {
     public abstract void update(Vector2D vector2D, int valueChange);
 
     public Vector2D findNewVectorToPlant() {
-        System.out.println(listOfPossibilities);
         if (listOfPossibilities.get(0).getPossibility() <= -9997) {
-            System.out.println("UWAGA");
             return new Vector2D(-1, -1);
         }
         if (NumberGenerator.isTrue(20)) {
@@ -56,7 +54,6 @@ public abstract class Planter {
 
 
     private Vector2D chooseVector(List<Vector2DWithPossibility> interestingList) {
-        System.out.println(interestingList);
         Vector2DWithPossibility chosenField = interestingList.get(NumberGenerator.generateNextInt(0, interestingList.size() - 1));
         plantOnField(chosenField);
         return chosenField.getVector2D();
@@ -87,7 +84,7 @@ public abstract class Planter {
         if (listOfPossibilities.get(interestingLen).getPossibility() <= -9997) {
             return filterOnlyPossiblePlaces(listOfPossibilities);
         }
-        int possibilities = 1;
+        int possibilities = 0;
         int start = interestingLen;
         int i = interestingLen;
         int interestingValue = listOfPossibilities.get(interestingLen).getPossibility();
@@ -104,7 +101,7 @@ public abstract class Planter {
         }
         Set<Integer> chosenNumbers = new HashSet<>();
         while (chosenNumbers.size() < possibilities) {
-            chosenNumbers.add(NumberGenerator.generateNextInt(start, start + possibilities));
+            chosenNumbers.add(NumberGenerator.generateNextInt(start, start + possibilities - 1));
         }
         for (int number : chosenNumbers) {
             tmpList.add(listOfPossibilities.get(number));
