@@ -1,12 +1,12 @@
 package com.akgroup.project.gui;
 
 import com.akgroup.project.config.Config;
+import com.akgroup.project.config.ConfigLoader;
 import com.akgroup.project.config.ConfigOption;
+import com.akgroup.project.config.InvalidConfigException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 
 public class SimulationConfigController {
     @FXML
@@ -17,26 +17,59 @@ public class SimulationConfigController {
     private ToggleGroup mutation_type;
     @FXML
     private ToggleGroup plant_type;
-
     @FXML
     private TextField heightInput, widthInput, startPlantInput, plantEveryDayInput, plantEnergyInput, animalsStartInput;
-
     @FXML
     private TextField animalEnergyInput, animalNeededEnergyInput, animalChildEnergyInput, minMutationInput;
-
     @FXML
     private TextField maxMutationInput, genomeLengthInput;
+    @FXML
+    private Menu openBuiltInConfigMenu;
 
     private TextField[] textFields;
     private IFXObserver observer;
+    private final ConfigLoader configLoader;
+    private boolean isConfigBuiltIn = false;
+    private String actualConfigName = "";
 
-    public SimulationConfigController() {}
+    public SimulationConfigController() {
+        this.configLoader = new ConfigLoader();
+    }
 
     @FXML
-    public void startSimulation(ActionEvent actionEvent) {
+    public void initialize() {
         textFields = new TextField[]{widthInput, heightInput, startPlantInput, plantEnergyInput,
                 plantEveryDayInput, animalsStartInput, animalEnergyInput, animalNeededEnergyInput, animalChildEnergyInput,
                 minMutationInput, maxMutationInput, genomeLengthInput};
+        String[] configFileNames = ConfigLoader.getConfigFileNames();
+        for (String configFileName : configFileNames) {
+            MenuItem item = new MenuItem();
+            item.setText(configFileName);
+            item.setOnAction(event -> loadBuiltInConfigByName(configFileName));
+            openBuiltInConfigMenu.getItems().add(item);
+        }
+    }
+
+    private void loadBuiltInConfigByName(String configFileName) {
+        try {
+            Config config = configLoader.loadConfig(configFileName);
+            for (int i = 0; i < 12; i++) {
+                ConfigOption option = ConfigOption.values()[i];
+                textFields[i].setText(config.getValue(option) + "");
+            }
+            setToggleGroupActiveValue(map_type, config.getValue(ConfigOption.MAP_TYPE));
+            setToggleGroupActiveValue(plant_type, config.getValue(ConfigOption.PLANTS_TYPE));
+            setToggleGroupActiveValue(behaviour_type, config.getValue(ConfigOption.ANIMAL_BEHAVIOUR_TYPE));
+            setToggleGroupActiveValue(mutation_type, config.getValue(ConfigOption.MUTATION_TYPE));
+            actualConfigName = configFileName;
+            isConfigBuiltIn = true;
+        } catch (InvalidConfigException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @FXML
+    public void startSimulation(ActionEvent actionEvent) {
         if(!hasAllFieldsCorrect()) return; //TODO display error message on window
         Config config = createConfigFromFields();
         observer.startSimulation(config);
@@ -51,10 +84,10 @@ public class SimulationConfigController {
         for (int i = 0; i < 12; i++) {
             simulationConfig.addValue(ConfigOption.values()[i], getFieldValue(textFields[i]));
         }
-        simulationConfig.addValue(ConfigOption.MAP_TYPE, getMapTypeValue());
-        simulationConfig.addValue(ConfigOption.PLANTS_TYPE, getPlantTypeValue());
-        simulationConfig.addValue(ConfigOption.MUTATION_TYPE, getMutationTypeValue());
-        simulationConfig.addValue(ConfigOption.ANIMAL_BEHAVIOUR_TYPE, getBehaviourTypeValue());
+        simulationConfig.addValue(ConfigOption.MAP_TYPE, getToggleGroupActiveIndex(map_type));
+        simulationConfig.addValue(ConfigOption.PLANTS_TYPE, getToggleGroupActiveIndex(plant_type));
+        simulationConfig.addValue(ConfigOption.MUTATION_TYPE, getToggleGroupActiveIndex(mutation_type));
+        simulationConfig.addValue(ConfigOption.ANIMAL_BEHAVIOUR_TYPE, getToggleGroupActiveIndex(behaviour_type));
         return simulationConfig;
     }
 
@@ -101,28 +134,12 @@ public class SimulationConfigController {
         return c >= '0' && c <= '9';
     }
 
-    private int getMapTypeValue(){
-        String value = getToggleGroupValue(map_type);
-        return value.equals("Kula ziemska") ? 1 : 0;
+    private int getToggleGroupActiveIndex(ToggleGroup group){
+        return group.getToggles().indexOf(group.getSelectedToggle());
     }
 
-    private int getPlantTypeValue(){
-        String value = getToggleGroupValue(plant_type);
-        return value.equals("Zalesione równiki") ? 1 : 0;
-    }
-
-    private int getMutationTypeValue(){
-        String value = getToggleGroupValue(mutation_type);
-        return value.equals("Pełna losowość") ? 1 : 0;
-    }
-
-    private int getBehaviourTypeValue(){
-        String value = getToggleGroupValue(behaviour_type);
-        return value.equals("Pełna predestynacja") ? 1 : 0;
-    }
-
-    private String getToggleGroupValue(ToggleGroup group) {
-        return ((RadioButton) group.getSelectedToggle()).getText();
+    private void setToggleGroupActiveValue(ToggleGroup group, int value){
+        group.selectToggle(group.getToggles().get(value));
     }
 
     private void setTextFieldInvalid(TextField textField){

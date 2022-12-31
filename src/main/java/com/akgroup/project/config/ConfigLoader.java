@@ -6,6 +6,12 @@ import java.util.Scanner;
 public class ConfigLoader {
     private Scanner scanner;
 
+    private static final String[] configFileNames = new String[]{"default", "example 5x5"};
+
+    public static String[] getConfigFileNames() {
+        return configFileNames;
+    }
+
     public Config loadConfig(String configName) throws InvalidConfigException {
         Config config = new Config();
         InputStream resourceAsStream = ConfigLoader.class.getResourceAsStream("/config/%s.csv".formatted(configName));

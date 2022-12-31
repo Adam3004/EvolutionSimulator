@@ -33,7 +33,7 @@ public record WorldConfig(MapBorders mapBorders, GenomeMutator mutator, Planter 
 
     private static AnimalBehaviour animalBehaviourFromConfig(int behaviourType) {
         switch (behaviourType) {
-            case 1 -> {
+            case 0 -> {
                 return new FullPredestinationBehaviour();
             }
             default -> {
@@ -44,7 +44,7 @@ public record WorldConfig(MapBorders mapBorders, GenomeMutator mutator, Planter 
 
     private static MapBorders bordersFromConfig(int bordersType, int width, int height) {
         switch (bordersType) {
-            case 1 -> {
+            case 0 -> {
                 return new EarthBorders(width, height);
             }
             default -> {
@@ -55,7 +55,7 @@ public record WorldConfig(MapBorders mapBorders, GenomeMutator mutator, Planter 
 
     private static Planter planterFromConfig(int bordersType, int width, int height) {
         switch (bordersType) {
-            case 1 -> {
+            case 0 -> {
                 return new EquatorPlanter(width, height);
             }
             default -> {
@@ -66,7 +66,7 @@ public record WorldConfig(MapBorders mapBorders, GenomeMutator mutator, Planter 
 
     private static GenomeMutator genomeMutatorFromConfig(int bordersType) {
         switch (bordersType) {
-            case 1 -> {
+            case 0 -> {
                 return new FullRandomMutator();
             }
             default -> {
