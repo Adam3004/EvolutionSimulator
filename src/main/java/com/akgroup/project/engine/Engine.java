@@ -9,6 +9,7 @@ import com.akgroup.project.util.Vector2D;
 import com.akgroup.project.world.map.WorldMap;
 import com.akgroup.project.world.object.Animal;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,17 +18,17 @@ import java.util.List;
 public class Engine implements Runnable, IPositionChangedObserver {
     private WorldMap worldMap;
     private final Config simulationConfig;
-    private final IOutputObserver outputObserver;
+    private final List<IOutputObserver> outputObservers;
 
-    public Engine(Config config, IOutputObserver outputObserver) {
+    public Engine(Config config) {
         this.simulationConfig = config;
-        this.outputObserver = outputObserver;
+        this.outputObservers = new ArrayList<>();
     }
 
     @Override
     public void run() {
         worldMap = new WorldMap(simulationConfig);
-        outputObserver.init(worldMap);
+        outputObservers.forEach(obs -> obs.init(worldMap));
         worldMap.addPositionChangedObserver(this);
         summonStartPlants();
         summonStartAnimals();
@@ -51,7 +52,7 @@ public class Engine implements Runnable, IPositionChangedObserver {
 
     private void infinityLoop() {
         while (true) {
-            outputObserver.renderFrame();
+            outputObservers.forEach(IOutputObserver::renderFrame);
             increaseAge();
             removeDeadAnimals();
             moveAnimals();
@@ -59,7 +60,7 @@ public class Engine implements Runnable, IPositionChangedObserver {
             multiplicationOfAnimals();
             summonNewPlants(simulationConfig.getValue(ConfigOption.PLANTS_EVERY_DAY));
             try {
-                Thread.sleep(3000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -82,6 +83,7 @@ public class Engine implements Runnable, IPositionChangedObserver {
         List<Animal> animals = worldMap.getAllAnimals();
         System.out.println(animals);
         for (Animal animal : animals) {
+            System.out.println(animal);
             worldMap.rotateAndMove(animal);
         }
     }
@@ -103,6 +105,10 @@ public class Engine implements Runnable, IPositionChangedObserver {
 
     private void increaseAge() {
         worldMap.getAllAnimals().forEach(Animal::increaseAge);
+    }
+
+    public void addOutputObserver(IOutputObserver outputObserver){
+        this.outputObservers.add(outputObserver);
     }
 
     @Override

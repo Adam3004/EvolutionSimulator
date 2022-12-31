@@ -26,7 +26,7 @@
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
-            <MenuItem fx:id="newConfigMenuItem" mnemonicParsing="false" text="New config" />
+            <MenuItem mnemonicParsing="false" onAction="#onNewConfigClicked" text="New config" />
             <Menu fx:id="openBuiltInConfigMenu" mnemonicParsing="false" text="Open built-in config" />
                   <MenuItem mnemonicParsing="false" text="Open file config" />
             <SeparatorMenuItem mnemonicParsing="false" />

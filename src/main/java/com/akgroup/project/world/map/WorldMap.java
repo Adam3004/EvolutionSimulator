@@ -149,6 +149,16 @@ public class WorldMap implements IWorldMap {
     }
 
     @Override
+    public Collection<Plant> getPlantsCollection(){
+        return plants.values();
+    }
+
+    @Override
+    public List<List<Animal>> getAnimalLists() {
+        return animalsContainer.getAnimalLists();
+    }
+
+    @Override
     public void init() {
         worldConfig.planter().init();
     }
