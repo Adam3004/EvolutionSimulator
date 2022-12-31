@@ -2,6 +2,10 @@ package com.akgroup.project;
 
 import com.akgroup.project.util.Vector2D;
 import com.akgroup.project.world.map.IWorldMap;
+import com.akgroup.project.world.object.Animal;
+import com.akgroup.project.world.object.Plant;
+
+import java.util.List;
 
 public interface IOutputObserver {
     void init(IWorldMap worldMap);
@@ -9,5 +13,5 @@ public interface IOutputObserver {
     void onPositionChanged(Vector2D oldPosition, Vector2D newPosition);
     void onPlantSummoned(Vector2D position);
     void onPlantWasEaten(Vector2D position);
-    void renderFrame();
+    void renderFrame(List<Animal> animals, List<Plant> plants);
 }

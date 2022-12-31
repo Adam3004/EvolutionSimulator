@@ -52,7 +52,7 @@ public class Engine implements Runnable, IPositionChangedObserver {
 
     private void infinityLoop() {
         while (true) {
-            outputObservers.forEach(IOutputObserver::renderFrame);
+            outputObservers.forEach((obs) -> obs.renderFrame(new ArrayList<>(worldMap.getAllAnimals()), new ArrayList<>(worldMap.getPlants())));
             increaseAge();
             removeDeadAnimals();
             moveAnimals();
