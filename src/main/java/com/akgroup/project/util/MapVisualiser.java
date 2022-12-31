@@ -63,7 +63,6 @@ public class MapVisualiser implements IOutputObserver {
 
     private void fulfillCharMap() {
         worldMap.getAllAnimals().forEach(animal -> {
-            System.out.println(animal);
             int x = animal.getPosition().x;
             int y = animal.getPosition().y;
             if(charsMap[y][x] != 0){
