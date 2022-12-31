@@ -43,6 +43,10 @@ public abstract class Planter {
     public abstract void update(Vector2D vector2D, int valueChange);
 
     public Vector2D findNewVectorToPlant() {
+        System.out.println(listOfPossibilities);
+        if (listOfPossibilities.get(0).getPossibility() <= 9997) {
+            return null;
+        }
         if (NumberGenerator.isTrue(20)) {
             return chooseVector(filterOnlyPossiblePlaces(listOfPossibilities));
         }
@@ -51,6 +55,7 @@ public abstract class Planter {
 
 
     private Vector2D chooseVector(List<Vector2DWithPossibility> interestingList) {
+        System.out.println(interestingList);
         Vector2DWithPossibility chosenField = interestingList.get(NumberGenerator.generateNextInt(0, interestingList.size() - 1));
         plantOnField(chosenField);
         return chosenField.getVector2D();
@@ -58,6 +63,7 @@ public abstract class Planter {
 
     private void plantOnField(Vector2DWithPossibility field) {
         field.setPossibility(field.getPossibility() - 10000);
+        listOfPossibilities.sortList();
     }
 
     public void eatPlantOnField(Vector2D vector2D) {
@@ -65,6 +71,7 @@ public abstract class Planter {
                 .filter(data -> data.getVector2D().equals(vector2D))
                 .toList().get(0);
         currVector.setPossibility(currVector.getPossibility() + 10000);
+        listOfPossibilities.sortList();
     }
 
     private List<Vector2DWithPossibility> filterOnlyPossiblePlaces(List<Vector2DWithPossibility> interestingList) {
