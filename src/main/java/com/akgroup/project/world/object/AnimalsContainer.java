@@ -103,4 +103,8 @@ public class AnimalsContainer implements IPositionChangedObserver {
         removeAnimalAt(animal, oldPosition);
         addAnimal(newPosition, animal);
     }
+
+    public List<List<Animal>> getAnimalLists() {
+        return new ArrayList<>(animals.values());
+    }
 }

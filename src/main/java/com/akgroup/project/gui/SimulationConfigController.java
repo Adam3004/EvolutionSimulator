@@ -75,6 +75,18 @@ public class SimulationConfigController {
         observer.startSimulation(config);
     }
 
+
+    @FXML
+    void onNewConfigClicked(ActionEvent event) {
+        for (int i = 0; i < 12; i++) {
+            textFields[i].setText("");
+        }
+        setToggleGroupActiveValue(map_type, 0);
+        setToggleGroupActiveValue(plant_type, 0);
+        setToggleGroupActiveValue(behaviour_type, 0);
+        setToggleGroupActiveValue(mutation_type, 0);
+    }
+
     private int getFieldValue(TextField textField) {
         return Integer.parseInt(textField.getCharacters().toString());
     }

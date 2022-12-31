@@ -1,9 +1,10 @@
 package com.akgroup.project;
 
+import com.akgroup.project.gui.App;
 import javafx.application.Application;
 
-public class Main {
+public class Launcher {
     public static void main(String[] args) {
-       Application.launch(JavaFXMain.class);
+       Application.launch(App.class);
     }
 }

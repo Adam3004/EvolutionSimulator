@@ -44,8 +44,9 @@ public abstract class Planter {
 
     public Vector2D findNewVectorToPlant() {
         System.out.println(listOfPossibilities);
-        if (listOfPossibilities.get(0).getPossibility() <= 9997) {
-            return null;
+        if (listOfPossibilities.get(0).getPossibility() <= -9997) {
+            System.out.println("UWAGA");
+            return new Vector2D(-1, -1);
         }
         if (NumberGenerator.isTrue(20)) {
             return chooseVector(filterOnlyPossiblePlaces(listOfPossibilities));
@@ -55,7 +56,6 @@ public abstract class Planter {
 
 
     private Vector2D chooseVector(List<Vector2DWithPossibility> interestingList) {
-        System.out.println(interestingList);
         Vector2DWithPossibility chosenField = interestingList.get(NumberGenerator.generateNextInt(0, interestingList.size() - 1));
         plantOnField(chosenField);
         return chosenField.getVector2D();
