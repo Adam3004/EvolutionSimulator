@@ -69,6 +69,7 @@ public class Engine implements Runnable, IPositionChangedObserver {
                 .filter(Animal::isDead)
                 .toList();
         for (Animal deadAnimal : deadAnimals) {
+            worldMap.getPlanter().update(deadAnimal.getPosition(), -1);
             worldMap.removeObject(deadAnimal);
         }
     }

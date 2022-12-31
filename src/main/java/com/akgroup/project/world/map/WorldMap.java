@@ -7,6 +7,7 @@ import com.akgroup.project.util.NumberGenerator;
 import com.akgroup.project.util.Vector2D;
 import com.akgroup.project.world.WorldConfig;
 import com.akgroup.project.world.object.*;
+import com.akgroup.project.world.planter.Planter;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,6 +33,10 @@ public class WorldMap implements IWorldMap {
 
     public List<Plant> getPlants() {
         return plants.values().stream().toList();
+    }
+
+    public Planter getPlanter() {
+        return worldConfig.planter();
     }
 
     public int getPlantsCount() {

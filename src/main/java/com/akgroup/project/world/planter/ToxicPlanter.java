@@ -18,5 +18,7 @@ public class ToxicPlanter extends Planter {
                 .filter(data -> data.getVector2D().equals(vector2D))
                 .toList().get(0);
         currVector.setPossibility(currVector.getPossibility() + valueChange);
+        listOfPossibilities.sortList();
+        System.out.println(listOfPossibilities);
     }
 }
