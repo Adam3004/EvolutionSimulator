@@ -34,10 +34,10 @@ public record WorldConfig(MapBorders mapBorders, GenomeMutator mutator, Planter 
     private static AnimalBehaviour animalBehaviourFromConfig(int behaviourType) {
         switch (behaviourType) {
             case 1 -> {
-                return new LittleCrazyBehaviour();
+                return new FullPredestinationBehaviour();
             }
             default -> {
-                return new FullPredestinationBehaviour();
+                return new LittleCrazyBehaviour();
             }
         }
     }
@@ -45,10 +45,10 @@ public record WorldConfig(MapBorders mapBorders, GenomeMutator mutator, Planter 
     private static MapBorders bordersFromConfig(int bordersType, int width, int height) {
         switch (bordersType) {
             case 1 -> {
-                return new HellPortalBorders(width, height);
+                return new EarthBorders(width, height);
             }
             default -> {
-                return new EarthBorders(width, height);
+                return new HellPortalBorders(width, height);
             }
         }
     }

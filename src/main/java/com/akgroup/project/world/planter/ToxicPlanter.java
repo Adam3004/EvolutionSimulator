@@ -19,6 +19,5 @@ public class ToxicPlanter extends Planter {
                 .toList().get(0);
         currVector.setPossibility(currVector.getPossibility() + valueChange);
         listOfPossibilities.sortList();
-        System.out.println(listOfPossibilities);
     }
 }
