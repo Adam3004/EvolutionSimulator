@@ -33,7 +33,8 @@ public class App extends Application implements IFXObserver {
 
     @Override
     public void startSimulation(Config config) {
-        Engine engine = new Engine(config, new StatSpectator(config.getMapArea()));
+        StatSpectator spectator = new StatSpectator(config.getMapArea());
+        Engine engine = new Engine(config, spectator);
         Thread thread = new Thread(engine);
         FXMLLoader loader = new FXMLLoader();
         String fxmlDocPath = "/fxml/simulation.fxml";
@@ -42,9 +43,11 @@ public class App extends Application implements IFXObserver {
         try {
             root = loader.load(this.getClass().getResourceAsStream(fxmlDocPath));
             SimulationController controller = loader.getController();
+            controller.setStatSpectator(spectator);
+            controller.setEngine(engine);
             Stage stage = new Stage();
             stage.setTitle("Simulation " + simulationID);
-            stage.setScene(new Scene(root, 800, 450));
+            stage.setScene(new Scene(root, 800, 500));
             stage.show();
             engine.addOutputObserver(controller);
             engine.addOutputObserver(new MapVisualiser());
