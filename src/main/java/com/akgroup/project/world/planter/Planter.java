@@ -4,6 +4,8 @@ import com.akgroup.project.util.NumberGenerator;
 import com.akgroup.project.util.SortedList;
 import com.akgroup.project.util.Vector2D;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 
 public abstract class Planter {
@@ -14,6 +16,8 @@ public abstract class Planter {
     protected Vector2D jgBottomLeft;
     protected Vector2D jgTopRight;
     private final int size;
+    private Instant timeStart;
+    private Instant timeEnd;
 
     protected Planter(int width, int height) {
         this.listOfPossibilities = new SortedList<>(Comparator.comparing(Vector2DWithPossibility::getPossibility));
@@ -46,16 +50,22 @@ public abstract class Planter {
         if (listOfPossibilities.get(0).getPossibility() <= -9997) {
             return new Vector2D(-1, -1);
         }
-        if (NumberGenerator.isTrue(20)) {
-            return chooseVector(filterOnlyPossiblePlaces(listOfPossibilities));
+        if (size >= 1000 && NumberGenerator.isTrue(33)) {
+            return randForBigSizes();
         }
-        return chooseVector(findInterestingList());
+        if (size < 1000 && NumberGenerator.isTrue(80)) {
+            return chooseVector(findInterestingList());
+        }
+        return chooseVector(filterOnlyPossiblePlaces(listOfPossibilities));
     }
 
 
     private Vector2D chooseVector(List<Vector2DWithPossibility> interestingList) {
+        timeStart = Instant.now();
         Vector2DWithPossibility chosenField = interestingList.get(NumberGenerator.generateNextInt(0, interestingList.size() - 1));
         plantOnField(chosenField);
+        timeEnd = Instant.now();
+        System.out.println("Choosing vector: " + Duration.between(timeStart, timeEnd));
         return chosenField.getVector2D();
     }
 
@@ -79,11 +89,20 @@ public abstract class Planter {
     }
 
 
+    private Vector2D randForBigSizes() {
+        Vector2DWithPossibility chosenField = listOfPossibilities.get(NumberGenerator.generateNextInt(0, Math.toIntExact(Math.round(size * 0.2))));
+        plantOnField(chosenField);
+        return chosenField.getVector2D();
+    }
+
+
     private List<Vector2DWithPossibility> findInterestingList() {
+
         int interestingLen = Math.toIntExact(Math.round(size * 0.2));
         if (listOfPossibilities.get(interestingLen).getPossibility() <= -9997) {
             return filterOnlyPossiblePlaces(listOfPossibilities);
         }
+        timeStart = Instant.now();
         int possibilities = 0;
         int start = interestingLen;
         int i = interestingLen;
@@ -93,19 +112,34 @@ public abstract class Planter {
             start -= 1;
             i--;
         }
+        timeEnd = Instant.now();
+        System.out.println("First while in findInterestingList: " + Duration.between(timeStart, timeEnd));
+        timeStart = Instant.now();
         List<Vector2DWithPossibility> tmpList = new ArrayList<>(listOfPossibilities.subList(0, start).stream().toList());
         i = interestingLen + 1;
+        timeEnd = Instant.now();
+        System.out.println("Creating list in findInterestingList: " + Duration.between(timeStart, timeEnd));
+
+        timeStart = Instant.now();
         while (i < size - 1 && interestingValue == listOfPossibilities.get(i).getPossibility()) {
             possibilities += 1;
             i++;
         }
+        timeEnd = Instant.now();
+        System.out.println("Second while in findInterestingList: " + Duration.between(timeStart, timeEnd));
+        timeStart = Instant.now();
         Set<Integer> chosenNumbers = new HashSet<>();
         while (chosenNumbers.size() < possibilities) {
             chosenNumbers.add(NumberGenerator.generateNextInt(start, start + possibilities - 1));
         }
+        timeEnd = Instant.now();
+        System.out.println("Creating set and third while in findInterestingList: " + Duration.between(timeStart, timeEnd));
+        timeStart = Instant.now();
         for (int number : chosenNumbers) {
             tmpList.add(listOfPossibilities.get(number));
         }
+        timeEnd = Instant.now();
+        System.out.println("Last for in findInterestingList: " + Duration.between(timeStart, timeEnd));
         return tmpList;
     }
 
