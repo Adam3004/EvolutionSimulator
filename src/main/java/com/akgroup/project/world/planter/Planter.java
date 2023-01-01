@@ -90,7 +90,8 @@ public abstract class Planter {
 
 
     private Vector2D randForBigSizes() {
-        Vector2DWithPossibility chosenField = listOfPossibilities.get(NumberGenerator.generateNextInt(0, Math.toIntExact(Math.round(size * 0.2))));
+        List<Vector2DWithPossibility> newList = filterOnlyPossiblePlaces(listOfPossibilities);
+        Vector2DWithPossibility chosenField = newList.get(NumberGenerator.generateNextInt(0, Math.toIntExact(Math.round(newList.size() * 0.2))));
         plantOnField(chosenField);
         return chosenField.getVector2D();
     }
