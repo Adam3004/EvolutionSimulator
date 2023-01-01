@@ -7,6 +7,10 @@ import com.akgroup.project.config.InvalidConfigException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.FileChooser;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 
 public class SimulationConfigController {
     @FXML
@@ -25,6 +29,8 @@ public class SimulationConfigController {
     private TextField maxMutationInput, genomeLengthInput;
     @FXML
     private Menu openBuiltInConfigMenu;
+    @FXML
+    private CheckBox generateCSV;
 
     private TextField[] textFields;
     private IFXObserver observer;
@@ -50,29 +56,12 @@ public class SimulationConfigController {
         }
     }
 
-    private void loadBuiltInConfigByName(String configFileName) {
-        try {
-            Config config = configLoader.loadConfig(configFileName);
-            for (int i = 0; i < 12; i++) {
-                ConfigOption option = ConfigOption.values()[i];
-                textFields[i].setText(config.getValue(option) + "");
-            }
-            setToggleGroupActiveValue(map_type, config.getValue(ConfigOption.MAP_TYPE));
-            setToggleGroupActiveValue(plant_type, config.getValue(ConfigOption.PLANTS_TYPE));
-            setToggleGroupActiveValue(behaviour_type, config.getValue(ConfigOption.ANIMAL_BEHAVIOUR_TYPE));
-            setToggleGroupActiveValue(mutation_type, config.getValue(ConfigOption.MUTATION_TYPE));
-            actualConfigName = configFileName;
-            isConfigBuiltIn = true;
-        } catch (InvalidConfigException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @FXML
     public void startSimulation(ActionEvent actionEvent) {
         if(!hasAllFieldsCorrect()) return; //TODO display error message on window
         Config config = createConfigFromFields();
-        observer.startSimulation(config);
+        boolean csv = generateCSV.isSelected();
+        observer.startSimulation(config, csv);
     }
 
 
@@ -85,6 +74,44 @@ public class SimulationConfigController {
         setToggleGroupActiveValue(plant_type, 0);
         setToggleGroupActiveValue(behaviour_type, 0);
         setToggleGroupActiveValue(mutation_type, 0);
+    }
+
+    @FXML
+    void onOpenConfigClicked(ActionEvent event) {
+        File file = observer.openConfigFile();
+        if(file == null) return;
+        try {
+            Config config = configLoader.loadConfigFromFile(file);
+            loadConfigFields(config);
+        } catch (FileNotFoundException | InvalidConfigException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("An error has occured");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
+    }
+
+    private void loadBuiltInConfigByName(String configFileName) {
+        try {
+            Config config = configLoader.loadConfig(configFileName);
+            loadConfigFields(config);
+            actualConfigName = configFileName;
+            isConfigBuiltIn = true;
+        } catch (InvalidConfigException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void loadConfigFields(Config config){
+        for (int i = 0; i < 12; i++) {
+            ConfigOption option = ConfigOption.values()[i];
+            textFields[i].setText(config.getValue(option) + "");
+        }
+        setToggleGroupActiveValue(map_type, config.getValue(ConfigOption.MAP_TYPE));
+        setToggleGroupActiveValue(plant_type, config.getValue(ConfigOption.PLANTS_TYPE));
+        setToggleGroupActiveValue(behaviour_type, config.getValue(ConfigOption.ANIMAL_BEHAVIOUR_TYPE));
+        setToggleGroupActiveValue(mutation_type, config.getValue(ConfigOption.MUTATION_TYPE));
     }
 
     private int getFieldValue(TextField textField) {

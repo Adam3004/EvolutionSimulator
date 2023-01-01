@@ -5,15 +5,12 @@ import com.akgroup.project.engine.Engine;
 import com.akgroup.project.engine.statistics.StatSpectator;
 import com.akgroup.project.util.Vector2D;
 import com.akgroup.project.world.map.IWorldMap;
-import com.akgroup.project.world.object.Animal;
-import com.akgroup.project.world.object.IWorldElement;
-import com.akgroup.project.world.object.Plant;
+import com.akgroup.project.world.object.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
@@ -28,34 +25,43 @@ public class SimulationController implements IOutputObserver {
 
     @FXML
     private GridPane grid;
-
     @FXML
     private Label statAnimals, statAvgAge, statEnergy, statFields, statGenotype, statPlants;
-
     @FXML
     private Button simulationButton;
+    @FXML
+    private Label statAnimalActiveGen, statAnimalDays, statAnimalEnergy, statAnimalGenome, statAnimalKids, statAnimalPlants;
+    @FXML
+    private Button showAnimalsWithGenotype;
+
     private int width, height;
     private float cellSize;
-
-    private IWorldMap worldMap;
     private StatSpectator statSpectator;
     private boolean simulationStopped = false;
     private Engine engine;
+    private Animal chosenAnimal;
+    private List<Animal> lastRenderedAnimals;
+    private final Color GRASS_COLOR = Color.rgb(55, 186, 32);
+    private final Color ANIMAL_MARK_COLOR = Color.rgb(66, 135, 245);
+    private final Color ANIMAL_HIGH_ENERGY_COLOR = Color.rgb(255, 59, 131);
+    private final Color ANIMAL_LOW_ENERGY_COLOR = Color.rgb(255, 0, 0);
+    private final Color ANIMAL_DYING_ENERGY_COLOR = Color.rgb(40, 40, 40);
 
     @Override
     public void init(IWorldMap worldMap) {
-        this.worldMap = worldMap;
         width = worldMap.getUpperRight().y + 1;
         height = worldMap.getUpperRight().x + 1;
         cellSize = Math.max(width, height);
         cellSize = 400 / cellSize;
+        while (cellSize < 8){
+            cellSize *= 2;
+        }
         grid.getRowConstraints().clear();
         grid.getColumnConstraints().clear();
         grid.setBackground(new Background(new BackgroundFill(Color.rgb(186, 114, 32), CornerRadii.EMPTY, Insets.EMPTY)));
-        grid.setMaxWidth(cellSize * width);
-        grid.setMaxHeight(cellSize * height);
         addGridConstraints();
         grid.setOnMouseClicked(this::onGridMouseClicked);
+        showAnimalsWithGenotype.setVisible(false);
     }
 
     private void onGridMouseClicked(MouseEvent mouseEvent) {
@@ -63,12 +69,15 @@ public class SimulationController implements IOutputObserver {
         if(!mouseEvent.getButton().equals(MouseButton.PRIMARY)) return;
         long x = (long) Math.floor(mouseEvent.getX() / cellSize);
         long y = (long) Math.floor(mouseEvent.getY() / cellSize);
-        showDetailsForXY(x, height - y - 1);
+        onGridClickedXY(x, height - y - 1);
     }
 
-    private void showDetailsForXY(long x, long y) {
-        List<IWorldElement> objectsAt = worldMap.getObjectsAt(new Vector2D((int) x, (int) y));
-        System.out.println(objectsAt);
+    private void onGridClickedXY(long x, long y) {
+        Vector2D position = new Vector2D((int) x, (int) y);
+        Optional<Animal> animal = lastRenderedAnimals.stream().filter(a -> a.getPosition().equals(position)).findFirst();
+        if(animal.isEmpty()) return;
+        chosenAnimal = animal.get();
+        renderAnimalDetails();
     }
 
     @FXML
@@ -79,6 +88,21 @@ public class SimulationController implements IOutputObserver {
             stopSimulation();
         }
         simulationStopped = !simulationStopped;
+        showAnimalsWithGenotype.setVisible(simulationStopped);
+    }
+
+    @FXML
+    void onShowAnimalsWithGenotype(ActionEvent event) {
+        int[] mostPopularGenotype = statSpectator.getMostPopularGenotype();
+        lastRenderedAnimals.stream()
+                .filter(animal -> Arrays.equals(animal.getGenome(), mostPopularGenotype))
+                .forEach(this::markAnimal);
+    }
+
+    private void markAnimal(Animal animal) {
+        Vector2D position = animal.getPosition();
+        Circle circle = createCircle(ANIMAL_MARK_COLOR);
+        addCircleToGrid(circle, position.x, height - position.y - 1);
     }
 
     private void stopSimulation() {
@@ -118,22 +142,11 @@ public class SimulationController implements IOutputObserver {
         });
     }
 
-    private final Color GRASS_COLOR = Color.rgb(55, 186, 32);
-    private final Color ANIMAL_COLOR = Color.rgb(40, 40, 40);
-
     private void renderNextFrame(List<Animal> animals, List<Plant> plants) {
-        statAnimals.setText(statSpectator.getNumberOfAliveAnimals() + "");
-        statPlants.setText(statSpectator.getNumberOfPlants() + "");
-        statFields.setText(statSpectator.getFreeFields() + "");
-        statGenotype.setText(Arrays.toString(statSpectator.getMostPopularGenotype()));
-        statAvgAge.setText(statSpectator.getAverageAgeOfDiedAnimals() + "");
-        statEnergy.setText(statSpectator.getAverageEnergy() + "");
+        renderStatistics();
         grid.getRowConstraints().clear();
         grid.getColumnConstraints().clear();
-        Node node = grid.getChildren().get(0);
         grid.getChildren().clear();
-        grid.getChildren().add(0, node);
-        grid.getRowConstraints().clear();
         addGridConstraints();
         plants.forEach(plant -> {
             Vector2D position = plant.getPosition();
@@ -142,9 +155,41 @@ public class SimulationController implements IOutputObserver {
         });
         animals.forEach(animal -> {
             Vector2D position = animal.getPosition();
-            Circle circle = createCircle(ANIMAL_COLOR);
+            Color color = getColorByEnergy(animal.getEnergy());
+            Circle circle = createCircle(color);
             addCircleToGrid(circle, position.x, height - position.y - 1);
         });
+        lastRenderedAnimals = animals;
+        renderAnimalDetails();
+    }
+
+    private Color getColorByEnergy(int energy) {
+        if(energy == 0){
+            return ANIMAL_DYING_ENERGY_COLOR;
+        }
+        if(energy <= 5){
+            return ANIMAL_LOW_ENERGY_COLOR;
+        }
+        return ANIMAL_HIGH_ENERGY_COLOR;
+    }
+
+    private void renderAnimalDetails() {
+        if(chosenAnimal == null) return;
+        statAnimalDays.setText(String.valueOf(chosenAnimal.getAge()));
+        statAnimalActiveGen.setText(String.valueOf(chosenAnimal.getActiveGenIndex()));
+        statAnimalEnergy.setText(String.valueOf(chosenAnimal.getEnergy()));
+        statAnimalGenome.setText(Arrays.toString(chosenAnimal.getGenome()));
+        statAnimalKids.setText(String.valueOf(chosenAnimal.getNumberOfKids()));
+        statAnimalPlants.setText(String.valueOf(chosenAnimal.getEatenPlants()));
+    }
+
+    private void renderStatistics() {
+        statAnimals.setText(statSpectator.getNumberOfAliveAnimals() + "");
+        statPlants.setText(statSpectator.getNumberOfPlants() + "");
+        statFields.setText(statSpectator.getFreeFields() + "");
+        statGenotype.setText(Arrays.toString(statSpectator.getMostPopularGenotype()));
+        statAvgAge.setText(statSpectator.getAverageAgeOfDiedAnimals() + "");
+        statEnergy.setText(statSpectator.getAverageEnergy() + "");
     }
 
     private void addCircleToGrid(Circle circle, int x, int y) {

@@ -1,5 +1,8 @@
 package com.akgroup.project.config;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Scanner;
 
@@ -12,18 +15,27 @@ public class ConfigLoader {
         return configFileNames;
     }
 
-    public Config loadConfig(String configName) throws InvalidConfigException {
+    public Config loadConfigFromFile(File file) throws FileNotFoundException, InvalidConfigException {
+        InputStream stream = new FileInputStream(file);
+        return loadConfigFromInputStream(stream);
+    }
+
+    private Config loadConfigFromInputStream(InputStream stream) throws InvalidConfigException {
         Config config = new Config();
-        InputStream resourceAsStream = ConfigLoader.class.getResourceAsStream("/config/%s.csv".formatted(configName));
-        if(resourceAsStream == null)
-            throw new InvalidConfigException("Config file with name '%s' doesn't exists!!".formatted(configName));
-        scanner = new Scanner(resourceAsStream);
+        scanner = new Scanner(stream);
         while (scanner.hasNextLine()){
             readNextConfigLine(config);
         }
         if(!config.isCorrect())
             throw new InvalidConfigException("There are missing options in config file!");
         return config;
+    }
+
+    public Config loadConfig(String configName) throws InvalidConfigException {
+        InputStream resourceAsStream = ConfigLoader.class.getResourceAsStream("/config/%s.csv".formatted(configName));
+        if(resourceAsStream == null)
+            throw new InvalidConfigException("Config file with name '%s' doesn't exists!!".formatted(configName));
+        return loadConfigFromInputStream(resourceAsStream);
     }
 
     private void readNextConfigLine(Config config) throws InvalidConfigException {
