@@ -1,6 +1,7 @@
 package com.akgroup.project.engine.statistics;
 
 import com.akgroup.project.world.object.Animal;
+import com.akgroup.project.world.object.Plant;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -61,31 +62,69 @@ public class StatSpectator {
     public void newAnimalRespawned(Animal animal, boolean isFieldFree) {
         numberOfAliveAnimals++;
         if (isFieldFree) {
-            freeFields -= 1;
+            freeFields--;
         }
-        setNewAverageEnergy(animal);
+        addEnergy(animal);
         addNewGenomeToMap(animal);
-        setNewAverageGenome();
     }
 
     private void addNewGenomeToMap(Animal animal) {
         if (!currGenotypes.containsKey(animal.getGenome())) {
             currGenotypes.put(animal.getGenome(), 1);
         }
+        setNewAverageGenome();
+    }
+
+    private void removeGenomeFromMap(Animal animal) {
+        currGenotypes.remove(animal.getGenome());
+        setNewAverageGenome();
     }
 
     private void setNewAverageGenome() {
         mostPopularGenotype = currGenotypes.entrySet().stream().max(Comparator.comparing(Map.Entry::getValue)).get().getKey();
     }
 
-    private void setNewAverageEnergy(Animal animal) {
+    private void addEnergy(Animal animal) {
         sumOfEnergy += animal.getEnergy();
+        setNewAverageEnergy();
+    }
+
+    private void removeEnergy(Animal animal) {
+        sumOfEnergy -= animal.getEnergy();
+        setNewAverageEnergy();
+    }
+
+    private void setNewAverageEnergy() {
         averageEnergy = Math.toIntExact(Math.round(sumOfEnergy / numberOfAliveAnimals));
     }
 
+    private void addNewAgeOfDiedAnimal(Animal animal) {
+        sumOfAgesOfDiedAnimals += animal.getAge();
+        setNewAverageAgeOfDiedAnimals();
+    }
 
-    public void animalDying() {
+    private void setNewAverageAgeOfDiedAnimals() {
+        averageAgeOfDiedAnimals = Math.toIntExact(Math.round(sumOfAgesOfDiedAnimals / diedAnimals));
+    }
 
+
+    public void animalDying(Animal animal, boolean willFieldBeFree) {
+        numberOfAliveAnimals--;
+        diedAnimals++;
+        if (willFieldBeFree) {
+            freeFields++;
+        }
+        removeGenomeFromMap(animal);
+        removeEnergy(animal);
+        addNewAgeOfDiedAnimal(animal);
+    }
+
+    public void newPlantsRespawned(int number) {
+        numberOfPlants += number;
+    }
+
+    public void plantEaten(int number) {
+        numberOfPlants -= number;
     }
 
 

@@ -2,6 +2,7 @@ package com.akgroup.project.gui;
 
 import com.akgroup.project.config.Config;
 import com.akgroup.project.engine.Engine;
+import com.akgroup.project.engine.statistics.StatSpectator;
 import com.akgroup.project.util.MapVisualiser;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -16,8 +17,8 @@ public class App extends Application implements IFXObserver {
 
 
     private int simulationID = 0;
-    public void start(Stage stage) throws IOException
-    {
+
+    public void start(Stage stage) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         String fxmlDocPath = "/fxml/main.fxml";
 
@@ -32,7 +33,7 @@ public class App extends Application implements IFXObserver {
 
     @Override
     public void startSimulation(Config config) {
-        Engine engine = new Engine(config);
+        Engine engine = new Engine(config, new StatSpectator(config.getMapArea()));
         Thread thread = new Thread(engine);
         FXMLLoader loader = new FXMLLoader();
         String fxmlDocPath = "/fxml/simulation.fxml";
@@ -49,8 +50,7 @@ public class App extends Application implements IFXObserver {
             engine.addOutputObserver(new MapVisualiser());
             thread.start();
             simulationID++;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

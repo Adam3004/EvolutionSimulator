@@ -1,6 +1,7 @@
 package com.akgroup.project.world.borders;
 
 import com.akgroup.project.config.Config;
+import com.akgroup.project.engine.statistics.StatSpectator;
 import com.akgroup.project.util.Vector2D;
 import com.akgroup.project.world.map.WorldMap;
 import com.akgroup.project.world.object.Animal;
@@ -14,7 +15,7 @@ class EarthBordersTest {
     WorldMap worldMap;
     @BeforeEach
     void setUp(){
-        worldMap = new WorldMap(Config.defaultConfig());
+        worldMap = new WorldMap(Config.defaultConfig(), new StatSpectator(Config.defaultConfig().getMapArea()));
     }
 
     @Test

@@ -3,6 +3,7 @@ package com.akgroup.project.world.map;
 import com.akgroup.project.IPositionChangedObserver;
 import com.akgroup.project.config.Config;
 import com.akgroup.project.config.ConfigOption;
+import com.akgroup.project.engine.statistics.StatSpectator;
 import com.akgroup.project.util.NumberGenerator;
 import com.akgroup.project.util.Vector2D;
 import com.akgroup.project.world.WorldConfig;
@@ -19,8 +20,9 @@ public class WorldMap implements IWorldMap {
     private final WorldConfig worldConfig;
     private final Config simulationConfig;
     private final List<IPositionChangedObserver> positionChangedObservers;
+    private final StatSpectator spectator;
 
-    public WorldMap(Config simulationConfig) {
+    public WorldMap(Config simulationConfig, StatSpectator spectator) {
         this.positionChangedObservers = new ArrayList<>();
         this.animalsContainer = new AnimalsContainer();
         this.positionChangedObservers.add(this.animalsContainer);
@@ -29,6 +31,7 @@ public class WorldMap implements IWorldMap {
         this.upperRight = new Vector2D(simulationConfig.getValue(ConfigOption.WIDTH) - 1, simulationConfig.getValue(ConfigOption.HEIGHT) - 1);
         this.worldConfig = WorldConfig.fromConfig(simulationConfig);
         this.simulationConfig = simulationConfig;
+        this.spectator = spectator;
     }
 
     public List<Plant> getPlants() {
@@ -133,6 +136,7 @@ public class WorldMap implements IWorldMap {
             bestAnimal.addEnergy(simulationConfig.getValue(ConfigOption.PLANT_ENERGY));
             tmpList.add(plantPosition);
         }
+        spectator.plantEaten(tmpList.size());
         for (Vector2D vector2D : tmpList) {
             plants.remove(vector2D);
             worldConfig.planter().eatPlantOnField(vector2D);
@@ -148,8 +152,12 @@ public class WorldMap implements IWorldMap {
         placeObject(new Plant(proposedVector));
     }
 
+    private boolean isFieldFree(Vector2D vector2D) {
+        return animalsContainer.getAnimalsAt(vector2D).isEmpty();
+    }
+
     @Override
-    public Collection<Plant> getPlantsCollection(){
+    public Collection<Plant> getPlantsCollection() {
         return plants.values();
     }
 
@@ -168,6 +176,8 @@ public class WorldMap implements IWorldMap {
         Vector2D position = element.getPosition();
         if (!position.follows(lowerLeft) || !position.precedes(upperRight)) return false;
         if (element.getType().equals(TypeEnum.ANIMAL)) {
+            Animal newAnimal = (Animal) element;
+            spectator.newAnimalRespawned(newAnimal, isFieldFree(newAnimal.getPosition()));
             animalsContainer.addAnimal(position, (Animal) element);
         } else if (!plants.containsKey(position)) {
             plants.put(position, (Plant) element);
@@ -192,7 +202,9 @@ public class WorldMap implements IWorldMap {
     @Override
     public void removeObject(IWorldElement object) {
         if (object.getType().equals(TypeEnum.ANIMAL)) {
-            animalsContainer.removeAnimal((Animal) object);
+            Animal dyingAnimal = (Animal) object;
+            animalsContainer.removeAnimal(dyingAnimal);
+            spectator.animalDying(dyingAnimal, isFieldFree(dyingAnimal.getPosition()));
         } else {
             plants.remove(object.getPosition());
         }

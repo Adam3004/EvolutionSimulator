@@ -2,6 +2,7 @@ package com.akgroup.project.world.map;
 
 import com.akgroup.project.config.Config;
 import com.akgroup.project.config.ConfigOption;
+import com.akgroup.project.engine.statistics.StatSpectator;
 import com.akgroup.project.util.NumberGenerator;
 import com.akgroup.project.util.Vector2D;
 import com.akgroup.project.world.object.Animal;
@@ -21,7 +22,7 @@ class WorldMapTest {
     @BeforeEach
     void setUp() {
         var config = Config.defaultConfig();
-        worldMap = new WorldMap(config);
+        worldMap = new WorldMap(config, new StatSpectator(config.getMapArea()));
         int len = config.getValue(ConfigOption.GENOME_LENGTH);
         animal1 = new Animal(new Vector2D(1, 9), NumberGenerator.generateNewGenome(len));
         animal2 = new Animal(new Vector2D(100, 101), NumberGenerator.generateNewGenome(len));
