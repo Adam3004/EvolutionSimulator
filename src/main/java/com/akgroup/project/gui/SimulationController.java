@@ -1,20 +1,26 @@
 package com.akgroup.project.gui;
 
 import com.akgroup.project.IOutputObserver;
+import com.akgroup.project.engine.Engine;
+import com.akgroup.project.engine.statistics.StatSpectator;
 import com.akgroup.project.util.Vector2D;
 import com.akgroup.project.world.map.IWorldMap;
 import com.akgroup.project.world.object.Animal;
+import com.akgroup.project.world.object.IWorldElement;
 import com.akgroup.project.world.object.Plant;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Font;
 
 import java.util.*;
 
@@ -22,10 +28,19 @@ public class SimulationController implements IOutputObserver {
 
     @FXML
     private GridPane grid;
+
+    @FXML
+    private Label statAnimals, statAvgAge, statEnergy, statFields, statGenotype, statPlants;
+
+    @FXML
+    private Button simulationButton;
     private int width, height;
     private float cellSize;
 
     private IWorldMap worldMap;
+    private StatSpectator statSpectator;
+    private boolean simulationStopped = false;
+    private Engine engine;
 
     @Override
     public void init(IWorldMap worldMap) {
@@ -40,6 +55,40 @@ public class SimulationController implements IOutputObserver {
         grid.setMaxWidth(cellSize * width);
         grid.setMaxHeight(cellSize * height);
         addGridConstraints();
+        grid.setOnMouseClicked(this::onGridMouseClicked);
+    }
+
+    private void onGridMouseClicked(MouseEvent mouseEvent) {
+        if(!simulationStopped) return;
+        if(!mouseEvent.getButton().equals(MouseButton.PRIMARY)) return;
+        long x = (long) Math.floor(mouseEvent.getX() / cellSize);
+        long y = (long) Math.floor(mouseEvent.getY() / cellSize);
+        showDetailsForXY(x, height - y - 1);
+    }
+
+    private void showDetailsForXY(long x, long y) {
+        List<IWorldElement> objectsAt = worldMap.getObjectsAt(new Vector2D((int) x, (int) y));
+        System.out.println(objectsAt);
+    }
+
+    @FXML
+    void onSimulationAction(ActionEvent event) {
+        if(simulationStopped){
+            startSimulation();
+        }else{
+            stopSimulation();
+        }
+        simulationStopped = !simulationStopped;
+    }
+
+    private void stopSimulation() {
+        simulationButton.setText("Resume");
+        engine.pause();
+    }
+
+    private void startSimulation() {
+        simulationButton.setText("Pause");
+        engine.resume();
     }
 
     @Override
@@ -73,6 +122,12 @@ public class SimulationController implements IOutputObserver {
     private final Color ANIMAL_COLOR = Color.rgb(40, 40, 40);
 
     private void renderNextFrame(List<Animal> animals, List<Plant> plants) {
+        statAnimals.setText(statSpectator.getNumberOfAliveAnimals() + "");
+        statPlants.setText(statSpectator.getNumberOfPlants() + "");
+        statFields.setText(statSpectator.getFreeFields() + "");
+        statGenotype.setText(Arrays.toString(statSpectator.getMostPopularGenotype()));
+        statAvgAge.setText(statSpectator.getAverageAgeOfDiedAnimals() + "");
+        statEnergy.setText(statSpectator.getAverageEnergy() + "");
         grid.getRowConstraints().clear();
         grid.getColumnConstraints().clear();
         Node node = grid.getChildren().get(0);
@@ -83,12 +138,12 @@ public class SimulationController implements IOutputObserver {
         plants.forEach(plant -> {
             Vector2D position = plant.getPosition();
             Circle circle = createCircle(GRASS_COLOR);
-            addCircleToGrid(circle, position.x, position.y);
+            addCircleToGrid(circle, position.x, height - position.y - 1);
         });
         animals.forEach(animal -> {
             Vector2D position = animal.getPosition();
             Circle circle = createCircle(ANIMAL_COLOR);
-            addCircleToGrid(circle, position.x, position.y);
+            addCircleToGrid(circle, position.x, height - position.y - 1);
         });
     }
 
@@ -111,5 +166,13 @@ public class SimulationController implements IOutputObserver {
         for (int i = 0; i < height; i++) {
             grid.getRowConstraints().add(new RowConstraints(cellSize));
         }
+    }
+
+    public void setStatSpectator(StatSpectator spectator) {
+        this.statSpectator = spectator;
+    }
+
+    public void setEngine(Engine engine) {
+        this.engine = engine;
     }
 }

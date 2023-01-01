@@ -3,10 +3,7 @@ package com.akgroup.project.engine.statistics;
 import com.akgroup.project.world.object.Animal;
 import com.akgroup.project.world.object.Plant;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class StatSpectator {
     private int numberOfAliveAnimals;
@@ -78,7 +75,11 @@ public class StatSpectator {
     }
 
     private void setNewAverageGenome() {
-        mostPopularGenotype = currGenotypes.entrySet().stream().max(Comparator.comparing(Map.Entry::getValue)).get().getKey();
+        var max = currGenotypes.entrySet().stream().max(Map.Entry.comparingByValue());
+        if(max.isPresent())
+            mostPopularGenotype = max.get().getKey();
+        else
+            mostPopularGenotype = new int[]{};
     }
 
     private void addEnergy(Animal animal) {

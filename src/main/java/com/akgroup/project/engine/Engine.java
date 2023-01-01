@@ -9,6 +9,7 @@ import com.akgroup.project.util.NumberGenerator;
 import com.akgroup.project.util.Vector2D;
 import com.akgroup.project.world.map.WorldMap;
 import com.akgroup.project.world.object.Animal;
+import javafx.application.Platform;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +19,10 @@ import java.util.List;
  * Class responsible for main simulation loop
  */
 public class Engine implements Runnable, IPositionChangedObserver {
+
+    private volatile boolean running = true;
+    private volatile boolean paused = false;
+    private final Object pauseLock = new Object();
     private WorldMap worldMap;
     private final Config simulationConfig;
     private final List<IOutputObserver> outputObservers;
@@ -57,7 +62,29 @@ public class Engine implements Runnable, IPositionChangedObserver {
     }
 
     private void infinityLoop() {
-        while (true) {
+        while (running) {
+            synchronized (pauseLock) {
+                if (!running) { // may have changed while waiting to
+                    // synchronize on pauseLock
+                    break;
+                }
+                if (paused) {
+                    try {
+                        pauseLock.wait(); // will cause this Thread to block until
+                        // another thread calls pauseLock.notifyAll()
+                        // Note that calling wait() will
+                        // relinquish the synchronized lock that this
+                        // thread holds on pauseLock so another thread
+                        // can acquire the lock to call notifyAll()
+                        // (link with explanation below this code)
+                    } catch (InterruptedException ex) {
+                        break;
+                    }
+                    if (!running) { // running might have changed since we paused
+                        break;
+                    }
+                }
+            }
             outputObservers.forEach((obs) -> obs.renderFrame(new ArrayList<>(worldMap.getAllAnimals()), new ArrayList<>(worldMap.getPlants())));
             increaseAge();
             removeDeadAnimals();
@@ -128,5 +155,25 @@ public class Engine implements Runnable, IPositionChangedObserver {
     @Override
     public void onPositionChanged(Animal animal, Vector2D oldPosition, Vector2D newPosition) {
 
+    }
+
+    public void stop() {
+        running = false;
+        // you might also want to interrupt() the Thread that is
+        // running this Runnable, too, or perhaps call:
+        resume();
+        // to unblock
+    }
+
+    public void pause() {
+        // you may want to throw an IllegalStateException if !running
+        paused = true;
+    }
+
+    public void resume() {
+        synchronized (pauseLock) {
+            paused = false;
+            pauseLock.notifyAll(); // Unblocks thread
+        }
     }
 }
