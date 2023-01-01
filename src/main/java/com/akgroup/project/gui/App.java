@@ -54,7 +54,9 @@ public class App extends Application implements IFXObserver {
             stage.setScene(new Scene(root, 1000, 550));
             stage.show();
             engine.addOutputObserver(controller);
-            engine.addOutputObserver(new Saver("simulation"+simulationID+"Stats.csv",spectator));
+            if (generateCSV) {
+                engine.addOutputObserver(new Saver("simulation" + simulationID + "Stats.csv", spectator));
+            }
 //            engine.addOutputObserver(new MapVisualiser());
             thread.start();
             simulationID++;
