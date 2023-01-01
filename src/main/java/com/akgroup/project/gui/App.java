@@ -4,6 +4,7 @@ import com.akgroup.project.config.Config;
 import com.akgroup.project.engine.Engine;
 import com.akgroup.project.engine.statistics.StatSpectator;
 import com.akgroup.project.util.MapVisualiser;
+import com.akgroup.project.util.Saver;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -50,7 +51,8 @@ public class App extends Application implements IFXObserver {
             stage.setScene(new Scene(root, 800, 500));
             stage.show();
             engine.addOutputObserver(controller);
-            engine.addOutputObserver(new MapVisualiser());
+            engine.addOutputObserver(new Saver("simulation"+simulationID+"Stats.csv",spectator));
+//            engine.addOutputObserver(new MapVisualiser());
             thread.start();
             simulationID++;
         } catch (IOException e) {
