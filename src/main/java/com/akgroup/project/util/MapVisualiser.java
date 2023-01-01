@@ -2,6 +2,10 @@ package com.akgroup.project.util;
 
 import com.akgroup.project.IOutputObserver;
 import com.akgroup.project.world.map.IWorldMap;
+import com.akgroup.project.world.object.Animal;
+import com.akgroup.project.world.object.Plant;
+
+import java.util.List;
 
 public class MapVisualiser implements IOutputObserver {
 
@@ -15,7 +19,8 @@ public class MapVisualiser implements IOutputObserver {
 
     private final String[] animalArrows = new String[]{"/\\", "^|", "->", "_|", "\\/", "|_", "<-", "|^"};
 
-    public void renderFrame() {
+    @Override
+    public void renderFrame(List<Animal> animals, List<Plant> plants) {
         for (int row = 0; row < h; row++) {
             for (int col = 0; col < w; col++) {
                 charsMap[row][col] = 0;

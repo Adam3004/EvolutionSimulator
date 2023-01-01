@@ -3,6 +3,7 @@ package com.akgroup.project.gui;
 import com.akgroup.project.IOutputObserver;
 import com.akgroup.project.util.Vector2D;
 import com.akgroup.project.world.map.IWorldMap;
+import com.akgroup.project.world.object.Animal;
 import com.akgroup.project.world.object.Plant;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -15,10 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class SimulationController implements IOutputObserver {
 
@@ -65,16 +63,16 @@ public class SimulationController implements IOutputObserver {
     }
 
     @Override
-    public void renderFrame() {
-        try {
-            Platform.runLater(this::renderNextFrame);
-        }catch (Exception e){}
+    public void renderFrame(List<Animal> animals, List<Plant> plants) {
+        Platform.runLater(() -> {
+            renderNextFrame(animals, plants);
+        });
     }
 
     private final Color GRASS_COLOR = Color.rgb(55, 186, 32);
     private final Color ANIMAL_COLOR = Color.rgb(40, 40, 40);
 
-    private void renderNextFrame() {
+    private void renderNextFrame(List<Animal> animals, List<Plant> plants) {
         grid.getRowConstraints().clear();
         grid.getColumnConstraints().clear();
         Node node = grid.getChildren().get(0);
@@ -82,25 +80,24 @@ public class SimulationController implements IOutputObserver {
         grid.getChildren().add(0, node);
         grid.getRowConstraints().clear();
         addGridConstraints();
-        List<Plant> plants = new ArrayList<>(worldMap.getPlantsCollection());
         plants.forEach(plant -> {
             Vector2D position = plant.getPosition();
             Circle circle = createCircle(GRASS_COLOR);
             addCircleToGrid(circle, position.x, position.y);
         });
-        worldMap.getAnimalLists().stream().filter(list -> list.size() > 0).forEach(list -> {
-            Vector2D position = list.get(0).getPosition();
+        animals.forEach(animal -> {
+            Vector2D position = animal.getPosition();
             Circle circle = createCircle(ANIMAL_COLOR);
             addCircleToGrid(circle, position.x, position.y);
         });
     }
 
-    private void addCircleToGrid(Circle circle, int x, int y){
+    private void addCircleToGrid(Circle circle, int x, int y) {
         grid.add(circle, x, y, 1, 1);
         GridPane.setHalignment(circle, HPos.CENTER);
     }
 
-    private Circle createCircle(Color color){
+    private Circle createCircle(Color color) {
         Circle circle = new Circle();
         circle.setFill(color);
         circle.setRadius(cellSize / 4);
