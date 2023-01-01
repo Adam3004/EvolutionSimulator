@@ -54,7 +54,6 @@ public class Engine implements Runnable, IPositionChangedObserver {
         worldMap.init();
         int numberOfStartingPlants = simulationConfig.getValue(ConfigOption.PLANTS_ON_START);
         summonNewPlants(numberOfStartingPlants);
-        spectator.newPlantsRespawned(numberOfStartingPlants);
     }
 
     private void infinityLoop() {
@@ -66,6 +65,7 @@ public class Engine implements Runnable, IPositionChangedObserver {
             eatPlants();
             multiplicationOfAnimals();
             summonNewPlants(simulationConfig.getValue(ConfigOption.PLANTS_EVERY_DAY));
+            refreshFieldStatistics();
             showStats();
             try {
                 Thread.sleep(1000);
@@ -111,7 +111,6 @@ public class Engine implements Runnable, IPositionChangedObserver {
         while (worldMap.getPlantsCount() < simulationConfig.getMapArea() && worldMap.getPlantsCount() < startingSize + increase) {
             worldMap.trySummonNewPlant();
         }
-        spectator.newPlantsRespawned(increase);
     }
 
     private void increaseAge() {
@@ -120,6 +119,10 @@ public class Engine implements Runnable, IPositionChangedObserver {
 
     public void addOutputObserver(IOutputObserver outputObserver) {
         this.outputObservers.add(outputObserver);
+    }
+
+    public void refreshFieldStatistics() {
+        spectator.setFreeFields(worldMap.countFreeFields());
     }
 
     @Override

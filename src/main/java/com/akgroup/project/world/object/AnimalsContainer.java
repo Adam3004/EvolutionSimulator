@@ -7,11 +7,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/** Class to store animals on map. Every Vector2D has List of Animals which has the same position*/
+/**
+ * Class to store animals on map. Every Vector2D has List of Animals which has the same position
+ */
 public class AnimalsContainer implements IPositionChangedObserver {
     private final Map<Vector2D, List<Animal>> animals;
 
     private int animalsCount = 0;
+
     public AnimalsContainer() {
         this.animals = new HashMap<>();
     }
@@ -24,22 +27,26 @@ public class AnimalsContainer implements IPositionChangedObserver {
         animals.get(position).add(element);
     }
 
+    public int countFilledFields() {
+        return animals.size();
+    }
+
     public List<IWorldElement> getWorldElementsAt(Vector2D vector2D) {
         return getAnimalsAt(vector2D)
                 .stream()
-                .map(animal -> (IWorldElement)animal)
+                .map(animal -> (IWorldElement) animal)
                 .collect(Collectors.toList());
     }
 
     public List<Animal> getAnimalsAt(Vector2D vector2D) {
-            return animals.getOrDefault(vector2D, new ArrayList<>());
+        return animals.getOrDefault(vector2D, new ArrayList<>());
     }
 
     public List<Animal> getAllAnimals() {
         return animals.values().stream().flatMap(List::stream).collect(Collectors.toList());
     }
 
-    public void removeAnimalAt(Animal animal, Vector2D position){
+    public void removeAnimalAt(Animal animal, Vector2D position) {
         animals.get(position).remove(animal);
         animalsCount -= 1;
         if (animals.get(position).size() == 0) {
@@ -57,7 +64,7 @@ public class AnimalsContainer implements IPositionChangedObserver {
                 .toList();
     }
 
-    public Animal findBestAnimalAt(Vector2D vector2D){
+    public Animal findBestAnimalAt(Vector2D vector2D) {
         return findBestAnimalFrom(getAnimalsAt(vector2D));
     }
 

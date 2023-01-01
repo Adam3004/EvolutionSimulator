@@ -150,10 +150,20 @@ public class WorldMap implements IWorldMap {
     public void trySummonNewPlant() {
         Vector2D proposedVector = worldConfig.planter().findNewVectorToPlant();
         placeObject(new Plant(proposedVector));
+        spectator.newPlantRespawned();
     }
 
-    private boolean isFieldFree(Vector2D vector2D) {
-        return animalsContainer.getAnimalsAt(vector2D).isEmpty();
+//    private boolean isFieldFree(Vector2D vector2D) {
+//        return animalsContainer.getAnimalsAt(vector2D).isEmpty() && !plants.containsKey(vector2D);
+//    }
+
+    public int countFreeFields() {
+        Set<Vector2D> plantsFields = plants.keySet();
+        int sameFields = plantsFields.stream()
+                .filter(field -> !animalsContainer.getAnimalsAt(field).isEmpty())
+                .toList()
+                .size();
+        return simulationConfig.getMapArea() - (plantsFields.size() + animalsContainer.countFilledFields() - sameFields);
     }
 
     @Override
@@ -177,7 +187,7 @@ public class WorldMap implements IWorldMap {
         if (!position.follows(lowerLeft) || !position.precedes(upperRight)) return false;
         if (element.getType().equals(TypeEnum.ANIMAL)) {
             Animal newAnimal = (Animal) element;
-            spectator.newAnimalRespawned(newAnimal, isFieldFree(newAnimal.getPosition()));
+            spectator.newAnimalRespawned(newAnimal);
             animalsContainer.addAnimal(position, (Animal) element);
         } else if (!plants.containsKey(position)) {
             plants.put(position, (Plant) element);
@@ -204,7 +214,7 @@ public class WorldMap implements IWorldMap {
         if (object.getType().equals(TypeEnum.ANIMAL)) {
             Animal dyingAnimal = (Animal) object;
             animalsContainer.removeAnimal(dyingAnimal);
-            spectator.animalDying(dyingAnimal, isFieldFree(dyingAnimal.getPosition()));
+            spectator.animalDying(dyingAnimal);
         } else {
             plants.remove(object.getPosition());
         }

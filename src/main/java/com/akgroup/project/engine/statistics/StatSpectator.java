@@ -59,11 +59,8 @@ public class StatSpectator {
         return averageAgeOfDiedAnimals;
     }
 
-    public void newAnimalRespawned(Animal animal, boolean isFieldFree) {
+    public void newAnimalRespawned(Animal animal) {
         numberOfAliveAnimals++;
-        if (isFieldFree) {
-            freeFields--;
-        }
         addEnergy(animal);
         addNewGenomeToMap(animal);
     }
@@ -95,7 +92,10 @@ public class StatSpectator {
     }
 
     private void setNewAverageEnergy() {
-        averageEnergy = Math.toIntExact(Math.round(sumOfEnergy / numberOfAliveAnimals));
+        averageEnergy = 0;
+        if (numberOfAliveAnimals > 0) {
+            averageEnergy = Math.toIntExact(Math.round(sumOfEnergy / numberOfAliveAnimals));
+        }
     }
 
     private void addNewAgeOfDiedAnimal(Animal animal) {
@@ -104,27 +104,30 @@ public class StatSpectator {
     }
 
     private void setNewAverageAgeOfDiedAnimals() {
-        averageAgeOfDiedAnimals = Math.toIntExact(Math.round(sumOfAgesOfDiedAnimals / diedAnimals));
+        averageAgeOfDiedAnimals = 0;
+        if (diedAnimals > 0) {
+            averageAgeOfDiedAnimals = Math.toIntExact(Math.round(sumOfAgesOfDiedAnimals / diedAnimals));
+        }
     }
 
-
-    public void animalDying(Animal animal, boolean willFieldBeFree) {
+    public void animalDying(Animal animal) {
         numberOfAliveAnimals--;
         diedAnimals++;
-        if (willFieldBeFree) {
-            freeFields++;
-        }
         removeGenomeFromMap(animal);
         removeEnergy(animal);
         addNewAgeOfDiedAnimal(animal);
     }
 
-    public void newPlantsRespawned(int number) {
-        numberOfPlants += number;
+    public void newPlantRespawned() {
+        numberOfPlants++;
     }
 
     public void plantEaten(int number) {
         numberOfPlants -= number;
+    }
+
+    public void setFreeFields(int newFreeFields) {
+        freeFields = newFreeFields;
     }
 
 
