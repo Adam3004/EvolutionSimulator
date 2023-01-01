@@ -113,7 +113,7 @@
                         <Font name="System Bold" size="18.0" fx:id="x11" />
                      </font>
                   </Label>
-                  <GridPane fx:id="grid" gridLinesVisible="true">
+                  <GridPane fx:id="grid">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                     </columnConstraints>
@@ -132,6 +132,95 @@
                         <Font name="System Bold" size="18.0" fx:id="x12" />
                      </font>
                   </Label>
+                  <HBox alignment="CENTER" prefHeight="48.0" prefWidth="274.0">
+                     <children>
+                        <Label prefHeight="25.0" prefWidth="130.0" text="Active gene:">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="statAnimalActiveGen" prefHeight="25.0" prefWidth="100.0" text="Value">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="48.0" prefWidth="274.0">
+                     <children>
+                        <Label prefHeight="25.0" prefWidth="130.0" text="Energy:">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="statAnimalEnergy" prefHeight="25.0" prefWidth="100.0" text="Value">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="48.0" prefWidth="274.0">
+                     <children>
+                        <Label prefHeight="25.0" prefWidth="130.0" text="Eaten plants:">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="statAnimalPlants" prefHeight="25.0" prefWidth="100.0" text="Value">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="48.0" prefWidth="274.0">
+                     <children>
+                        <Label prefHeight="25.0" prefWidth="130.0" text="Kids:">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="statAnimalKids" prefHeight="25.0" prefWidth="100.0" text="Value">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="48.0" prefWidth="274.0">
+                     <children>
+                        <Label prefHeight="25.0" prefWidth="130.0" text="Days:">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="statAnimalDays" prefHeight="25.0" prefWidth="100.0" text="Value">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <VBox alignment="CENTER" prefHeight="61.0" prefWidth="274.0">
+                     <children>
+                        <Label prefHeight="33.0" text="Genome:">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="statAnimalGenome" text="Value" textAlignment="CENTER">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <Button fx:id="showAnimalsWithGenotype" mnemonicParsing="false" onAction="#onShowAnimalsWithGenotype" text="Show animals with most popular genotype" />
+                     </children>
+                  </VBox>
                </children>
             </VBox>
          </children>

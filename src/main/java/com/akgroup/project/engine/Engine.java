@@ -39,9 +39,23 @@ public class Engine implements Runnable, IPositionChangedObserver {
         worldMap = new WorldMap(simulationConfig, spectator);
         outputObservers.forEach(obs -> obs.init(worldMap));
         worldMap.addPositionChangedObserver(this);
+        sleepForInitiation();
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         summonStartPlants();
         summonStartAnimals();
         infinityLoop();
+    }
+
+    private void sleepForInitiation() {
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void summonStartAnimals() {
@@ -85,7 +99,6 @@ public class Engine implements Runnable, IPositionChangedObserver {
                     }
                 }
             }
-            outputObservers.forEach((obs) -> obs.renderFrame(new ArrayList<>(worldMap.getAllAnimals()), new ArrayList<>(worldMap.getPlants())));
             increaseAge();
             removeDeadAnimals();
             moveAnimals();
@@ -94,6 +107,7 @@ public class Engine implements Runnable, IPositionChangedObserver {
             summonNewPlants(simulationConfig.getValue(ConfigOption.PLANTS_EVERY_DAY));
             refreshFieldStatistics();
             showStats();
+            outputObservers.forEach((obs) -> obs.renderFrame(new ArrayList<>(worldMap.getAllAnimals()), new ArrayList<>(worldMap.getPlants())));
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
