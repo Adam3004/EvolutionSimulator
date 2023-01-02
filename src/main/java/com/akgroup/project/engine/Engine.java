@@ -93,7 +93,7 @@ public class Engine implements Runnable, IPositionChangedObserver {
         List<Animal> animals = new ArrayList<>(worldMap.getAllAnimals());
         List<Plant> plants = new ArrayList<>(worldMap.getPlants());
         outputObservers.forEach(obs -> obs.renderFrame(animals, plants));
-        System.out.println(animals);
+//        System.out.println(animals);
     }
 
     private void removeDeadAnimals() {

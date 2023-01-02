@@ -1,10 +1,11 @@
 package com.akgroup.project.util;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 
-public class SortedList<E> extends LinkedList<E> {
+
+public class SortedList<E> extends ArrayList<E> {
     private final Comparator<E> comparator;
 
     public SortedList(Comparator<E> comparator) {
