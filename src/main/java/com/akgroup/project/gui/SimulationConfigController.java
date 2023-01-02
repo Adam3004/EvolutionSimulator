@@ -10,6 +10,8 @@ import javafx.scene.control.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SimulationConfigController {
     @FXML
@@ -30,15 +32,16 @@ public class SimulationConfigController {
     private Menu openBuiltInConfigMenu;
     @FXML
     private CheckBox generateCSV;
-
     private TextField[] textFields;
     private IFXObserver observer;
     private final ConfigLoader configLoader;
     private boolean isConfigBuiltIn = false;
-    private String actualConfigName = "";
+
+    private final Map<TextField, Boolean> isFieldValidMap;
 
     public SimulationConfigController() {
         this.configLoader = new ConfigLoader();
+        isFieldValidMap = new HashMap<>();
     }
 
     @FXML
@@ -95,7 +98,6 @@ public class SimulationConfigController {
         try {
             Config config = configLoader.loadConfig(configFileName);
             loadConfigFields(config);
-            actualConfigName = configFileName;
             isConfigBuiltIn = true;
         } catch (InvalidConfigException e) {
             throw new RuntimeException(e);
@@ -130,33 +132,62 @@ public class SimulationConfigController {
     }
 
 
-    private boolean hasAllFieldsCorrect(){
-        return hasAllFieldsNumbers() && hasMinLessThanMax();
+    private boolean hasAllFieldsCorrect() {
+        boolean valid = hasAllFieldsNumbers() && hasMinLessThanMax()
+                && hasFieldsPositiveValues() && hasEnergyFieldsCorrect();
+        markFieldsValidOrNot();
+        return valid;
+    }
+
+    private void markFieldsValidOrNot() {
+        for (TextField textField : textFields) {
+            if(!isFieldValidMap.containsKey(textField)) continue;
+            boolean valid = isFieldValidMap.get(textField);
+            if(valid){
+                setTextFieldValid(textField);
+            }else{
+                setTextFieldInvalid(textField);
+            }
+        }
+    }
+
+    private boolean hasEnergyFieldsCorrect() {
+        int needed = getFieldValue(animalNeededEnergyInput);
+        int childEnergy = getFieldValue(animalChildEnergyInput);
+        boolean valid = needed <= childEnergy;
+        isFieldValidMap.put(animalChildEnergyInput, valid);
+        isFieldValidMap.put(animalNeededEnergyInput, valid);
+        return valid;
+    }
+
+    private boolean hasFieldsPositiveValues() {
+        int width = getFieldValue(widthInput);
+        int height = getFieldValue(heightInput);
+        int energy = getFieldValue(animalEnergyInput);
+        int genome = getFieldValue(genomeLengthInput);
+        isFieldValidMap.put(widthInput, width > 0);
+        isFieldValidMap.put(heightInput, height > 0);
+        isFieldValidMap.put(animalEnergyInput, energy > 0);
+        isFieldValidMap.put(genomeLengthInput, genome > 0);
+        return width > 0 && height > 0 && energy > 0 && genome > 0;
     }
 
     private boolean hasMinLessThanMax() {
         int min = getFieldValue(minMutationInput);
         int max = getFieldValue(maxMutationInput);
-        if(min <= max){
-            setTextFieldValid(minMutationInput);
-            setTextFieldValid(maxMutationInput);
-            return true;
-        }else{
-            setTextFieldInvalid(minMutationInput);
-            setTextFieldInvalid(maxMutationInput);
-            return false;
-        }
+        boolean valid = min <= max;
+        isFieldValidMap.put(minMutationInput, valid);
+        isFieldValidMap.put(maxMutationInput, valid);
+        return valid;
     }
 
     private boolean hasAllFieldsNumbers() {
         boolean correct = true;
         for (TextField textField : textFields) {
             boolean isNumber = checkIfNumber(textField);
+            isFieldValidMap.put(textField, isNumber);
             if(!isNumber){
-                setTextFieldInvalid(textField);
                 correct = false;
-            }else {
-                setTextFieldValid(textField);
             }
         }
         return correct;

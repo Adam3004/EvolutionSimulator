@@ -161,7 +161,6 @@ public class SimulationController implements IOutputObserver {
     private void renderNextFrame(List<Animal> animals, List<Plant> plants) {
         renderStatistics();
         grid.getChildren().clear();
-        //resetGridConstraints();
         renderJungle();
         plants.forEach(plant -> {
             Vector2D position = plant.getPosition();
@@ -225,7 +224,7 @@ public class SimulationController implements IOutputObserver {
     private Circle createCircle(Color color) {
         Circle circle = new Circle();
         circle.setFill(color);
-        circle.setRadius(cellSize / 4);
+        circle.setRadius(1.4 * cellSize / 4);
         return circle;
     }
 
