@@ -167,16 +167,6 @@ public class WorldMap implements IWorldMap {
     }
 
     @Override
-    public Collection<Plant> getPlantsCollection() {
-        return plants.values();
-    }
-
-    @Override
-    public List<List<Animal>> getAnimalLists() {
-        return animalsContainer.getAnimalLists();
-    }
-
-    @Override
     public void init() {
         worldConfig.planter().init();
     }
@@ -233,5 +223,15 @@ public class WorldMap implements IWorldMap {
     @Override
     public void addPositionChangedObserver(IPositionChangedObserver observer) {
         this.positionChangedObservers.add(observer);
+    }
+
+    @Override
+    public Vector2D getJungleLowerLeft() {
+       return worldConfig.planter().getJgBottomLeft();
+    }
+
+    @Override
+    public Vector2D getJungleUpperRight() {
+        return worldConfig.planter().getJgTopRight();
     }
 }

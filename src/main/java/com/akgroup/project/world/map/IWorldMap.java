@@ -6,7 +6,6 @@ import com.akgroup.project.world.object.Animal;
 import com.akgroup.project.world.object.IWorldElement;
 import com.akgroup.project.world.object.Plant;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface IWorldMap {
@@ -37,7 +36,7 @@ public interface IWorldMap {
     /** Returns all Plants on the map*/
     List<Plant> getPlants();
 
-    List<List<Animal>> getAnimalLists();
+    Vector2D getJungleLowerLeft();
 
-    Collection<Plant> getPlantsCollection();
+    Vector2D getJungleUpperRight();
 }

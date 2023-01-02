@@ -3,7 +3,6 @@ package com.akgroup.project.gui;
 import com.akgroup.project.config.Config;
 import com.akgroup.project.engine.Engine;
 import com.akgroup.project.engine.statistics.StatSpectator;
-import com.akgroup.project.util.MapVisualiser;
 import com.akgroup.project.util.Saver;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -16,6 +15,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 
+/** Class responsible for GUI side of Application */
 public class App extends Application implements IFXObserver {
     private int simulationID = 0;
 
@@ -33,6 +33,7 @@ public class App extends Application implements IFXObserver {
         stage.setScene(scene);
         stage.setTitle("Simulation Config");
         stage.show();
+        stage.setOnCloseRequest(event -> System.exit(0));
     }
 
     @Override
@@ -50,6 +51,7 @@ public class App extends Application implements IFXObserver {
             controller.setStatSpectator(spectator);
             controller.setEngine(engine);
             Stage stage = new Stage();
+            stage.setOnCloseRequest(event -> engine.stop());
             stage.setTitle("Simulation " + simulationID);
             stage.setScene(new Scene(root, 1000, 550));
             stage.show();

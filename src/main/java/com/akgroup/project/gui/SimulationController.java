@@ -18,17 +18,36 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 
 import java.util.*;
 
+/**
+ * Class is implementation of FXML Controller for Simulation Window
+ */
 public class SimulationController implements IOutputObserver {
 
+    /**
+     * Main simulation grid. Every cell of this grid represents one field on {@link IWorldMap}
+     */
     @FXML
     private GridPane grid;
+
+    /**
+     * Global statistic Labels for simulation
+     */
     @FXML
     private Label statAnimals, statAvgAge, statEnergy, statFields, statGenotype, statPlants;
+
+    /**
+     * Pause / Resume button. When clicked runs {@link #onSimulationAction(ActionEvent event)}
+     */
     @FXML
     private Button simulationButton;
+
+    /**
+     * Detailed statistic Labels for chosen Animal
+     */
     @FXML
     private Label statAnimalActiveGen, statAnimalDays, statAnimalEnergy, statAnimalGenome, statAnimalKids, statAnimalPlants;
     @FXML
@@ -46,57 +65,79 @@ public class SimulationController implements IOutputObserver {
     private final Color ANIMAL_HIGH_ENERGY_COLOR = Color.rgb(255, 59, 131);
     private final Color ANIMAL_LOW_ENERGY_COLOR = Color.rgb(255, 0, 0);
     private final Color ANIMAL_DYING_ENERGY_COLOR = Color.rgb(40, 40, 40);
+    private final Color JUNGLE_COLOR = Color.rgb(44, 105, 12);
+    private final Color GRID_BACKGROUND = Color.rgb(186, 114, 32);
+    private IWorldMap worldMap;
 
-    @Override
-    public void init(IWorldMap worldMap) {
-        width = worldMap.getUpperRight().y + 1;
-        height = worldMap.getUpperRight().x + 1;
-        cellSize = Math.max(width, height);
-        cellSize = 400 / cellSize;
-        while (cellSize < 8){
-            cellSize *= 2;
-        }
-        grid.getRowConstraints().clear();
-        grid.getColumnConstraints().clear();
-        grid.setBackground(new Background(new BackgroundFill(Color.rgb(186, 114, 32), CornerRadii.EMPTY, Insets.EMPTY)));
-        addGridConstraints();
-        grid.setOnMouseClicked(this::onGridMouseClicked);
-        showAnimalsWithGenotype.setVisible(false);
-    }
 
-    private void onGridMouseClicked(MouseEvent mouseEvent) {
-        if(!simulationStopped) return;
-        if(!mouseEvent.getButton().equals(MouseButton.PRIMARY)) return;
-        long x = (long) Math.floor(mouseEvent.getX() / cellSize);
-        long y = (long) Math.floor(mouseEvent.getY() / cellSize);
-        onGridClickedXY(x, height - y - 1);
-    }
-
-    private void onGridClickedXY(long x, long y) {
-        Vector2D position = new Vector2D((int) x, (int) y);
-        Optional<Animal> animal = lastRenderedAnimals.stream().filter(a -> a.getPosition().equals(position)).findFirst();
-        if(animal.isEmpty()) return;
-        chosenAnimal = animal.get();
-        renderAnimalDetails();
-    }
-
+    /**
+     * Function runs when {@link #simulationButton} was clicked
+     */
     @FXML
     void onSimulationAction(ActionEvent event) {
-        if(simulationStopped){
+        if (simulationStopped) {
             startSimulation();
-        }else{
+        } else {
             stopSimulation();
         }
         simulationStopped = !simulationStopped;
         showAnimalsWithGenotype.setVisible(simulationStopped);
     }
 
+    /**
+     * Function runs when button was clicked. Marks all animals with most popular genotype.
+     */
     @FXML
     void onShowAnimalsWithGenotype(ActionEvent event) {
         int[] mostPopularGenotype = statSpectator.getMostPopularGenotype();
         lastRenderedAnimals.stream()
                 .filter(animal -> Arrays.equals(animal.getGenome(), mostPopularGenotype))
                 .forEach(this::markAnimal);
+    }
+
+    /**
+     * Finds appropriate cell size and prepare {@link #grid} by adding columns and rows
+     */
+    @Override
+    public void init(IWorldMap worldMap) {
+        this.worldMap = worldMap;
+        width = worldMap.getUpperRight().y + 1;
+        height = worldMap.getUpperRight().x + 1;
+        cellSize = Math.max(width, height);
+        cellSize = 400 / cellSize;
+        while (cellSize < 20 && cellSize * width < 800) {
+            cellSize *= 2;
+        }
+        grid.setBackground(new Background(new BackgroundFill(GRID_BACKGROUND, CornerRadii.EMPTY, Insets.EMPTY)));
+        resetGridConstraints();
+        grid.setOnMouseClicked(this::onGridMouseClicked);
+        showAnimalsWithGenotype.setVisible(false);
+        grid.setMaxWidth(width * cellSize + 5);
+    }
+
+    /**
+     * Runs when user clicked {@link #grid} with mouse.
+     * Action is skipped when simulation is stopped or clicked {@link MouseButton} wasn't PRIMARY.
+     * Calculates {@link Vector2D} (x, y) position of {@link MouseEvent}
+     */
+    private void onGridMouseClicked(MouseEvent mouseEvent) {
+        if (!simulationStopped) return;
+        if (!mouseEvent.getButton().equals(MouseButton.PRIMARY)) return;
+        Vector2D clickedPosition = calculateMouseClickedPosition(mouseEvent);
+        Optional<Animal> animal = findAnimalAt(clickedPosition);
+        if (animal.isEmpty()) return;
+        chosenAnimal = animal.get();
+        renderAnimalDetails();
+    }
+
+    private Optional<Animal> findAnimalAt(Vector2D clickedPosition) {
+        return lastRenderedAnimals.stream().filter(a -> a.getPosition().equals(clickedPosition)).findFirst();
+    }
+
+    private Vector2D calculateMouseClickedPosition(MouseEvent mouseEvent) {
+        long x = (long) Math.floor(mouseEvent.getX() / cellSize);
+        long y = (long) Math.floor(mouseEvent.getY() / cellSize);
+        return new Vector2D((int) x, (int) (height - y - 1));
     }
 
     private void markAnimal(Animal animal) {
@@ -115,39 +156,11 @@ public class SimulationController implements IOutputObserver {
         engine.resume();
     }
 
-    @Override
-    public void onAnimalSummoned(Vector2D position) {
-
-    }
-
-    @Override
-    public void onPositionChanged(Vector2D oldPosition, Vector2D newPosition) {
-
-    }
-
-    @Override
-    public void onPlantSummoned(Vector2D position) {
-
-    }
-
-    @Override
-    public void onPlantWasEaten(Vector2D position) {
-
-    }
-
-    @Override
-    public void renderFrame(List<Animal> animals, List<Plant> plants) {
-        Platform.runLater(() -> {
-            renderNextFrame(animals, plants);
-        });
-    }
-
     private void renderNextFrame(List<Animal> animals, List<Plant> plants) {
         renderStatistics();
-        grid.getRowConstraints().clear();
-        grid.getColumnConstraints().clear();
         grid.getChildren().clear();
-        addGridConstraints();
+        //resetGridConstraints();
+        renderJungle();
         plants.forEach(plant -> {
             Vector2D position = plant.getPosition();
             Circle circle = createCircle(GRASS_COLOR);
@@ -163,18 +176,28 @@ public class SimulationController implements IOutputObserver {
         renderAnimalDetails();
     }
 
+    private void renderJungle() {
+        Vector2D lowerLeft = worldMap.getJungleLowerLeft();
+        Vector2D upperRight = worldMap.getJungleUpperRight();
+        Rectangle rectangle = new Rectangle();
+        rectangle.setFill(JUNGLE_COLOR);
+        rectangle.setWidth(cellSize * (upperRight.x - lowerLeft.x + 1));
+        rectangle.setHeight(cellSize * (upperRight.y - lowerLeft.y + 1));
+        grid.add(rectangle, lowerLeft.x-1, lowerLeft.y, (upperRight.x - lowerLeft.x) + 1, (upperRight.y - lowerLeft.y) + 1);
+    }
+
     private Color getColorByEnergy(int energy) {
-        if(energy == 0){
+        if (energy == 0) {
             return ANIMAL_DYING_ENERGY_COLOR;
         }
-        if(energy <= 5){
+        if (energy <= 5) {
             return ANIMAL_LOW_ENERGY_COLOR;
         }
         return ANIMAL_HIGH_ENERGY_COLOR;
     }
 
     private void renderAnimalDetails() {
-        if(chosenAnimal == null) return;
+        if (chosenAnimal == null) return;
         statAnimalDays.setText(String.valueOf(chosenAnimal.getAge()));
         statAnimalActiveGen.setText(String.valueOf(chosenAnimal.getActiveGenIndex()));
         statAnimalEnergy.setText(String.valueOf(chosenAnimal.getEnergy()));
@@ -204,7 +227,9 @@ public class SimulationController implements IOutputObserver {
         return circle;
     }
 
-    private void addGridConstraints() {
+    private void resetGridConstraints() {
+        grid.getRowConstraints().clear();
+        grid.getColumnConstraints().clear();
         for (int i = 0; i < width; i++) {
             grid.getColumnConstraints().add(new ColumnConstraints(cellSize));
         }
@@ -219,5 +244,30 @@ public class SimulationController implements IOutputObserver {
 
     public void setEngine(Engine engine) {
         this.engine = engine;
+    }
+
+    @Override
+    public void onAnimalSummoned(Vector2D position) {
+
+    }
+
+    @Override
+    public void onPositionChanged(Vector2D oldPosition, Vector2D newPosition) {
+
+    }
+
+    @Override
+    public void onPlantSummoned(Vector2D position) {
+
+    }
+
+    @Override
+    public void onPlantWasEaten(Vector2D position) {
+
+    }
+
+    @Override
+    public void renderFrame(List<Animal> animals, List<Plant> plants) {
+        Platform.runLater(() -> renderNextFrame(animals, plants));
     }
 }

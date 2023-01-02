@@ -4,7 +4,6 @@ import com.akgroup.project.util.NumberGenerator;
 import com.akgroup.project.util.SortedList;
 import com.akgroup.project.util.Vector2D;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 
@@ -65,7 +64,7 @@ public abstract class Planter {
         Vector2DWithPossibility chosenField = interestingList.get(NumberGenerator.generateNextInt(0, interestingList.size() - 1));
         plantOnField(chosenField);
         timeEnd = Instant.now();
-        System.out.println("Choosing vector: " + Duration.between(timeStart, timeEnd));
+        //System.out.println("Choosing vector: " + Duration.between(timeStart, timeEnd));
         return chosenField.getVector2D();
     }
 
@@ -103,7 +102,7 @@ public abstract class Planter {
         if (listOfPossibilities.get(interestingLen).getPossibility() <= -9997) {
             return filterOnlyPossiblePlaces(listOfPossibilities);
         }
-        timeStart = Instant.now();
+        //timeStart = Instant.now();
         int possibilities = 0;
         int start = interestingLen;
         int i = interestingLen;
@@ -113,34 +112,34 @@ public abstract class Planter {
             start -= 1;
             i--;
         }
-        timeEnd = Instant.now();
-        System.out.println("First while in findInterestingList: " + Duration.between(timeStart, timeEnd));
-        timeStart = Instant.now();
+        //timeEnd = Instant.now();
+        //System.out.println("First while in findInterestingList: " + Duration.between(timeStart, timeEnd));
+        //timeStart = Instant.now();
         List<Vector2DWithPossibility> tmpList = new ArrayList<>(listOfPossibilities.subList(0, start).stream().toList());
         i = interestingLen + 1;
-        timeEnd = Instant.now();
-        System.out.println("Creating list in findInterestingList: " + Duration.between(timeStart, timeEnd));
+        //timeEnd = Instant.now();
+        //System.out.println("Creating list in findInterestingList: " + Duration.between(timeStart, timeEnd));
 
-        timeStart = Instant.now();
+        //timeStart = Instant.now();
         while (i < size - 1 && interestingValue == listOfPossibilities.get(i).getPossibility()) {
             possibilities += 1;
             i++;
         }
-        timeEnd = Instant.now();
-        System.out.println("Second while in findInterestingList: " + Duration.between(timeStart, timeEnd));
-        timeStart = Instant.now();
+        //timeEnd = Instant.now();
+        //System.out.println("Second while in findInterestingList: " + Duration.between(timeStart, timeEnd));
+        //timeStart = Instant.now();
         Set<Integer> chosenNumbers = new HashSet<>();
         while (chosenNumbers.size() < possibilities) {
             chosenNumbers.add(NumberGenerator.generateNextInt(start, start + possibilities - 1));
         }
-        timeEnd = Instant.now();
-        System.out.println("Creating set and third while in findInterestingList: " + Duration.between(timeStart, timeEnd));
-        timeStart = Instant.now();
+        //timeEnd = Instant.now();
+        //System.out.println("Creating set and third while in findInterestingList: " + Duration.between(timeStart, timeEnd));
+        //timeStart = Instant.now();
         for (int number : chosenNumbers) {
             tmpList.add(listOfPossibilities.get(number));
         }
-        timeEnd = Instant.now();
-        System.out.println("Last for in findInterestingList: " + Duration.between(timeStart, timeEnd));
+        //timeEnd = Instant.now();
+        //System.out.println("Last for in findInterestingList: " + Duration.between(timeStart, timeEnd));
         return tmpList;
     }
 
@@ -188,4 +187,13 @@ public abstract class Planter {
                 "possibility=" + listOfPossibilities +
                 '}';
     }
+
+    public Vector2D getJgBottomLeft() {
+        return jgBottomLeft;
+    }
+
+    public Vector2D getJgTopRight() {
+        return jgTopRight;
+    }
+
 }

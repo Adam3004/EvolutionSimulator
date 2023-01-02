@@ -7,7 +7,6 @@ import com.akgroup.project.config.InvalidConfigException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -58,7 +57,7 @@ public class SimulationConfigController {
 
     @FXML
     public void startSimulation(ActionEvent actionEvent) {
-        if(!hasAllFieldsCorrect()) return; //TODO display error message on window
+        if(!hasAllFieldsCorrect()) return;
         Config config = createConfigFromFields();
         boolean csv = generateCSV.isSelected();
         observer.startSimulation(config, csv);

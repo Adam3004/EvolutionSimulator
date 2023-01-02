@@ -9,8 +9,6 @@ import com.akgroup.project.util.NumberGenerator;
 import com.akgroup.project.util.Vector2D;
 import com.akgroup.project.world.map.WorldMap;
 import com.akgroup.project.world.object.Animal;
-import javafx.application.Platform;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,11 +38,6 @@ public class Engine implements Runnable, IPositionChangedObserver {
         outputObservers.forEach(obs -> obs.init(worldMap));
         worldMap.addPositionChangedObserver(this);
         sleepForInitiation();
-        try {
-            Thread.sleep(10);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
         summonStartPlants();
         summonStartAnimals();
         infinityLoop();
@@ -52,7 +45,7 @@ public class Engine implements Runnable, IPositionChangedObserver {
 
     private void sleepForInitiation() {
         try {
-            Thread.sleep(10);
+            Thread.sleep(50);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
