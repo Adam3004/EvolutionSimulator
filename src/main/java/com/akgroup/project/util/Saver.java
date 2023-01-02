@@ -22,7 +22,7 @@ public class Saver implements IOutputObserver {
     }
 
     public String convertToCSV(List<String> data) {
-        return String.join(",", data);
+        return String.join(";", data);
     }
 
     public void save(List<String> dataLines) throws IOException {
@@ -74,7 +74,7 @@ public class Saver implements IOutputObserver {
             }
         }
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(csvOutputFile, true))) {
-            bw.write(("Average energy, Day of death, Free fields, Animals, Plants, Most popular genome\n"));
+            bw.write(("Average energy; Day of death; Free fields; Animals; Plants; Most popular genome\n"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
