@@ -74,7 +74,7 @@ public class StatSpectator {
 
     private void setNewAverageGenome() {
         var max = currGenotypes.entrySet().stream().max(Map.Entry.comparingByValue());
-        if(max.isPresent())
+        if (max.isPresent())
             mostPopularGenotype = max.get().getKey();
         else
             mostPopularGenotype = new int[]{};
@@ -93,7 +93,7 @@ public class StatSpectator {
     private void setNewAverageEnergy() {
         averageEnergy = 0;
         if (numberOfAliveAnimals > 0) {
-            averageEnergy = Math.toIntExact(Math.round(sumOfEnergy / numberOfAliveAnimals));
+            averageEnergy = Math.toIntExact(Math.round((float) sumOfEnergy / numberOfAliveAnimals));
         }
     }
 
@@ -105,7 +105,7 @@ public class StatSpectator {
     private void setNewAverageAgeOfDiedAnimals() {
         averageAgeOfDiedAnimals = 0;
         if (diedAnimals > 0) {
-            averageAgeOfDiedAnimals = Math.toIntExact(Math.round(sumOfAgesOfDiedAnimals / diedAnimals));
+            averageAgeOfDiedAnimals = Math.toIntExact(Math.round((float) sumOfAgesOfDiedAnimals / diedAnimals));
         }
     }
 

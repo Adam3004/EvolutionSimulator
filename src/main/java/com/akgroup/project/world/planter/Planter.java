@@ -96,7 +96,6 @@ public abstract class Planter {
         if (listOfPossibilities.get(interestingLen).getPossibility() <= -9997) {
             return filterOnlyPossiblePlaces(listOfPossibilities);
         }
-        //timeStart = Instant.now();
         int possibilities = 0;
         int start = interestingLen;
         int i = interestingLen;
@@ -125,10 +124,10 @@ public abstract class Planter {
     private void createJungle() {
         int[] params = findJungle();
 //        half of the width and height
-        int jgWidth = Math.toIntExact(Math.round(params[0] / 2));
-        int jgHeight = Math.toIntExact(Math.round(params[1] / 2));
-        int middleWidth = Math.round(width / 2);
-        int middleHeight = Math.round(height / 2);
+        int jgWidth = Math.toIntExact(Math.round((float) params[0] / 2));
+        int jgHeight = Math.toIntExact(Math.round((float) params[1] / 2));
+        int middleWidth = Math.round((float) width / 2);
+        int middleHeight = Math.round((float) height / 2);
         int leftW = middleWidth - jgWidth;
         int rightW = middleWidth + jgHeight;
         int topH = middleHeight + jgHeight;

@@ -100,14 +100,6 @@ public class WorldMap implements IWorldMap {
                 .forEach(this::multiply);
     }
 
-//    private void animalsReproduction(Vector2D vector2D) {
-//        List<Animal> animalsOnVector2D = sortAnimalsByEnergyR(animals.getListOfPossibilities(vector2D));
-//        if (animalsOnVector2D.size() < 2) {
-//            return;
-//        }
-//        createKid(animalsOnVector2D, vector2D);
-//    }
-
     private void createKid(Animal mum, Animal dad) {
         int energyPerParent = simulationConfig.getValue(ConfigOption.ANIMAL_ENERGY_FOR_CHILD);
         mum.loseEnergy(energyPerParent);
@@ -120,15 +112,6 @@ public class WorldMap implements IWorldMap {
         Animal kid = new Animal(mum.getPosition(), 2 * energyPerParent, newGenome);
         placeObject(kid);
     }
-
-//    private void createKid(List<Animal> animalsOnVector2D, Vector2D vector2D) {
-//        Animal mum = animalsOnVector2D.getListOfPossibilities(0);
-//        Animal dad = animalsOnVector2D.getListOfPossibilities(1);
-//        int energyPerParent = SimulationConfig.getInstance().getMultiplicationEnergyLose();
-//        prepareEnergy(mum, dad, energyPerParent);
-//        Animal kid = new Animal(vector2D, 2 * energyPerParent, NumberGenerator.createNewGenome(dad, mum));
-//        placeObject(kid);
-//    }
 
 
     public void eatPlants() {
@@ -157,7 +140,9 @@ public class WorldMap implements IWorldMap {
         spectator.newPlantRespawned();
     }
 
-    /** Calculates free fields on a map using inclusion-exclusion principle. */
+    /**
+     * Calculates free fields on a map using inclusion-exclusion principle.
+     */
     public int countFreeFields() {
         int sameFields = (int) plants.keySet().stream()
                 .filter(animalsContainer::hasAnimalAt)
@@ -226,7 +211,7 @@ public class WorldMap implements IWorldMap {
 
     @Override
     public Vector2D getJungleLowerLeft() {
-       return worldConfig.planter().getJgBottomLeft();
+        return worldConfig.planter().getJgBottomLeft();
     }
 
     @Override
