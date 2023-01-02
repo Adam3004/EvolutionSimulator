@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class Vector2DWithPossibility {
     private int possibility;
-    private Vector2D vector2D;
+    private final Vector2D vector2D;
 
     public Vector2DWithPossibility(int possibility, Vector2D vector2D) {
         this.possibility = possibility;
@@ -23,10 +23,6 @@ public class Vector2DWithPossibility {
 
     public Vector2D getVector2D() {
         return vector2D;
-    }
-
-    public void setVector2D(Vector2D vector2D) {
-        this.vector2D = vector2D;
     }
 
     @Override

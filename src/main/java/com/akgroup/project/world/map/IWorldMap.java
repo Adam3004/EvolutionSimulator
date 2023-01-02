@@ -36,7 +36,9 @@ public interface IWorldMap {
     /** Returns all Plants on the map*/
     List<Plant> getPlants();
 
+    /** Returns lower left point of jungle as Vector2D*/
     Vector2D getJungleLowerLeft();
 
+    /** Returns upper right point of jungle as Vector2D*/
     Vector2D getJungleUpperRight();
 }

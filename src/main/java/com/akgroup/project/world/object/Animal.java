@@ -82,11 +82,6 @@ public class Animal extends AbstractWorldElement {
         this.energy -= energyToLose;
     }
 
-    //TODO zmienić statyczną wartość na przekazywaną zwierzęciu w konstruktorze albo zrobić to w mapie
-    public boolean haveEnoughEnergy() {
-        return this.energy >= 4;
-    }
-
     public void loseEnergyOnMove() {
         this.loseEnergy(1);
     }

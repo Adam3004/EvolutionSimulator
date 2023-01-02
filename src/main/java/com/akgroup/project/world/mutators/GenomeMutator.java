@@ -1,7 +1,5 @@
 package com.akgroup.project.world.mutators;
 
-import com.akgroup.project.world.object.Animal;
-
 import java.util.HashSet;
 import java.util.Set;
 

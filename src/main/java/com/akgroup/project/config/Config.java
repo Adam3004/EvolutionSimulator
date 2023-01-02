@@ -42,11 +42,11 @@ public class Config {
         return getWidth() * getHeight();
     }
 
-    private int getHeight() {
+    public int getHeight() {
         return getValue(ConfigOption.HEIGHT);
     }
 
-    private int getWidth() {
+    public int getWidth() {
         return getValue(ConfigOption.WIDTH);
     }
 }

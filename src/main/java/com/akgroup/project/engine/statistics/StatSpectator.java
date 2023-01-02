@@ -1,9 +1,9 @@
 package com.akgroup.project.engine.statistics;
 
 import com.akgroup.project.world.object.Animal;
-import com.akgroup.project.world.object.Plant;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class StatSpectator {
     private int numberOfAliveAnimals;
@@ -15,7 +15,6 @@ public class StatSpectator {
     private int averageAgeOfDiedAnimals;
     private int sumOfAgesOfDiedAnimals;
     private int diedAnimals;
-    private final int numberOfAllFields;
     private final Map<int[], Integer> currGenotypes;
 
     public StatSpectator(int area) {
@@ -28,7 +27,6 @@ public class StatSpectator {
         this.averageAgeOfDiedAnimals = 0;
         this.sumOfAgesOfDiedAnimals = 0;
         this.diedAnimals = 0;
-        this.numberOfAllFields = area;
         this.currGenotypes = new HashMap<>();
     }
 

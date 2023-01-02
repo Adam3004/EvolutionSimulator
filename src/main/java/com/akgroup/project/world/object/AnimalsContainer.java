@@ -13,14 +13,11 @@ import java.util.stream.Stream;
 public class AnimalsContainer implements IPositionChangedObserver {
     private final Map<Vector2D, List<Animal>> animals;
 
-    private int animalsCount = 0;
-
     public AnimalsContainer() {
         this.animals = new HashMap<>();
     }
 
     public void addAnimal(Vector2D position, Animal element) {
-        animalsCount += 1;
         if (!animals.containsKey(position)) {
             animals.put(position, new ArrayList<>());
         }
@@ -48,7 +45,6 @@ public class AnimalsContainer implements IPositionChangedObserver {
 
     public void removeAnimalAt(Animal animal, Vector2D position) {
         animals.get(position).remove(animal);
-        animalsCount -= 1;
         if (animals.get(position).size() == 0) {
             animals.remove(position);
         }
@@ -93,16 +89,8 @@ public class AnimalsContainer implements IPositionChangedObserver {
         return oldestAnimals.get(0);
     }
 
-    public boolean hasAnimalAt(Vector2D plantPosition) {
-        return animals.containsKey(plantPosition);
-    }
-
     public Stream<List<Animal>> getAnimalGroups() {
         return animals.values().stream().filter(list -> list.size() > 1);
-    }
-
-    public int getAnimalsCount() {
-        return animalsCount;
     }
 
     @Override
@@ -111,7 +99,7 @@ public class AnimalsContainer implements IPositionChangedObserver {
         addAnimal(newPosition, animal);
     }
 
-    public List<List<Animal>> getAnimalLists() {
-        return new ArrayList<>(animals.values());
+    public boolean hasAnimalAt(Vector2D plantPosition) {
+        return animals.containsKey(plantPosition);
     }
 }

@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class ConfigLoader {
     private Scanner scanner;
 
-    private static final String[] configFileNames = new String[]{"default", "example 5x5"};
+    private static final String[] configFileNames = new String[]{"default", "example 5x5", "huge_map"};
 
     public static String[] getConfigFileNames() {
         return configFileNames;

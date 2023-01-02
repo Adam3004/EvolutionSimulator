@@ -9,8 +9,9 @@ import com.akgroup.project.util.NumberGenerator;
 import com.akgroup.project.util.Vector2D;
 import com.akgroup.project.world.map.WorldMap;
 import com.akgroup.project.world.object.Animal;
+import com.akgroup.project.world.object.Plant;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -25,6 +26,8 @@ public class Engine implements Runnable, IPositionChangedObserver {
     private final Config simulationConfig;
     private final List<IOutputObserver> outputObservers;
     private final StatSpectator spectator;
+    private static final int INITIATION_TIME = 50;
+    private static final int TIME_DELAY = 100;
 
     public Engine(Config config, StatSpectator spectator) {
         this.simulationConfig = config;
@@ -37,59 +40,41 @@ public class Engine implements Runnable, IPositionChangedObserver {
         worldMap = new WorldMap(simulationConfig, spectator);
         outputObservers.forEach(obs -> obs.init(worldMap));
         worldMap.addPositionChangedObserver(this);
+        worldMap.init();
         sleepForInitiation();
         summonStartPlants();
         summonStartAnimals();
-        infinityLoop();
-    }
-
-    private void sleepForInitiation() {
-        try {
-            Thread.sleep(50);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        mainLoop();
     }
 
     private void summonStartAnimals() {
-        int width = simulationConfig.getValue(ConfigOption.WIDTH);
-        int height = simulationConfig.getValue(ConfigOption.HEIGHT);
+        int width = simulationConfig.getWidth();
+        int height = simulationConfig.getHeight();
+        int genomeLen = simulationConfig.getValue(ConfigOption.GENOME_LENGTH);
         for (int i = 0; i < simulationConfig.getValue(ConfigOption.ANIMALS_ON_START); i++) {
             Vector2D newVector = NumberGenerator.generateNextVector2D(width, height);
-            int[] newGenome = NumberGenerator.generateNewGenome(simulationConfig.getValue(ConfigOption.GENOME_LENGTH));
+            int[] newGenome = NumberGenerator.generateNewGenome(genomeLen);
             Animal newAnimal = new Animal(newVector, newGenome);
             worldMap.placeObject(newAnimal);
         }
     }
 
     private void summonStartPlants() {
-        worldMap.init();
         int numberOfStartingPlants = simulationConfig.getValue(ConfigOption.PLANTS_ON_START);
         summonNewPlants(numberOfStartingPlants);
     }
 
-    private void infinityLoop() {
+    private void mainLoop() {
         while (running) {
             synchronized (pauseLock) {
-                if (!running) { // may have changed while waiting to
-                    // synchronize on pauseLock
-                    break;
-                }
+                if (!running) break;
                 if (paused) {
                     try {
-                        pauseLock.wait(); // will cause this Thread to block until
-                        // another thread calls pauseLock.notifyAll()
-                        // Note that calling wait() will
-                        // relinquish the synchronized lock that this
-                        // thread holds on pauseLock so another thread
-                        // can acquire the lock to call notifyAll()
-                        // (link with explanation below this code)
+                        pauseLock.wait();
                     } catch (InterruptedException ex) {
                         break;
                     }
-                    if (!running) { // running might have changed since we paused
-                        break;
-                    }
+                    if (!running) break;
                 }
             }
             increaseAge();
@@ -99,18 +84,16 @@ public class Engine implements Runnable, IPositionChangedObserver {
             multiplicationOfAnimals();
             summonNewPlants(simulationConfig.getValue(ConfigOption.PLANTS_EVERY_DAY));
             refreshFieldStatistics();
-            showStats();
-            outputObservers.forEach((obs) -> obs.renderFrame(new ArrayList<>(worldMap.getAllAnimals()), new ArrayList<>(worldMap.getPlants())));
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            notifyOutputObservers();
+            waitForMoment(TIME_DELAY);
         }
     }
 
-    private void showStats() {
-        System.out.println("all animals: " + spectator.getNumberOfAliveAnimals() + ", plants: " + spectator.getNumberOfPlants() + ", free fields: " + spectator.getFreeFields() + ", most popular genotype: " + Arrays.toString(spectator.getMostPopularGenotype()) + ", energy: " + spectator.getAverageEnergy() + ", ageOfDyingAnimals: " + spectator.getAverageAgeOfDiedAnimals());
+    private void notifyOutputObservers() {
+        List<Animal> animals = new ArrayList<>(worldMap.getAllAnimals());
+        List<Plant> plants = new ArrayList<>(worldMap.getPlants());
+        outputObservers.forEach(obs -> obs.renderFrame(animals, plants));
+        System.out.println(animals);
     }
 
     private void removeDeadAnimals() {
@@ -127,9 +110,7 @@ public class Engine implements Runnable, IPositionChangedObserver {
 
     private void moveAnimals() {
         List<Animal> animals = worldMap.getAllAnimals();
-        for (Animal animal : animals) {
-            worldMap.rotateAndMove(animal);
-        }
+        animals.forEach(worldMap::rotateAndMove);
     }
 
     private void eatPlants() {
@@ -164,23 +145,33 @@ public class Engine implements Runnable, IPositionChangedObserver {
 
     }
 
+    private void sleepForInitiation() {
+        waitForMoment(INITIATION_TIME);
+    }
+
+    private void waitForMoment(int time) {
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            throw new RuntimeException();
+        }
+    }
+
+    // MultiThread functions
+
     public void stop() {
         running = false;
-        // you might also want to interrupt() the Thread that is
-        // running this Runnable, too, or perhaps call:
         resume();
-        // to unblock
     }
 
     public void pause() {
-        // you may want to throw an IllegalStateException if !running
         paused = true;
     }
 
     public void resume() {
         synchronized (pauseLock) {
             paused = false;
-            pauseLock.notifyAll(); // Unblocks thread
+            pauseLock.notifyAll();
         }
     }
 }

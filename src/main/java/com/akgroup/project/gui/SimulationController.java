@@ -11,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
@@ -69,7 +70,6 @@ public class SimulationController implements IOutputObserver {
     private final Color GRID_BACKGROUND = Color.rgb(186, 114, 32);
     private IWorldMap worldMap;
 
-
     /**
      * Function runs when {@link #simulationButton} was clicked
      */
@@ -108,11 +108,14 @@ public class SimulationController implements IOutputObserver {
         while (cellSize < 20 && cellSize * width < 800) {
             cellSize *= 2;
         }
+        cellSize = Math.round(cellSize * 100);
+        cellSize = cellSize / 100;
         grid.setBackground(new Background(new BackgroundFill(GRID_BACKGROUND, CornerRadii.EMPTY, Insets.EMPTY)));
         resetGridConstraints();
         grid.setOnMouseClicked(this::onGridMouseClicked);
         showAnimalsWithGenotype.setVisible(false);
-        grid.setMaxWidth(width * cellSize + 5);
+        grid.setMaxWidth(width * cellSize);
+        grid.gridLinesVisibleProperty().set(false);
     }
 
     /**
@@ -123,21 +126,20 @@ public class SimulationController implements IOutputObserver {
     private void onGridMouseClicked(MouseEvent mouseEvent) {
         if (!simulationStopped) return;
         if (!mouseEvent.getButton().equals(MouseButton.PRIMARY)) return;
-        Vector2D clickedPosition = calculateMouseClickedPosition(mouseEvent);
+        Node clickedNode = mouseEvent.getPickResult().getIntersectedNode();
+        Integer colIndex = GridPane.getColumnIndex(clickedNode);
+        Integer rowIndex = GridPane.getRowIndex(clickedNode);
+        if(colIndex == null || rowIndex == null) return;
+        Vector2D clickedPosition = new Vector2D( colIndex, height - rowIndex - 1);
         Optional<Animal> animal = findAnimalAt(clickedPosition);
         if (animal.isEmpty()) return;
         chosenAnimal = animal.get();
+        System.out.println(chosenAnimal);
         renderAnimalDetails();
     }
 
     private Optional<Animal> findAnimalAt(Vector2D clickedPosition) {
         return lastRenderedAnimals.stream().filter(a -> a.getPosition().equals(clickedPosition)).findFirst();
-    }
-
-    private Vector2D calculateMouseClickedPosition(MouseEvent mouseEvent) {
-        long x = (long) Math.floor(mouseEvent.getX() / cellSize);
-        long y = (long) Math.floor(mouseEvent.getY() / cellSize);
-        return new Vector2D((int) x, (int) (height - y - 1));
     }
 
     private void markAnimal(Animal animal) {
@@ -244,26 +246,6 @@ public class SimulationController implements IOutputObserver {
 
     public void setEngine(Engine engine) {
         this.engine = engine;
-    }
-
-    @Override
-    public void onAnimalSummoned(Vector2D position) {
-
-    }
-
-    @Override
-    public void onPositionChanged(Vector2D oldPosition, Vector2D newPosition) {
-
-    }
-
-    @Override
-    public void onPlantSummoned(Vector2D position) {
-
-    }
-
-    @Override
-    public void onPlantWasEaten(Vector2D position) {
-
     }
 
     @Override

@@ -1,5 +1,5 @@
 package com.akgroup.project.world.behaviour;
 
-public interface AnimalBehaviour {
+public interface IAnimalBehaviour {
     int getAnimalRotation( int genomeLen);
 }

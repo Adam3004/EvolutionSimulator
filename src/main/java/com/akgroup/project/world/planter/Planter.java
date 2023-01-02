@@ -8,9 +8,9 @@ import java.time.Instant;
 import java.util.*;
 
 public abstract class Planter {
-    protected SortedList<Vector2DWithPossibility> listOfPossibilities;
-    protected int width;
-    protected int height;
+    protected final SortedList<Vector2DWithPossibility> listOfPossibilities;
+    protected final int width;
+    protected final int height;
 
     protected Vector2D jgBottomLeft;
     protected Vector2D jgTopRight;

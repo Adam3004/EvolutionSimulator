@@ -74,9 +74,13 @@ public class WorldMap implements IWorldMap {
 
     public List<Animal> filterAnimalsToReproduction(List<Animal> list) {
         return list.stream()
-                .filter(Animal::haveEnoughEnergy)
+                .filter(this::animalHaveEnoughEnergy)
                 .sorted(Comparator.comparing(Animal::getEnergy).reversed())
                 .collect(Collectors.toList());
+    }
+
+    private boolean animalHaveEnoughEnergy(Animal animal) {
+        return animal.getEnergy() >= simulationConfig.getValue(ConfigOption.ANIMAL_NEEDED_ENERGY);
     }
 
     private void multiply(List<Animal> list) {
@@ -153,17 +157,12 @@ public class WorldMap implements IWorldMap {
         spectator.newPlantRespawned();
     }
 
-//    private boolean isFieldFree(Vector2D vector2D) {
-//        return animalsContainer.getAnimalsAt(vector2D).isEmpty() && !plants.containsKey(vector2D);
-//    }
-
+    /** Calculates free fields on a map using inclusion-exclusion principle. */
     public int countFreeFields() {
-        Set<Vector2D> plantsFields = plants.keySet();
-        int sameFields = plantsFields.stream()
-                .filter(field -> !animalsContainer.getAnimalsAt(field).isEmpty())
-                .toList()
-                .size();
-        return simulationConfig.getMapArea() - (plantsFields.size() + animalsContainer.countFilledFields() - sameFields);
+        int sameFields = (int) plants.keySet().stream()
+                .filter(animalsContainer::hasAnimalAt)
+                .count();
+        return simulationConfig.getMapArea() - (plants.size() + animalsContainer.countFilledFields() - sameFields);
     }
 
     @Override

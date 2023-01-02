@@ -2,7 +2,7 @@ package com.akgroup.project.world;
 
 import com.akgroup.project.config.Config;
 import com.akgroup.project.config.ConfigOption;
-import com.akgroup.project.world.behaviour.AnimalBehaviour;
+import com.akgroup.project.world.behaviour.IAnimalBehaviour;
 import com.akgroup.project.world.behaviour.FullPredestinationBehaviour;
 import com.akgroup.project.world.behaviour.LittleCrazyBehaviour;
 import com.akgroup.project.world.borders.EarthBorders;
@@ -15,7 +15,7 @@ import com.akgroup.project.world.planter.EquatorPlanter;
 import com.akgroup.project.world.planter.Planter;
 import com.akgroup.project.world.planter.ToxicPlanter;
 
-public record WorldConfig(MapBorders mapBorders, GenomeMutator mutator, Planter planter, AnimalBehaviour behaviour) {
+public record WorldConfig(MapBorders mapBorders, GenomeMutator mutator, Planter planter, IAnimalBehaviour behaviour) {
 
     public static WorldConfig fromConfig(Config config) {
         int width = config.getValue(ConfigOption.WIDTH);
@@ -27,11 +27,11 @@ public record WorldConfig(MapBorders mapBorders, GenomeMutator mutator, Planter 
         MapBorders borders = bordersFromConfig(bordersType, width, height);
         Planter planter = planterFromConfig(planterType, width, height);
         GenomeMutator mutator = genomeMutatorFromConfig(mutatorType);
-        AnimalBehaviour behaviour = animalBehaviourFromConfig(behaviourType);
+        IAnimalBehaviour behaviour = animalBehaviourFromConfig(behaviourType);
         return new WorldConfig(borders, mutator, planter, behaviour);
     }
 
-    private static AnimalBehaviour animalBehaviourFromConfig(int behaviourType) {
+    private static IAnimalBehaviour animalBehaviourFromConfig(int behaviourType) {
         switch (behaviourType) {
             case 0 -> {
                 return new FullPredestinationBehaviour();

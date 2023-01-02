@@ -50,18 +50,12 @@ public class EquatorPlanter extends Planter {
     }
 
     private int prepareEquatorValue(int eVal, int val) {
-        switch (val % 2) {
-            case 0:
-                if (eVal % 2 == 1) {
-                    eVal += 1;
-                }
-                break;
-            case 1:
-                if (eVal % 2 == 0) {
-                    eVal += 1;
-                }
-                break;
+        if(val % 2 == 0){
+            if(eVal % 2 == 1) eVal += 1;
+        }else{
+            if(eVal % 2 == 0) eVal += 1;
         }
+
         return eVal;
     }
 

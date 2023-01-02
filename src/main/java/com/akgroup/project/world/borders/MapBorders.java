@@ -5,7 +5,7 @@ import com.akgroup.project.world.object.Animal;
 
 public abstract class MapBorders {
 
-    protected Vector2D lowerLeft, upperRight;
+    protected final Vector2D lowerLeft, upperRight;
 
     public MapBorders(int width, int height){
         this(new Vector2D(0, 0), new Vector2D(width-1, height-1));

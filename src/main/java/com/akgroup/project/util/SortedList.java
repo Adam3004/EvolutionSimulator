@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 
 public class SortedList<E> extends LinkedList<E> {
-    private Comparator<E> comparator;
+    private final Comparator<E> comparator;
 
     public SortedList(Comparator<E> comparator) {
         this.comparator = comparator;

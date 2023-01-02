@@ -101,24 +101,4 @@ public class MapVisualiser implements IOutputObserver {
         this.charsMap = new char[this.h][this.w];
         this.builder = new StringBuilder();
     }
-
-    @Override
-    public void onAnimalSummoned(Vector2D position) {
-
-    }
-
-    @Override
-    public void onPositionChanged(Vector2D oldPosition, Vector2D newPosition) {
-
-    }
-
-    @Override
-    public void onPlantSummoned(Vector2D position) {
-
-    }
-
-    @Override
-    public void onPlantWasEaten(Vector2D position) {
-
-    }
 }
