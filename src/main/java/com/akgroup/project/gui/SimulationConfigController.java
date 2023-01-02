@@ -134,8 +134,17 @@ public class SimulationConfigController {
 
     private boolean hasAllFieldsCorrect() {
         boolean valid = hasAllFieldsNumbers() && hasMinLessThanMax()
-                && hasFieldsPositiveValues() && hasEnergyFieldsCorrect();
+                && hasFieldsPositiveValues() && hasEnergyFieldsCorrect() && hasGenomeCorrect();
         markFieldsValidOrNot();
+        return valid;
+    }
+
+    private boolean hasGenomeCorrect() {
+        int genome = getFieldValue(genomeLengthInput);
+        int maxM = getFieldValue(maxMutationInput);
+        boolean valid = maxM <= genome;
+        isFieldValidMap.put(genomeLengthInput, valid);
+        isFieldValidMap.put(maxMutationInput, valid);
         return valid;
     }
 
@@ -154,7 +163,7 @@ public class SimulationConfigController {
     private boolean hasEnergyFieldsCorrect() {
         int needed = getFieldValue(animalNeededEnergyInput);
         int childEnergy = getFieldValue(animalChildEnergyInput);
-        boolean valid = needed <= childEnergy;
+        boolean valid = childEnergy <= needed;
         isFieldValidMap.put(animalChildEnergyInput, valid);
         isFieldValidMap.put(animalNeededEnergyInput, valid);
         return valid;

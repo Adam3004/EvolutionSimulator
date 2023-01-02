@@ -184,7 +184,7 @@ public class SimulationController implements IOutputObserver {
         rectangle.setFill(JUNGLE_COLOR);
         rectangle.setWidth(cellSize * (upperRight.x - lowerLeft.x + 1));
         rectangle.setHeight(cellSize * (upperRight.y - lowerLeft.y + 1));
-        grid.add(rectangle, lowerLeft.x-1, lowerLeft.y, (upperRight.x - lowerLeft.x) + 1, (upperRight.y - lowerLeft.y) + 1);
+        grid.add(rectangle, lowerLeft.x, lowerLeft.y, (upperRight.x - lowerLeft.x) + 1, (upperRight.y - lowerLeft.y) + 1);
     }
 
     private Color getColorByEnergy(int energy) {
