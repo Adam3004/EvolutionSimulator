@@ -100,6 +100,10 @@ public class SimulationController implements IOutputObserver {
      */
     @Override
     public void init(IWorldMap worldMap) {
+        Platform.runLater(() -> init2(worldMap));
+    }
+
+    private void init2(IWorldMap worldMap) {
         this.worldMap = worldMap;
         width = worldMap.getUpperRight().y + 1;
         height = worldMap.getUpperRight().x + 1;
@@ -114,7 +118,7 @@ public class SimulationController implements IOutputObserver {
         resetGridConstraints();
         grid.setOnMouseClicked(this::onGridMouseClicked);
         showAnimalsWithGenotype.setVisible(false);
-        grid.setMaxWidth(width * cellSize);
+        grid.setMaxWidth(cellSize * width);
         grid.gridLinesVisibleProperty().set(false);
     }
 
@@ -134,7 +138,6 @@ public class SimulationController implements IOutputObserver {
         Optional<Animal> animal = findAnimalAt(clickedPosition);
         if (animal.isEmpty()) return;
         chosenAnimal = animal.get();
-        System.out.println(chosenAnimal);
         renderAnimalDetails();
     }
 
@@ -229,13 +232,13 @@ public class SimulationController implements IOutputObserver {
     }
 
     private void resetGridConstraints() {
-        grid.getRowConstraints().clear();
-        grid.getColumnConstraints().clear();
+        ColumnConstraints columnConstraints = new ColumnConstraints(cellSize);
+        RowConstraints rowConstraints = new RowConstraints(cellSize);
         for (int i = 0; i < width; i++) {
-            grid.getColumnConstraints().add(new ColumnConstraints(cellSize));
+            grid.getColumnConstraints().add(columnConstraints);
         }
         for (int i = 0; i < height; i++) {
-            grid.getRowConstraints().add(new RowConstraints(cellSize));
+            grid.getRowConstraints().add(rowConstraints);
         }
     }
 
