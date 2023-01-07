@@ -25,14 +25,13 @@ import javafx.scene.paint.Color;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Class is implementation of FXML Controller for Simulation Window
  */
 public class SimulationController implements IOutputObserver {
 
-    public static final int RENDERING_TEXTURES_MAX = 16;
+    public static final int RENDERING_TEXTURES_MAX = 17;
     @FXML
     private LineChart<Number, Number> graph;
 
@@ -71,7 +70,6 @@ public class SimulationController implements IOutputObserver {
     private List<Animal> lastRenderedAnimals;
     private final Color GRID_BACKGROUND = Color.rgb(186, 114, 32);
     private IWorldMap worldMap;
-
     private Renderer renderer;
 
     /**
@@ -132,6 +130,7 @@ public class SimulationController implements IOutputObserver {
         }
     }
 
+
     /**
      * Runs when user clicked {@link #grid} with mouse.
      * Action is skipped when simulation is stopped or clicked {@link MouseButton} wasn't PRIMARY.
@@ -145,14 +144,16 @@ public class SimulationController implements IOutputObserver {
         Integer rowIndex = GridPane.getRowIndex(clickedNode);
         if(colIndex == null || rowIndex == null) return;
         Vector2D clickedPosition = new Vector2D( colIndex, height - rowIndex - 1);
-        Optional<Animal> animal = findAnimalAt(clickedPosition);
-        if (animal.isEmpty()) return;
-        chosenAnimal = animal.get();
+        List<Animal> animals = lastRenderedAnimals.stream().filter(a -> a.getPosition().equals(clickedPosition)).toList();
+        if(animals.isEmpty()) return;
+        int index = animals.indexOf(chosenAnimal);
+        if(chosenAnimal != null && index != -1){
+            index++;
+        }else{
+            index = 0;
+        }
+        chosenAnimal = animals.get((index % animals.size()));
         renderAnimalDetails();
-    }
-
-    private Optional<Animal> findAnimalAt(Vector2D clickedPosition) {
-        return lastRenderedAnimals.stream().filter(a -> a.getPosition().equals(clickedPosition)).findFirst();
     }
 
     private void stopSimulation() {
