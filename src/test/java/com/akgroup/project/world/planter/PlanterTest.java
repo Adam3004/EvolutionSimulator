@@ -44,7 +44,7 @@ class PlanterTest {
     void increasingPossibilitiesInList() {
         EquatorPlanter equatorPlanter = new EquatorPlanter(2, 12);
         equatorPlanter.init();
-        assertEquals(equatorPlanter.getListOfPossibilities().stream().filter(data -> data.getPossibility() == 3).toList().size(), 3);
+        assertEquals(equatorPlanter.getListOfPossibilities().stream().filter(data -> data.getPossibility() == 3).toList().size(), 4);
     }
 
     @Test

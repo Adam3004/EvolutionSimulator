@@ -1,7 +1,0 @@
--move
-.ruch do przodu
-
--jedzenie roślin
--wyrastanie roślin
--rozmnażanie
--randomizacja
