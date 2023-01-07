@@ -27,7 +27,7 @@ public class Engine implements Runnable, IPositionChangedObserver {
     private final List<IOutputObserver> outputObservers;
     private final StatSpectator spectator;
     private static final int INITIATION_TIME = 50;
-    private static final int TIME_DELAY = 100;
+    private static final int TIME_DELAY = 700;
 
     public Engine(Config config, StatSpectator spectator) {
         this.simulationConfig = config;

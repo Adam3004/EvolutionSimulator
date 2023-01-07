@@ -13,6 +13,8 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
@@ -29,6 +31,11 @@ import java.util.*;
  */
 public class SimulationController implements IOutputObserver {
 
+    @FXML
+    private NumberAxis xAxis;
+
+    @FXML
+    private NumberAxis yAxis;
     @FXML
     private LineChart<Number, Number> graph;
 
@@ -73,6 +80,9 @@ public class SimulationController implements IOutputObserver {
     private final Color JUNGLE_COLOR = Color.rgb(44, 105, 12);
     private final Color GRID_BACKGROUND = Color.rgb(186, 114, 32);
     private IWorldMap worldMap;
+
+    private Graph graph2;
+
 
     /**
      * Function runs when {@link #simulationButton} was clicked
@@ -124,6 +134,7 @@ public class SimulationController implements IOutputObserver {
         showAnimalsWithGenotype.setVisible(false);
         grid.setMaxWidth(cellSize * width);
         grid.gridLinesVisibleProperty().set(false);
+        initGraph();
     }
 
     /**
@@ -137,8 +148,8 @@ public class SimulationController implements IOutputObserver {
         Node clickedNode = mouseEvent.getPickResult().getIntersectedNode();
         Integer colIndex = GridPane.getColumnIndex(clickedNode);
         Integer rowIndex = GridPane.getRowIndex(clickedNode);
-        if(colIndex == null || rowIndex == null) return;
-        Vector2D clickedPosition = new Vector2D( colIndex, height - rowIndex - 1);
+        if (colIndex == null || rowIndex == null) return;
+        Vector2D clickedPosition = new Vector2D(colIndex, height - rowIndex - 1);
         Optional<Animal> animal = findAnimalAt(clickedPosition);
         if (animal.isEmpty()) return;
         chosenAnimal = animal.get();
@@ -182,6 +193,7 @@ public class SimulationController implements IOutputObserver {
         });
         lastRenderedAnimals = animals;
         renderAnimalDetails();
+        graph2.updateGraph(animals.size(), plants.size());
     }
 
     private void renderJungle() {
@@ -253,6 +265,12 @@ public class SimulationController implements IOutputObserver {
     public void setEngine(Engine engine) {
         this.engine = engine;
     }
+
+    private void initGraph() {
+        graph2 = new Graph(xAxis, yAxis, graph);
+        graph2.prepareGraph();
+    }
+
 
     @Override
     public void renderFrame(List<Animal> animals, List<Plant> plants) {

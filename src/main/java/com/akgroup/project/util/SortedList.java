@@ -23,4 +23,35 @@ public class SortedList<E> extends ArrayList<E> {
         return result;
     }
 
+    @Override
+    public E remove(int index) {
+        E result = super.remove(index);
+        sortList();
+        return result;
+    }
+
+    public boolean removeObject(E o) {
+        boolean result = super.remove(o);
+        sortList();
+        return result;
+    }
+
+    public void removeFirst() {
+        remove(0);
+    }
+
+    public E getLast() {
+        if (this.size() == 0) {
+            return null;
+        }
+        return this.get(this.size() - 1);
+    }
+
+    public E getFirst() {
+        if (this.size() == 0) {
+            return null;
+        }
+        return this.get(0);
+    }
+
 }
