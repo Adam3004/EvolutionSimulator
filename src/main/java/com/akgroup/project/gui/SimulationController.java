@@ -3,13 +3,16 @@ package com.akgroup.project.gui;
 import com.akgroup.project.IOutputObserver;
 import com.akgroup.project.engine.Engine;
 import com.akgroup.project.engine.statistics.StatSpectator;
+import com.akgroup.project.gui.render.Renderer;
+import com.akgroup.project.gui.render.SimpleRenderer;
+import com.akgroup.project.gui.render.TextureRenderer;
 import com.akgroup.project.util.Vector2D;
 import com.akgroup.project.world.map.IWorldMap;
-import com.akgroup.project.world.object.*;
+import com.akgroup.project.world.object.Animal;
+import com.akgroup.project.world.object.Plant;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
@@ -21,10 +24,9 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Class is implementation of FXML Controller for Simulation Window
@@ -36,6 +38,7 @@ public class SimulationController implements IOutputObserver {
 
     @FXML
     private NumberAxis yAxis;
+    public static final int RENDERING_TEXTURES_MAX = 17;
     @FXML
     private LineChart<Number, Number> graph;
 
@@ -72,15 +75,9 @@ public class SimulationController implements IOutputObserver {
     private Engine engine;
     private Animal chosenAnimal;
     private List<Animal> lastRenderedAnimals;
-    private final Color GRASS_COLOR = Color.rgb(55, 186, 32);
-    private final Color ANIMAL_MARK_COLOR = Color.rgb(66, 135, 245);
-    private final Color ANIMAL_HIGH_ENERGY_COLOR = Color.rgb(255, 59, 131);
-    private final Color ANIMAL_LOW_ENERGY_COLOR = Color.rgb(255, 0, 0);
-    private final Color ANIMAL_DYING_ENERGY_COLOR = Color.rgb(40, 40, 40);
-    private final Color JUNGLE_COLOR = Color.rgb(44, 105, 12);
     private final Color GRID_BACKGROUND = Color.rgb(186, 114, 32);
     private IWorldMap worldMap;
-
+    private Renderer renderer;
     private Graph graph2;
 
 
@@ -106,7 +103,7 @@ public class SimulationController implements IOutputObserver {
         int[] mostPopularGenotype = statSpectator.getMostPopularGenotype();
         lastRenderedAnimals.stream()
                 .filter(animal -> Arrays.equals(animal.getGenome(), mostPopularGenotype))
-                .forEach(this::markAnimal);
+                .forEach(renderer::markAnimal);
     }
 
     /**
@@ -122,6 +119,7 @@ public class SimulationController implements IOutputObserver {
         width = worldMap.getUpperRight().y + 1;
         height = worldMap.getUpperRight().x + 1;
         cellSize = Math.max(width, height);
+        boolean renderTextures = cellSize < RENDERING_TEXTURES_MAX;
         cellSize = 400 / cellSize;
         while (cellSize < 20 && cellSize * width < 800) {
             cellSize *= 2;
@@ -135,7 +133,13 @@ public class SimulationController implements IOutputObserver {
         grid.setMaxWidth(cellSize * width);
         grid.gridLinesVisibleProperty().set(false);
         initGraph();
+        if(renderTextures){
+            renderer = new TextureRenderer(cellSize, grid, height);
+        }else{
+            renderer = new SimpleRenderer(cellSize, grid, height);
+        }
     }
+
 
     /**
      * Runs when user clicked {@link #grid} with mouse.
@@ -148,22 +152,18 @@ public class SimulationController implements IOutputObserver {
         Node clickedNode = mouseEvent.getPickResult().getIntersectedNode();
         Integer colIndex = GridPane.getColumnIndex(clickedNode);
         Integer rowIndex = GridPane.getRowIndex(clickedNode);
-        if (colIndex == null || rowIndex == null) return;
-        Vector2D clickedPosition = new Vector2D(colIndex, height - rowIndex - 1);
-        Optional<Animal> animal = findAnimalAt(clickedPosition);
-        if (animal.isEmpty()) return;
-        chosenAnimal = animal.get();
+        if(colIndex == null || rowIndex == null) return;
+        Vector2D clickedPosition = new Vector2D( colIndex, height - rowIndex - 1);
+        List<Animal> animals = lastRenderedAnimals.stream().filter(a -> a.getPosition().equals(clickedPosition)).toList();
+        if(animals.isEmpty()) return;
+        int index = animals.indexOf(chosenAnimal);
+        if(chosenAnimal != null && index != -1){
+            index++;
+        }else{
+            index = 0;
+        }
+        chosenAnimal = animals.get((index % animals.size()));
         renderAnimalDetails();
-    }
-
-    private Optional<Animal> findAnimalAt(Vector2D clickedPosition) {
-        return lastRenderedAnimals.stream().filter(a -> a.getPosition().equals(clickedPosition)).findFirst();
-    }
-
-    private void markAnimal(Animal animal) {
-        Vector2D position = animal.getPosition();
-        Circle circle = createCircle(ANIMAL_MARK_COLOR);
-        addCircleToGrid(circle, position.x, height - position.y - 1);
     }
 
     private void stopSimulation() {
@@ -179,42 +179,15 @@ public class SimulationController implements IOutputObserver {
     private void renderNextFrame(List<Animal> animals, List<Plant> plants) {
         renderStatistics();
         grid.getChildren().clear();
-        renderJungle();
-        plants.forEach(plant -> {
-            Vector2D position = plant.getPosition();
-            Circle circle = createCircle(GRASS_COLOR);
-            addCircleToGrid(circle, position.x, height - position.y - 1);
-        });
-        animals.forEach(animal -> {
-            Vector2D position = animal.getPosition();
-            Color color = getColorByEnergy(animal.getEnergy());
-            Circle circle = createCircle(color);
-            addCircleToGrid(circle, position.x, height - position.y - 1);
-        });
+        renderer.renderJungle(worldMap);
+        plants.forEach(renderer::renderPlant);
+        animals.forEach(renderer::renderAnimal);
         lastRenderedAnimals = animals;
         renderAnimalDetails();
         graph2.updateGraph(animals.size(), plants.size());
     }
 
-    private void renderJungle() {
-        Vector2D lowerLeft = worldMap.getJungleLowerLeft();
-        Vector2D upperRight = worldMap.getJungleUpperRight();
-        Rectangle rectangle = new Rectangle();
-        rectangle.setFill(JUNGLE_COLOR);
-        rectangle.setWidth(cellSize * (upperRight.x - lowerLeft.x + 1));
-        rectangle.setHeight(cellSize * (upperRight.y - lowerLeft.y + 1));
-        grid.add(rectangle, lowerLeft.x, lowerLeft.y, (upperRight.x - lowerLeft.x) + 1, (upperRight.y - lowerLeft.y) + 1);
-    }
 
-    private Color getColorByEnergy(int energy) {
-        if (energy == 0) {
-            return ANIMAL_DYING_ENERGY_COLOR;
-        }
-        if (energy <= 5) {
-            return ANIMAL_LOW_ENERGY_COLOR;
-        }
-        return ANIMAL_HIGH_ENERGY_COLOR;
-    }
 
     private void renderAnimalDetails() {
         if (chosenAnimal == null) return;
@@ -233,18 +206,6 @@ public class SimulationController implements IOutputObserver {
         statGenotype.setText(Arrays.toString(statSpectator.getMostPopularGenotype()));
         statAvgAge.setText(statSpectator.getAverageAgeOfDiedAnimals() + "");
         statEnergy.setText(statSpectator.getAverageEnergy() + "");
-    }
-
-    private void addCircleToGrid(Circle circle, int x, int y) {
-        grid.add(circle, x, y, 1, 1);
-        GridPane.setHalignment(circle, HPos.CENTER);
-    }
-
-    private Circle createCircle(Color color) {
-        Circle circle = new Circle();
-        circle.setFill(color);
-        circle.setRadius(1.4 * cellSize / 4);
-        return circle;
     }
 
     private void resetGridConstraints() {
