@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
 
 <HBox alignment="CENTER" prefHeight="621.0" prefWidth="1022.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.akgroup.project.gui.SimulationController">
    <children>
@@ -103,6 +104,14 @@
                   </Label>
                </children>
             </VBox>
+            <LineChart fx:id="graph" prefHeight="224.0" prefWidth="255.0">
+              <xAxis>
+                <CategoryAxis side="BOTTOM" />
+              </xAxis>
+              <yAxis>
+                <NumberAxis side="LEFT" />
+              </yAxis>
+            </LineChart>
          </children>
       </VBox>
       <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="500.0">
@@ -112,7 +121,7 @@
                   <Font name="System Bold" size="18.0" fx:id="x11" />
                </font>
             </Label>
-            <GridPane prefWidth="400" prefHeight="400" fx:id="grid">
+            <GridPane fx:id="grid" prefHeight="400" prefWidth="400">
             </GridPane>
             <Button fx:id="simulationButton" mnemonicParsing="false" onAction="#onSimulationAction" text="Pause">
                <VBox.margin>
