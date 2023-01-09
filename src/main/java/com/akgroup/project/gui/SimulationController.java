@@ -13,17 +13,16 @@ import com.akgroup.project.world.object.Plant;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
 
 import java.util.Arrays;
 import java.util.List;
@@ -75,7 +74,6 @@ public class SimulationController implements IOutputObserver {
     private Engine engine;
     private Animal chosenAnimal;
     private List<Animal> lastRenderedAnimals;
-    private final Color GRID_BACKGROUND = Color.rgb(186, 114, 32);
     private IWorldMap worldMap;
     private Renderer renderer;
     private Graph graph2;
@@ -120,13 +118,13 @@ public class SimulationController implements IOutputObserver {
         height = worldMap.getUpperRight().x + 1;
         cellSize = Math.max(width, height);
         boolean renderTextures = cellSize < RENDERING_TEXTURES_MAX;
-        cellSize = 400 / cellSize;
-        while (cellSize < 20 && cellSize * width < 800) {
-            cellSize *= 2;
+        if(cellSize < 8){
+            cellSize = 400 / cellSize;
+        }else{
+            cellSize = 800 / cellSize;
         }
         cellSize = Math.round(cellSize * 100);
         cellSize = cellSize / 100;
-        grid.setBackground(new Background(new BackgroundFill(GRID_BACKGROUND, CornerRadii.EMPTY, Insets.EMPTY)));
         resetGridConstraints();
         grid.setOnMouseClicked(this::onGridMouseClicked);
         showAnimalsWithGenotype.setVisible(false);
@@ -138,6 +136,7 @@ public class SimulationController implements IOutputObserver {
         }else{
             renderer = new SimpleRenderer(cellSize, grid, height);
         }
+        renderer.renderGridBackground();
     }
 
 

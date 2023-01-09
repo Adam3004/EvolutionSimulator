@@ -21,6 +21,8 @@ public class TextureRenderer extends Renderer{
         TextureManager.loadTexture("flower");
         TextureManager.loadTexture("bee");
         TextureManager.loadTexture("bee_crown");
+        TextureManager.loadTexture("bee_lower");
+        TextureManager.loadTexture("bee_dead");
     }
 
     private ImageView createImageView(String textureName){
@@ -39,10 +41,36 @@ public class TextureRenderer extends Renderer{
 
     @Override
     public void renderAnimal(Animal animal) {
-        ImageView imageView = createImageView("bee");
+        String textureName = getTextureFromEnergy(animal.getEnergy());
+        ImageView imageView = createImageView(textureName);
         imageView.setRotate(animal.getRotation() * SINGLE_ROTATION);
         Vector2D position = animal.getPosition();
+        imageView.setScaleX(getScaleFromAge(animal.getAge()));
+        imageView.setScaleY(getScaleFromAge(animal.getAge()));
         grid.add(imageView, position.x, height - position.y - 1);
+    }
+
+    private float getScaleFromAge(int age){
+        if(age < 4){
+            return 0.4f;
+        }
+        if(age < 8){
+            return 0.6f;
+        }
+        if(age < 16){
+            return 0.8f;
+        }
+        return 1f;
+    }
+
+    private String getTextureFromEnergy(int energy) {
+        if (energy == 0) {
+            return "bee_dead";
+        }
+        if (energy <= 5) {
+            return "bee_lower";
+        }
+        return "bee";
     }
 
     @Override

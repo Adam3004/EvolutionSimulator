@@ -53,7 +53,13 @@ public class App extends Application implements IFXObserver {
             Stage stage = new Stage();
             stage.setOnCloseRequest(event -> engine.stop());
             stage.setTitle("Simulation " + simulationID);
-            stage.setScene(new Scene(root, 1000, 550));
+            int width = 1000;
+            int height = 550;
+            if(Math.max(config.getHeight(), config.getWidth()) > 8){
+                width = 1400;
+                height = 900;
+            }
+            stage.setScene(new Scene(root, width, height));
             stage.show();
             engine.addOutputObserver(controller);
             if (generateCSV) {
